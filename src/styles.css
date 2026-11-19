@@ -253,7 +253,7 @@ select.input{appearance:none;cursor:pointer}
 /* ===== zoom 90% global ===== */
 html{zoom:.9}
 /* ===== auth (login/registro/recuperar) ===== */
-.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 18px;position:relative;background:var(--bg)}
+.auth-wrap{position:fixed;inset:0;z-index:1000;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 18px;overflow-y:auto;background:var(--bg)}
 .auth-wrap.top{align-items:flex-start;padding-top:40px}
 html.dark .auth-wrap{background:radial-gradient(1200px 600px at 50% -10%,#1a1733 0%,transparent 55%),#0f1120}
 html:not(.dark) .auth-wrap{background:radial-gradient(1200px 600px at 50% -10%,#efeafc 0%,transparent 55%),#fbfaff}

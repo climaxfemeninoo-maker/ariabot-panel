@@ -9,8 +9,34 @@ function useTheme() {
 }
 
 function Logo({ theme, size = 54 }) {
-  return <img className={'auth-brand' + (theme === 'dark' ? '' : ' lt')} src="/leona-white.png" alt="Leona"
-    style={{ height: size, display: 'block', margin: '0 auto', objectFit: 'contain' }} />
+  const col = theme === 'dark' ? '#fff' : '#7c3aed'
+  return <svg height={size} viewBox="0 0 230 56" style={{ display: 'block', margin: '0 auto' }} aria-label="Leona">
+    <defs>
+      <linearGradient id="leoG" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor={theme === 'dark' ? '#c4b5fd' : '#a855f7'} />
+        <stop offset="1" stopColor={theme === 'dark' ? '#ffffff' : '#6d28d9'} />
+      </linearGradient>
+    </defs>
+    {/* LE */}
+    <text x="0" y="42" fontFamily="Inter,sans-serif" fontWeight="800" fontSize="46" letterSpacing="-1" fill={col}>LE</text>
+    {/* lioness medallion as the O */}
+    <g transform="translate(74,6)">
+      <circle cx="22" cy="22" r="22" fill="url(#leoG)" />
+      <circle cx="22" cy="22" r="22" fill="none" stroke={theme === 'dark' ? '#fff' : '#6d28d9'} strokeWidth="1.5" opacity=".5" />
+      {/* ears */}
+      <circle cx="12" cy="7" r="6" fill={theme === 'dark' ? '#6d28d9' : '#ede9fe'} />
+      <circle cx="32" cy="7" r="6" fill={theme === 'dark' ? '#6d28d9' : '#ede9fe'} />
+      {/* face */}
+      <path d="M22 10c8 0 13 6 13 14 0 7-6 13-13 13S9 31 9 24c0-8 5-14 13-14z" fill={theme === 'dark' ? '#3b1d73' : '#4c1d95'} opacity=".55" />
+      {/* eyes + muzzle */}
+      <circle cx="16" cy="22" r="2.4" fill="#fff" />
+      <circle cx="28" cy="22" r="2.4" fill="#fff" />
+      <path d="M18 29c2 2 6 2 8 0" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="22" cy="27" r="1.6" fill="#fff" />
+    </g>
+    {/* NA */}
+    <text x="124" y="42" fontFamily="Inter,sans-serif" fontWeight="800" fontSize="46" letterSpacing="-1" fill={col}>NA</text>
+  </svg>
 }
 
 function Field({ icon, type = 'text', value, onChange, placeholder, eye, onEye }) {
