@@ -1,0 +1,141 @@
+import { useState, useEffect, useRef } from 'react'
+import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { LayoutGrid, MessageSquare, Columns3, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, PlayCircle, PanelLeft, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, Sparkles, Copy } from 'lucide-react'
+import { Logo, Modal, useStore, useOutside, useToast, uid } from './ui'
+import Dashboard from './pages/Dashboard'
+import Chats from './pages/Chats'
+import Kanban from './pages/Kanban'
+import Contacts from './pages/Contacts'
+import Flows, { FlowEditor } from './pages/Flows'
+import Agents from './pages/Agents'
+import { Connections, Webhooks, Mass } from './pages/Ops'
+import Facebook from './pages/Facebook'
+import Billing from './pages/Billing'
+import Settings from './pages/Settings'
+import Tutorials from './pages/Tutorials'
+
+const NAV = [
+  ['PRINCIPAL', [['/welcome', 'Dashboard', LayoutGrid], ['/chats', 'Chats en vivo', MessageSquare], ['/crms', 'Kanban', Columns3], ['/customers', 'Contactos', Users]]],
+  ['OPERACIONES', [['/flows', 'Flujos', Workflow], ['/agentes', 'Agentes de IA', Bot], ['/connections', 'Conexiones', Plug], ['/settings/inbound-webhooks', 'Webhooks de entrada', Webhook], ['/mass-dispatches', 'Envíos masivos', Send], ['/facebook/campaigns', 'Facebook', Megaphone]]],
+  ['GESTIÓN', [['/billing', 'Cobros y suscripciones', CreditCard], ['/settings', 'Configuración', Cog], ['/tutoriales', 'Tutoriales', PlayCircle]]],
+]
+
+export function useTheme() {
+  const [theme, setTheme] = useStore('theme', 'dark')
+  useEffect(() => { document.documentElement.className = theme }, [theme])
+  return [theme, () => setTheme(t => t === 'dark' ? 'light' : 'dark')]
+}
+
+function Sidebar({ col, setCol, mopen, setMopen }) {
+  const [theme, toggle] = useTheme()
+  const [, setAuthed] = useStore('authed', false)
+  const [companies, setCompanies] = useStore('companies', [{ id: 'c1', name: 'Empresa Pablo Monja Suclupe' }])
+  const [cur, setCur] = useStore('company', 'c1')
+  const [contacts] = useStore('contacts', [])
+  const [ddOpen, setDd] = useState(false); const [newCo, setNewCo] = useState(false); const [coName, setCoName] = useState('')
+  const [modal, setModal] = useState(null); const [notifOpen, setNotif] = useState(false); const [userOpen, setUser] = useState(false)
+  const ref = useRef(); const nref = useRef(); const uref = useRef()
+  useOutside(ref, () => setDd(false)); useOutside(nref, () => setNotif(false)); useOutside(uref, () => setUser(false))
+  const toast = useToast(); const nav = useNavigate()
+  const company = companies.find(c => c.id === cur) || companies[0]
+  const [notifs, setNotifs] = useStore('notifs', [
+    { id: 1, t: 'Bienvenido a AriaBot', d: 'Configura tu primera conexión de WhatsApp para empezar.', r: false },
+    { id: 2, t: 'Nuevo tutorial disponible', d: 'Aprende a crear flujos con IA en 5 minutos.', r: false }])
+  const unread = notifs.filter(n => !n.r).length
+  return <aside className={'side' + (col ? ' col' : '') + (mopen ? ' mopen' : '')}>
+    <div className="side-top"><NavLink to="/welcome" className="logo"><Logo h={24} /></NavLink>
+      <button className="collapse" onClick={() => setCol(!col)} title="Contraer menú"><PanelLeft size={15} /></button></div>
+    <div ref={ref} style={{ position: 'relative' }}>
+      <div className="company" onClick={() => setDd(!ddOpen)}>
+        {col ? <Building2 size={16} /> : <><div style={{ flex: 1, minWidth: 0 }}><div className="n">{company.name}</div><div className="s">Leads: {contacts.length}</div></div><ChevronDown size={14} className="muted" /></>}
+      </div>
+      {ddOpen && <div className="dd-menu" style={{ left: 6, right: 6, top: 'calc(100% - 2px)', minWidth: 200 }}>
+        <div className="small muted" style={{ padding: '6px 9px' }}>Empresas</div>
+        {companies.map(c => <button key={c.id} className={'dd-item' + (c.id === cur ? ' on' : '')} onClick={() => { setCur(c.id); setDd(false); toast('Empresa cambiada a ' + c.name) }}><Building2 size={14} />{c.name}{c.id === cur && <Check size={13} style={{ marginLeft: 'auto' }} />}</button>)}
+        <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
+        <button className="dd-item" onClick={() => { setNewCo(true); setDd(false) }}><Plus size={14} />Nueva empresa</button>
+      </div>}
+    </div>
+    <nav className="nav">
+      {NAV.map(([sec, items]) => <div key={sec}><div className="nav-sec">{sec}</div>
+        {items.map(([to, label, Ic]) => <NavLink key={to} to={to} end={to === '/settings'} title={label} onClick={() => setMopen(false)}><Ic size={15} /><span>{label}</span></NavLink>)}</div>)}
+    </nav>
+    <div className="side-bottom">
+      <div className="tokens" onClick={() => setModal('tokens')}>0 tokens Aria</div>
+      <div className="duo"><button className="bg-amber" onClick={() => setModal('support')}><HelpCircle size={13} /><span>Soporte</span></button>
+        <button className="bg-purple" onClick={() => setModal('aff')}><UserPlus size={13} /><span>Afiliación</span></button></div>
+      <div className="theme-row" onClick={toggle} title="Ctrl+M">
+        {theme === 'dark' ? <Sun size={15} color="#f59e0b" /> : <Moon size={15} />}
+        <div><div className="t">{theme === 'dark' ? 'Claro' : 'Oscuro'}</div><div className="k">Ctrl+M · ⌘M</div></div>
+        <div className="bell" ref={nref} onClick={e => { e.stopPropagation(); setNotif(!notifOpen) }}><Bell size={14} />{unread > 0 && <span className="dot-badge" />}
+          {notifOpen && <div className="dd-menu notif card" style={{ position: 'absolute', left: -150, bottom: 26, top: 'auto', width: 290, cursor: 'default' }} onClick={e => e.stopPropagation()}>
+            <div className="row" style={{ padding: '6px 8px' }}><b style={{ color: 'var(--text)' }}>Notificaciones</b><button className="sp" /><button className="small" style={{ color: 'var(--p)' }} onClick={() => setNotifs(n => n.map(x => ({ ...x, r: true })))}>Marcar todo leído</button></div>
+            {notifs.map(n => <div key={n.id} className="dd-item" style={{ alignItems: 'flex-start', whiteSpace: 'normal', color: 'var(--text)' }} onClick={() => setNotifs(l => l.map(x => x.id === n.id ? { ...x, r: true } : x))}>
+              <span style={{ width: 7, height: 7, borderRadius: 9, marginTop: 5, flexShrink: 0, background: n.r ? 'transparent' : 'var(--p)' }} /><div><div className="bold" style={{ fontSize: 12 }}>{n.t}</div><div className="small muted">{n.d}</div></div></div>)}
+          </div>}</div>
+      </div>
+      <div className="user" ref={uref} onClick={() => setUser(!userOpen)}>
+        <div className="avatar">PM</div><div className="info" style={{ minWidth: 0 }}><div className="n">Pablo Monja Suclupe</div><div className="e">k4el.ux@gmail.com</div></div><ChevronsUpDown size={13} className="muted chev" style={{ marginLeft: 'auto' }} />
+        {userOpen && <div className="dd-menu" style={{ top: 'auto', bottom: 'calc(100% + 6px)', left: 0, right: 0 }} onClick={e => e.stopPropagation()}>
+          <button className="dd-item" onClick={() => { nav('/settings'); setUser(false) }}><User size={14} />Mi perfil</button>
+          <button className="dd-item" onClick={() => { nav('/billing'); setUser(false) }}><CreditCard size={14} />Facturación</button>
+          <button className="dd-item" onClick={() => { toggle(); setUser(false) }}>{theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}Cambiar tema</button>
+          <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
+          <button className="dd-item danger" onClick={() => { setUser(false); setAuthed(false); toast('Sesión cerrada', 'info') }}><LogOut size={14} />Cerrar sesión</button>
+        </div>}
+      </div>
+    </div>
+    <Modal open={newCo} onClose={() => setNewCo(false)} title="Nueva empresa" sub="Crea un nuevo espacio de trabajo" icon={<Building2 size={18} />}
+      footer={<><button className="btn btn-g" onClick={() => setNewCo(false)}>Cancelar</button><button className="btn btn-p" disabled={!coName.trim()} onClick={() => { const id = uid(); setCompanies(c => [...c, { id, name: coName }]); setCur(id); setCoName(''); setNewCo(false); toast('Empresa creada') }}>Crear</button></>}>
+      <label className="lb">Nombre de la empresa</label><input className="input" autoFocus value={coName} onChange={e => setCoName(e.target.value)} placeholder="Mi empresa" /></Modal>
+    <Modal open={modal === 'tokens'} onClose={() => setModal(null)} title="Tokens Aria" sub="Créditos para bloques de IA y agentes" icon={<Sparkles size={18} />}>
+      <div className="grid g3">{[['1.000', '9,90'], ['5.000', '39,90'], ['20.000', '129,90']].map(([t, p], i) => <div key={t} className="card lift" style={{ padding: 14, textAlign: 'center', borderColor: i === 1 ? 'var(--p)' : undefined }}>
+        <div className="bold" style={{ fontSize: 18 }}>{t}</div><div className="small muted">tokens</div><div style={{ margin: '10px 0', fontWeight: 700 }}>PEN {p}</div>
+        <button className="btn btn-p btn-sm" style={{ width: '100%' }} onClick={() => { setModal(null); toast('Redirigiendo al pago…', 'info') }}>Comprar</button></div>)}</div></Modal>
+    <Modal open={modal === 'support'} onClose={() => setModal(null)} title="Soporte" sub="¿En qué podemos ayudarte?" icon={<HelpCircle size={18} />}
+      footer={<><button className="btn btn-g" onClick={() => setModal(null)}>Cerrar</button><button className="btn btn-p" onClick={() => { setModal(null); toast('Mensaje enviado a soporte') }}>Enviar</button></>}>
+      <div className="field"><label className="lb">Asunto</label><input className="input" placeholder="Describe brevemente el problema" /></div>
+      <div className="field"><label className="lb">Mensaje</label><textarea className="input" placeholder="Cuéntanos más detalles…" /></div></Modal>
+    <Modal open={modal === 'aff'} onClose={() => setModal(null)} title="Programa de afiliación" sub="Gana hasta 40% de comisión recurrente" icon={<UserPlus size={18} />}>
+      <div className="grid g3" style={{ marginBottom: 14 }}>{[['Clics', 0], ['Registros', 0], ['Comisión', 'PEN 0,00']].map(([a, b]) => <div key={a} className="card" style={{ padding: 12 }}><div className="small muted">{a}</div><div className="bold" style={{ fontSize: 16 }}>{b}</div></div>)}</div>
+      <label className="lb">Tu enlace de afiliado</label>
+      <div className="row"><input className="input" readOnly value="https://ariabot.app/r/pablo-monja" /><button className="btn btn-p" onClick={() => { navigator.clipboard?.writeText('https://ariabot.app/r/pablo-monja'); toast('Enlace copiado') }}><Copy size={13} />Copiar</button></div></Modal>
+  </aside>
+}
+
+export default function App() {
+  const [col, setCol] = useStore('sidecol', false)
+  const [mopen, setMopen] = useState(false)
+  const [, toggle] = useTheme()
+  const loc = useLocation()
+  useEffect(() => {
+    const k = e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm') { e.preventDefault(); toggle() } }
+    window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k)
+  }, [toggle])
+  const full = /\/flows\/.+\/edit/.test(loc.pathname) || loc.pathname === '/chats'
+  return <div className="app">
+    <button className="mob-btn" onClick={() => setMopen(!mopen)}><MenuIcon size={18} /></button>
+    <Sidebar col={col} setCol={setCol} mopen={mopen} setMopen={setMopen} />
+    <main className="main" style={full ? { overflow: 'hidden' } : null}>
+      <Routes>
+        <Route path="/" element={<Navigate to="/welcome" />} />
+        <Route path="/welcome" element={<Dashboard />} />
+        <Route path="/chats" element={<Chats />} />
+        <Route path="/crms" element={<Kanban />} />
+        <Route path="/crms/:id" element={<Kanban />} />
+        <Route path="/customers" element={<Contacts />} />
+        <Route path="/flows" element={<Flows />} />
+        <Route path="/flows/:id/edit" element={<FlowEditor />} />
+        <Route path="/agentes" element={<Agents />} />
+        <Route path="/connections" element={<Connections />} />
+        <Route path="/settings/inbound-webhooks" element={<Webhooks />} />
+        <Route path="/mass-dispatches" element={<Mass />} />
+        <Route path="/facebook/campaigns" element={<Facebook />} />
+        <Route path="/billing" element={<Billing />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/tutoriales" element={<Tutorials />} />
+        <Route path="*" element={<Navigate to="/welcome" />} />
+      </Routes>
+    </main>
+  </div>
+}
