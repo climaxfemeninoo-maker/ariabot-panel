@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search, ZoomIn, ZoomOut, Maximize2, RotateCcw, MessageSquare, FileText, Tag, CreditCard, List, Save, MessageCircle, Bell, GitBranch, Share2, Target, Clock, Building2, Globe, Bot, Kanban, SlidersHorizontal, DollarSign, Wallet, PhoneCall, Sparkles, Copy, Trash2, X, Send, Image, Video, Mic, User, File, Sticker, GripVertical, Bold, Italic, Strikethrough, Smile, Code, WandSparkles, Upload, Link2, Repeat, CirclePlay, Workflow, TriangleAlert, Plus, Square, KeyRound, ChevronDown } from 'lucide-react'
 import { useStore, useToast, uid, nowStr, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
+import { NODE_DEF, ESPERAR_OUTS, GenericNodeModal, CarouselModal, carOuts } from './flowNodes'
 
 export const FB = {
   inicio: ['Início', '#16a34a', CirclePlay, 'Nodo de inicio del flujo', ['#22c55e', '#16a34a']],
@@ -11,32 +12,35 @@ export const FB = {
   etiquetas: ['Etiquetas', '#6366f1', Tag, 'Añadir etiquetas al cliente', ['#6366f1', '#4f46e5']],
   pix: ['Botón PIX', '#10b981', CreditCard, 'Enviar botón de pago PIX', ['#10b981', '#059669']],
   menu: ['Menú', '#a855f7', List, 'Opciones para que el cliente elija', ['#a855f7', '#9333ea']],
-  carrusel: ['Carrusel', '#0ea5e9', LayoutGrid, 'Tarjetas deslizables con botones'],
-  esperar: ['Esperar respuesta', '#f97316', Save, 'Pausa hasta que el cliente responda'],
-  controlador: ['Controlador de chat', '#94a3b8', MessageCircle, 'Abre o cierra la atención'],
-  notificacion: ['Notificación', '#14b8a6', Bell, 'Avisa al equipo por WhatsApp o correo'],
-  condicional: ['Condicional', '#38bdf8', GitBranch, 'Divide el flujo según condiciones'],
-  distribuidor: ['Distribuidor', '#f59e0b', GitBranch, 'Reparte leads entre caminos (A/B)'],
-  conexion: ['Conexión de flujo', '#f43f5e', Share2, 'Redirige a otro flujo'],
-  pixel: ['Pixel', '#eab308', Target, 'Dispara eventos en herramientas de anuncios'],
-  intervalo: ['Intervalo inteligente', '#06b6d4', Clock, 'Espera un tiempo antes de continuar'],
-  departamento: ['Departamento', '#8b5cf6', Building2, 'Transfiere a un departamento'],
-  integracion: ['Integración', '#3b82f6', Globe, 'Webhook / API externa'],
-  ia: ['Bloque de IA', '#10b981', Bot, 'Respuestas inteligentes con GPT o Gemini'],
-  agente: ['Agente de IA', '#d97706', Bot, 'Un agente responde dudas y cierra la venta'],
-  kanban: ['Kanban', '#a855f7', Kanban, 'Mueve el lead a una columna del tablero'],
-  manipulador: ['Manipulador', '#f97316', SlidersHorizontal, 'Actualiza datos del contacto'],
-  venta: ['Venta aprobada', '#4ade80', DollarSign, 'Registra la venta en el dashboard'],
+  carrusel: ['Carrusel', '#0ea5e9', LayoutGrid, 'Tarjetas con imagen y botones'],
+  esperar: ['Esperar respuesta', '#f97316', Save, 'Esperar la respuesta del cliente.'],
+  controlador: ['Controlador de chat', '#94a3b8', MessageCircle, 'Cambiar el estado del chat'],
+  notificacion: ['Notificación', '#14b8a6', Bell, 'Enviar notificación por WhatsApp'],
+  condicional: ['Condicional', '#38bdf8', GitBranch, 'Dividir el flujo según reglas'],
+  distribuidor: ['Distribuidor', '#f59e0b', GitBranch, 'Distribuir contactos entre salidas'],
+  conexion: ['Conexión de flujo', '#f43f5e', Share2, 'Redirigir a otro flujo'],
+  pixel: ['Pixel', '#eab308', Target, 'Disparar eventos en herramientas de anuncios (Facebook Ads, etc.)'],
+  intervalo: ['Intervalo inteligente', '#06b6d4', Clock, 'Espera de 01 minuto'],
+  departamento: ['Departamento', '#8b5cf6', Building2, 'Asignar departamento al chat'],
+  integracion: ['Integración', '#3b82f6', Globe, 'Realizar peticiones HTTP (POST/PUT/GET) a APIs externas'],
+  ia: ['Bloque de IA', '#10b981', Bot, 'Integración con GPT y Gemini para respuestas inteligentes'],
+  agente: ['Agente de IA', '#d97706', Bot, 'Entregar o retomar la conversación'],
+  kanban: ['Kanban', '#a855f7', Kanban, 'Crear o mover tarjeta en el Kanban seleccionado'],
+  manipulador: ['Manipulador', '#f97316', SlidersHorizontal, 'Actualizar la fecha de creación del contacto en la base o guardar un campo personalizado'],
+  venta: ['Venta aprobada', '#4ade80', DollarSign, ''],
   pago: ['Pago', '#a78bfa', CreditCard, 'Genera un cobro y continúa el flujo'],
-  ariapay: ['Leona Pay', '#6366f1', Wallet, 'Cobro integrado con estados de pago'],
-  llamar: ['Llamar', '#14b8a6', PhoneCall, 'Realiza una llamada de voz'],
-  kie: ['Integración Kie.ai', '#d946ef', Sparkles, 'Genera imágenes o videos con IA'],
+  ariapay: ['Leona Pay', '#6366f1', Wallet, 'BRL · 100,00'],
+  llamar: ['Llamar', '#14b8a6', PhoneCall, '8s'],
+  kie: ['Integración Kie.ai', '#d946ef', Sparkles, 'Bloque nativo para generación de audio, imagen y video (Veo)'],
 }
 const B = t => FB[t] || FB.mensaje
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
   if (n.type === 'template') { const t = n.tpl || {}; return [{ k: 'reply', l: 'Resposta livre', c: 'or', pc: '#d97706' }, { k: 'timeout', l: 'Timeout sem clique', s: `${t.timeout || 60} ${({ m: 'minutes', h: 'hours', d: 'days' })[t.unit || 'm']}`, c: 'gr', pc: '#6b7280' }, { k: 'fail', l: 'Falha de entrega', c: 'rd', pc: '#dc2626' }] }
   if (n.type === 'menu') { const m = n.menu || {}; const o = (m.mode === 'buttons' ? m.buttons : m.options) || []; return [...o.map((x, i) => ({ k: 'o' + x.id, l: `${i + 1}. ${x.title || 'Opción sin título'}`, c: 'pu', pc: '#9333ea' })), ...(+m.exp > 0 ? [{ k: 'timeout', l: 'Sin respuesta', s: `${m.exp} ${({ m: 'minutos', h: 'horas', d: 'días' })[m.unit || 'd']}`, c: 'gr', pc: '#6b7280' }] : [])] }
+  if (n.type === 'carrusel') return carOuts(n.cfg || {})
+  if (n.type === 'esperar') return ESPERAR_OUTS(n.cfg || {})
+  const d = NODE_DEF[n.type]; if (d && d.outs) return d.outs(n.cfg || {})
   return null
 }
 const newNode = (type, x, y) => ({ id: uid(), type, x, y, title: B(type)[0], desc: '', actions: [], stats: [0, 0, 0] })
@@ -173,10 +177,19 @@ function Simulator({ flow, onClose, onStep }) {
       await wait(300)
       if (cur.type === 'menu') { const m = cur.menu || {}; const o = (m.mode === 'buttons' ? m.buttons : m.options) || []; say(fill(m.text || 'Menú') + '\n\n' + o.map((x, i) => `${i + 1}. ${x.title}`).join('\n') + (m.btn ? `\n[${m.btn}]` : '')); setState({ id: cur.id, kind: 'menu', o }); return }
       if (cur.type === 'template') { say(`[Template: ${cur.tpl?.name || 'sin seleccionar'}]`); setState({ id: cur.id, kind: 'tpl' }); return }
-      if (cur.type === 'esperar') { say('Esperando respuesta…', 'sys'); setState({ id: cur.id, kind: 'wait' }); return }
+      const cf = cur.cfg || {}
+      if (cur.type === 'esperar') { if (cf.msg) say(fill(cf.msg)); say('Esperando respuesta…', 'sys'); setState({ id: cur.id, kind: 'wait' }); return }
+      if (cur.type === 'carrusel') { const o = []; (cf.cards || []).forEach(k => k.buttons.forEach(b => b.type === 'reply' && o.push(b))); say(fill(cf.intro || 'Elige una opción abajo') + '\n\n' + (cf.cards || []).map((k, i) => `🖼 ${i + 1}. ${fill(k.text)} [${k.buttons.map(b => b.title).join(' | ')}]`).join('\n')); setState({ id: cur.id, kind: 'car', o }); return }
+      if (cur.type === 'conexion') { const f = (JSON.parse(localStorage.getItem('aria_flows') || '[]')).find(x => x.id === cf.flow); say('▸ Redirigido a ' + (f ? f.name : 'otro flujo'), 'sys'); break }
+      if (cur.type === 'agente') { say((cf.act || 'give') === 'take' ? '▸ Conversación devuelta al flujo' : '▸ Chat entregado al agente de IA', 'sys'); if ((cf.act || 'give') === 'give') break }
+      const portOf = { integracion: 'success', ia: 'success', kie: 'success', pago: 'payment_approved', ariapay: 'payment_approved', condicional: 'true' }
+      if (cur.type === 'notificacion') say(`▸ Notificación a ${cf.phone ? cf.phone.cc + ' ' + cf.phone.n : '—'}: ${fill(cf.msg || '')}`, 'sys')
+      if (['pago', 'ariapay'].includes(cur.type)) say(`💳 Cobro ${cf.method || 'PIX'} · ${cf.cur || 'BRL'} ${cf.noAmount ? '(sin monto)' : cf.value || '100,00'}`)
+      if (cur.type === 'distribuidor') { const os = cf.outs || []; const pk = os.length ? os[Math.floor(Math.random() * os.length)] : null; say('▸ Distribuidor → ' + (pk ? pk.name : 'sin salidas'), 'sys'); cur = pk ? next(cur.id, 'o' + pk.id) : null; continue }
+      if (portOf[cur.type]) { if (!['pago', 'ariapay'].includes(cur.type)) say(`▸ ${cur.title}`, 'sys'); cur = next(cur.id, portOf[cur.type]); continue }
       if (cur.type === 'pix') say(`💳 PIX${cur.pix?.amount ? ' · R$ ' + cur.pix.amount : ''}\n${cur.pix?.key || 'Clave sin configurar'}${cur.pix?.text ? '\n' + fill(cur.pix.text) : ''}`)
       else if (cur.type === 'etiquetas') say(`▸ ${cur.tagMode === 'remove' ? 'Etiquetas quitadas' : 'Etiquetas añadidas'}: ${(cur.tags || []).join(', ') || '—'}`, 'sys')
-      else if (!['inicio', 'mensaje'].includes(cur.type)) say(`▸ ${cur.title}`, 'sys')
+      else if (!['inicio', 'mensaje', 'notificacion'].includes(cur.type)) say(`▸ ${cur.title}${cur.desc && !['venta'].includes(cur.type) ? ' · ' + cur.desc : ''}`, 'sys')
       cur = next(cur.id)
     }
     onStep(null); setState('done'); say('Fin del flujo', 'sys')
@@ -186,6 +199,7 @@ function Simulator({ flow, onClose, onStep }) {
     if (state && state !== 'done') { let port = 'main'
       if (state.kind === 'menu') { const i = state.o.findIndex((x, i) => String(i + 1) === t || x.title.toLowerCase() === t.toLowerCase()); if (i < 0) { say('Opción no válida, responde con el número de una opción.', 'sys'); return } port = 'o' + state.o[i].id }
       if (state.kind === 'tpl') port = 'reply'
+      if (state.kind === 'car') { const b = state.o.find(x => x.title.toLowerCase() === t.toLowerCase()); port = b ? 'b' + b.id : 'fallback' }
       const n = next(state.id, port); setState(null); if (n) run(n); else { setState('done'); onStep(null); say('Fin del flujo', 'sys') } }
     else if (!state) run(flow.nodes.find(n => n.type === 'inicio') || flow.nodes[0])
   }
@@ -263,7 +277,7 @@ export default function FlowEditor() {
           </svg>
           {flow.nodes.map(n => { const [, c, I, dd, g] = B(n.type); const outs = nodeOuts(n); const tpl = n.type === 'template'
             const startLink = (e, k) => { e.stopPropagation(); const pp = ports[n.id + '|' + k] || { x: n.x + NW, y: n.y + OUTY }; setLink({ from: n.id, port: k, sx: pp.x, sy: pp.y, x: pp.x, y: pp.y }); act.current = { t: 'link' } }
-            const desc = n.desc || (['inicio', 'mensaje', 'menu', 'template'].includes(n.type) ? '' : dd)
+            const desc = n.desc || (['inicio', 'mensaje', 'menu', 'template'].includes(n.type) ? '' : n.type === 'carrusel' ? '📝 Elige una opción abajo' : dd)
             return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }}
             onMouseDown={e => { e.stopPropagation(); setSel(n.id) }} onDoubleClick={() => setEdit(n)}
             onMouseUp={() => { if (link && link.from !== n.id && n.type !== 'inicio') { setFlow(f => ({ ...f, edges: [...f.edges.filter(x => !(x.from === link.from && (x.port || 'main') === (link.port || 'main'))), { id: uid(), from: link.from, port: link.port, to: n.id }] })); toast('Bloques conectados') } }}>
@@ -274,6 +288,7 @@ export default function FlowEditor() {
                   <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={15} /></button></>}</span></div>
             <div className="fe-ns"><div><span>ENTRADAS</span><b>{n.stats[0]}</b></div><div><span>AVANCES</span><b>{n.stats[1]}</b></div><div><span>TASA</span><b>{n.stats[2]}%</b></div></div>
             {tpl && <div className="fe-box"><b>{n.tpl?.name || 'Template não selecionado'}</b><span>Template Meta HSM · Quick Reply</span></div>}
+            {outs && desc && !['menu', 'template'].includes(n.type) && <div className="fe-nd" style={{ fontSize: 13, paddingTop: 6 }}>{desc}</div>}
             {outs ? <div style={{ paddingTop: 4, minHeight: outs.length ? 0 : 34 }}>{outs.map(o => <div key={o.k} className={'fe-row ' + o.c}>{o.l}{o.s && <small>{o.s}</small>}<span className="fe-port out" data-port={n.id + '|' + o.k} style={{ background: o.pc }} onMouseDown={e => startLink(e, o.k)} /></div>)}</div>
               : <><div className="fe-nd" style={{ fontSize: 13, minHeight: n.type === 'mensaje' ? 48 : 30, paddingTop: 6 }}>{desc}</div>
                 <span className="fe-port out" data-port={n.id + '|main'} style={{ bottom: 22 }} onMouseDown={e => startLink(e, 'main')} /></>}
@@ -298,7 +313,11 @@ export default function FlowEditor() {
     {edit && ['template', 'etiquetas', 'pix', 'menu'].includes(edit.type) && (() => { const save = n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || !e.port || e.port === 'main' || (nodeOuts(n) || []).some(o => o.k === e.port)) })); setEdit(null); toast('Nodo guardado') }
       const M = { template: TemplateModal, etiquetas: TagsModal, pix: PixModal, menu: MenuModal }[edit.type]; return <M node={edit} onClose={() => setEdit(null)} onSave={save} /> })()}
     {edit && !['template', 'etiquetas', 'pix', 'menu'].includes(edit.type) && (edit.type === 'mensaje' ? <MessageModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Mensaje guardado') }} />
-      : <NodeModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Nodo guardado') }} />)}
+      : (() => { const save = n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || (nodeOuts(n) ? (nodeOuts(n).some(o => o.k === (e.port || 'main'))) : !e.port || e.port === 'main')) })); setEdit(null); toast('Nodo guardado') }
+        const [, c, I] = B(edit.type)
+        if (edit.type === 'carrusel') return <CarouselModal node={edit} onClose={() => setEdit(null)} onSave={save} />
+        if (NODE_DEF[edit.type]) return <GenericNodeModal node={edit} def={NODE_DEF[edit.type]} color={c} icon={<I size={20} />} flowId={flow.id} onClose={() => setEdit(null)} onSave={save} />
+        return <NodeModal node={edit} onClose={() => setEdit(null)} onSave={save} /> })())}
     {modal === 'tr' && <TranslateModal flow={flow} onClose={() => setModal(null)} />}
     {modal === 'ai' && <AiModal onClose={() => setModal(null)} onGen={types => { const base = flow.nodes.length ? Math.max(...flow.nodes.map(n => n.y)) + 220 : 100; const ns = types.map((t, i) => newNode(t, 80 + i * 330, base + (i % 2) * 60)); const last = flow.nodes.length ? flow.nodes[flow.nodes.length - 1] : null
       setFlow(f => ({ ...f, nodes: [...f.nodes, ...ns], edges: [...f.edges, ...(last ? [{ id: uid(), from: last.id, to: ns[0].id }] : []), ...ns.slice(1).map((n, i) => ({ id: uid(), from: ns[i].id, to: n.id }))] })); setModal(null); setReady(false); toast('Flujo generado con LeonaAI') }} />}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Share, SlidersHorizontal, UserPlus, Banknote, TrendingUp, ShoppingBag, Megaphone, Wallet, Zap, Percent, ChartLine, Clock, Network, Flag, Archive, ReceiptText, Download, Users, Columns3, Wallet as WalletIc, UserSearch, Check, X, Star, ArrowLeft, Search, CalendarDays, ChevronRight, ChevronDown, BookmarkPlus, Pencil, Calendar } from 'lucide-react'
 import { useStore, useToast, downloadCSV } from '../../ui'
+import { CampaignIcon } from '../../icons'
 
 export function useMobile() {
   const q = '(max-width: 760px)'
@@ -132,7 +133,7 @@ export default function MobileDash({ P, period, setPeriod, range, setRange, selC
   const total = fs.reduce((a, s) => a + (+s.value || 0), 0); const leads = contacts.filter(c => c.created && inP(c.created)).length
   const conv = leads ? fs.length / leads * 100 : 0
   const K = [['Leads nuevos', leads, '#2563eb', UserPlus], ['Ingresos', money(total), '#059669', Banknote], ['Ticket medio', money(fs.length ? total / fs.length : 0), '#7c3aed', TrendingUp], ['Ventas', fs.length, '#4f46e5', ShoppingBag],
-    ['Inversión Meta', money(ad), '#dc2626', Megaphone], ['Beneficio', money(total - ad), '#059669', Wallet], ['ROAS', (ad ? total / ad : 0).toFixed(2), '#ea580c', Zap], ['Tasa de conv.', conv.toFixed(2) + '%', '#e879f9', Percent, '#a78bfa']]
+    ['Inversión Meta', money(ad), '#dc2626', CampaignIcon], ['Beneficio', money(total - ad), '#059669', Wallet], ['ROAS', (ad ? total / ad : 0).toFixed(2), '#ea580c', Zap], ['Tasa de conv.', conv.toFixed(2) + '%', '#e879f9', Percent, '#a78bfa']]
   const byDay = P.buckets.map(d => [P.hourly ? pad(d.getHours()) : `${d.getDate()}/${d.getMonth() + 1}`, 0, 0]); fs.forEach(s => { const i = P.idx(new Date(s.date)); if (byDay[i]) { byDay[i][1]++; byDay[i][2] += +s.value || 0 } })
   const hours = Array.from({ length: 24 }, (_, h) => [pad(h), fs.filter(s => new Date(s.date).getHours() === h).length]).filter(([, v], i, a) => a.some(x => x[1]) ? true : false)
   const grp = (k, val) => Object.entries(fs.reduce((a, s) => { const key = s[k] || '—'; a[key] = (a[key] || 0) + (val ? +s.value || 0 : 1); return a }, {}))

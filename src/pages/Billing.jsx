@@ -4,7 +4,7 @@ import { CreditCard, Crown, LayoutGrid, Sparkles, CircleHelp, FileText, Copy, Fi
 import { useStore, useToast } from '../ui'
 import { LModal, LSelect } from './leona'
 
-const brl = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+const brl = v => 'R$ ' + (+v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
 const PRICE = 127
 
 /* ---------- Modal "Assinar agora" (también se usa en el Dashboard) ---------- */
@@ -77,11 +77,13 @@ export default function Billing() {
 
 function Main() {
   const nav = useNavigate(); const toast = useToast()
-  const [subS] = useStore('subscription', { status: 'CANCELADA', instances: 0, since: 'Set de 2026', next: null, method: 'Pix', price: 0, country: 'Exterior' })
-  const [tok] = useStore('tokens', { balance: 0, used: 0, last: null })
-  const [inv] = useStore('invoices', []); const [conns] = useStore('connections', [])
-  const [co] = useStore('companyData', { name: 'Empresa Pablo Monja Suclupe' })
-  const [prof] = useStore('profile', { name: 'Pablo Monja Suclupe', email: 'k4el.ux@gmail.com' })
+  const obj = (v, d) => ({ ...d, ...(v && typeof v === 'object' && !Array.isArray(v) ? v : {}) })
+  const [subR] = useStore('subscription', {}); const subS = obj(subR, { status: 'CANCELADA', instances: 0, since: 'Set de 2026', next: null, method: 'Pix', price: 0, country: 'Exterior' })
+  const [tokR] = useStore('tokens', {}); const tok = obj(tokR, { balance: 0, used: 0, last: null }); tok.balance = +tok.balance || 0; tok.used = +tok.used || 0
+  const [invR] = useStore('invoices', []); const inv = Array.isArray(invR) ? invR : []; const [connR] = useStore('connections', []); const conns = Array.isArray(connR) ? connR : []
+  const [coR] = useStore('companyData', {}); const co = obj(coR, { name: 'Empresa Pablo Monja Suclupe' })
+  const [prR] = useStore('profile', {}); const prof = obj(prR, { name: 'Pablo Monja Suclupe', email: 'k4el.ux@gmail.com' })
+  subS.price = +subS.price || 0; subS.instances = +subS.instances || 0
   const [m, setM] = useState(null)
   const usedI = Math.min(conns.length, subS.instances)
   const Hd = ({ ic: Ic, t }) => <div style={{ display: 'flex', alignItems: 'center', gap: 13 }}><span className="bl-ib"><Ic size={18} /></span><span className="bl-t">{t}</span></div>
@@ -131,7 +133,7 @@ function Main() {
 
 function Records({ kind }) {
   const nav = useNavigate()
-  const [items] = useStore(kind, [])
+  const [itR] = useStore(kind, []); const items = Array.isArray(itR) ? itR : []
   const [show, setShow] = useState(false); const [f, setF] = useState({ st: 'all', from: '', to: '' })
   const R = kind === 'refunds'
   const on = f.st !== 'all' || f.from || f.to

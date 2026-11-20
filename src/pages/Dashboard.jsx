@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Users, DollarSign, ShoppingBag, Trophy, CircleCheck, ShoppingCart, Gem, Megaphone, RotateCcw, BookmarkPlus, RefreshCw, Settings, Filter, Download, Plus, CreditCard, X, UserCheck, Clock, MessageSquareOff, Minus, Trash2, Award } from 'lucide-react'
 import { useStore, Modal, useToast, uid, downloadCSV, Confirm } from '../ui'
 import { AssinarModal } from './Billing'
+import { MegaphoneIcon } from '../icons'
 import { HuellaModal } from './Huella'
 import MobileDash, { useMobile } from './dash/MobileDash'
 import { Seg, Kpi, Section, EmptyBox, PeriodSelect, MultiSelect, CurrencySelect, IconGroup, LineChart, BarChart, Heatmap, InfoTip, fmtMoney, ddmm } from './dash/parts'
@@ -140,7 +141,7 @@ function Ventas({ P, fs, cur, contacts, inP, onNew, onDel }) {
       <Kpi icon={CircleCheck} color="#22c55e" value={conv.toFixed(2) + '%'} label="Tasa de conversión" tip="Ventas ÷ leads nuevos." />
       <Kpi icon={ShoppingCart} color="#a855f7" value={money(fs.length ? total / fs.length : 0)} label="Ticket promedio" tip="Facturación ÷ ventas." />
       <Kpi icon={Gem} color="#22c55e" value={money(total - ad)} valueColor="#22c55e" label="Beneficio" tip="Facturación − gasto en anuncios." />
-      <Kpi icon={Megaphone} color="#ef4444" value={money(ad)} valueColor="#ef4444" label="Gasto Meta (Ad)" tip="Gasto en Meta Ads del período." extra={<span className="fbtn"><Filter size={13} /></span>} />
+      <Kpi icon={MegaphoneIcon} color="#ef4444" value={money(ad)} valueColor="#ef4444" label="Gasto Meta (Ad)" tip="Gasto en Meta Ads del período." extra={<span className="fbtn"><Filter size={13} /></span>} />
     </div>
 
     <div className="db-g21">

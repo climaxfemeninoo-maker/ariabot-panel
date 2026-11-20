@@ -4,7 +4,7 @@ import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Pl
 import { SendIcon, MegaphoneIcon } from './icons'
 import { NewAccountModal } from './pages/SettingsParts'
 import { TokensModal } from './pages/Billing'
-import { Rewards } from './pages/Huella'
+import { Rewards, TrilhaMobile, HuellaModal } from './pages/Huella'
 import { NotifPanel } from './pages/Notifs'
 import { useMobile } from './pages/dash/MobileDash'
 import { MobileMenu, MobileChats, MobileConnections, MobileProfile, MobileCampaigns } from './pages/MobileViews'
@@ -106,6 +106,8 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
   </aside>
 }
 
+function TrilhaDesk() { const nav = useNavigate(); return <HuellaModal open onClose={() => nav('/welcome')} /> }
+
 function MobileNav({ onAll }) {
   const loc = useLocation(); const on = p => loc.pathname.startsWith(p); const [menu, setMenu] = useState(false); const nav = useNavigate()
   return <><nav className="mb-nav">
@@ -113,7 +115,7 @@ function MobileNav({ onAll }) {
     <NavLink to="/facebook/campaigns" title="Facebook"><span className="sq" style={{ background: '#1d4ed8', fontWeight: 800, fontSize: 15, fontFamily: 'Arial,sans-serif', opacity: on('/facebook') ? 1 : .85 }}>f</span></NavLink>
     <NavLink to="/chats" title="Chats"><MessagesSquare size={24} strokeWidth={1.7} color={on('/chats') ? '#fff' : '#8f8a9e'} /></NavLink>
     <NavLink to="/connections" title="Conexiones"><QrCode size={22} strokeWidth={1.7} color={on('/connections') ? '#fff' : '#8f8a9e'} /></NavLink>
-    <button onClick={() => on('/profile') ? nav(-1) : setMenu(true)} title="Menú" style={{ color: on('/profile') ? '#fff' : undefined }}>{on('/profile') ? <IndentDecrease size={23} strokeWidth={1.8} /> : <MenuIcon size={23} strokeWidth={1.7} />}</button>
+    <button onClick={() => on('/profile') || on('/trilha') ? nav(-1) : setMenu(true)} title="Menú" style={{ color: on('/profile') || on('/trilha') ? '#fff' : undefined }}>{on('/profile') || on('/trilha') ? <IndentDecrease size={23} strokeWidth={1.8} /> : <MenuIcon size={23} strokeWidth={1.7} />}</button>
   </nav>{menu && <MobileMenu onClose={() => setMenu(false)} onAll={onAll} />}</>
 }
 
@@ -151,6 +153,7 @@ export default function App() {
         <Route path="/facebook/campaigns" element={mobile ? <MobileCampaigns /> : <Facebook />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing/:sub" element={<Billing />} />
+        <Route path="/trilha" element={mobile ? <TrilhaMobile /> : <TrilhaDesk />} />
         <Route path="/profile" element={mobile ? <MobileProfile /> : <Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/tutoriales" element={<Tutorials />} />

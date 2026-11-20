@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Gift, Briefcase, Users, TrendingUp, Trophy, Target, Zap, Shield, Gem, Crown, Lock, X, Minus, Plus, CircleHelp, ArrowLeft } from 'lucide-react'
 import { useStore, useToast, uid } from '../ui'
+import { PawIcon } from '../icons'
 
 const brl = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
 const brl0 = v => 'R$ ' + v.toLocaleString('pt-BR')
@@ -13,7 +14,7 @@ export const LEVELS = [
   [1000000, 'Topo da Cadeia', Gem, 'Liderança e escala. O faturamento milionário é reflexo de uma engrenagem operacional perfeita e de escala contínua.'],
   [2000000, 'Lenda Viva', Crown, 'Domínio absoluto. A consolidação de um império comercial que dita o ritmo e as regras do seu mercado.'],
 ]
-const useRevenue = () => { const [sales] = useStore('sales', []); return sales.reduce((a, s) => a + (+s.value || 0), 0) }
+const useRevenue = () => { const [sl] = useStore('sales', []); const sales = Array.isArray(sl) ? sl : []; return sales.reduce((a, s) => a + (+s.value || 0), 0) }
 
 export function HuellaModal({ open, onClose }) {
   const nav = useNavigate()
@@ -68,7 +69,7 @@ const REWARDS = [
 
 export function Rewards() {
   const nav = useNavigate(); const toast = useToast(); const rev = useRevenue()
-  const [prof] = useStore('profile', { name: 'Pablo Monja Suclupe' }); const [sub] = useStore('subscription', { instances: 0 })
+  const [profR] = useStore('profile', {}); const prof = { name: 'Pablo Monja Suclupe', ...(profR || {}) }; const [subR] = useStore('subscription', {}); const sub = { instances: 0, ...(subR && typeof subR === 'object' ? subR : {}) }
   const [orders, setOrders] = useStore('reward_orders', []); const [tab, setTab] = useState('prem'); const [extra, setExtra] = useState({})
   const next = LEVELS.find(l => rev < l[0]); const prev = [...LEVELS].reverse().find(l => rev >= l[0])?.[0] || 0
   const pct = next ? Math.min(100, (rev - prev) / (next[0] - prev) * 100) : 100
@@ -127,5 +128,54 @@ export function Rewards() {
                 </div>
               </div></div> })}</div></>}
     </div>
+  </div>
+}
+
+/* ======================= Trilha do Predador (móvil) ======================= */
+const STEP_C = ['#f59e0b', '#94a3b8', '#ca8a04', '#14b8a6', '#ec4899', '#22d3ee']
+export function TrilhaMobile() {
+  const [contacts] = useStore('contacts', []); const [coR] = useStore('companyData', {}); const co = { name: 'Empresa Pablo Monja Suclupe', ...(coR || {}) }
+  const [seen, setSeen] = useStore('trilha_seen', false); const [open, setOpen] = useState(null)
+  const rev = useRevenue(); const brlx = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + ' BRL'; const brli = v => v.toLocaleString('pt-BR') + ' BRL'
+  const ni = LEVELS.findIndex(l => rev < l[0]); const next = LEVELS[ni]; const cur = ni === 0 ? null : LEVELS[ni < 0 ? LEVELS.length - 1 : ni - 1]
+  const prev = cur ? cur[0] : 0; const pct = next ? (rev - prev) / (next[0] - prev) : 1
+  return <div className="tr">
+    <div className="mv-logo" style={{ marginBottom: 6 }}><img src="/leona-white.png" alt="Leona" /></div>
+    <h1>Trilha do Predador</h1><div style={{ fontSize: 15, color: '#a19cb0', marginTop: 8 }}>La jornada de escala de tu operación.</div>
+    <div className="tr-hero">
+      <div style={{ fontSize: 19, fontWeight: 600 }}>🐆&nbsp; El mercado es una selva.</div>
+      <div style={{ fontSize: 14.5, color: '#a19cb0', marginTop: 8, lineHeight: 1.45 }}>Cada hito es territorio conquistado. Toca los sellos y siente la cacería.</div>
+      <div className="tr-orb"><i>{cur ? (() => { const I = cur[2]; return <I size={44} /> })() : <PawIcon size={50} />}</i></div>
+      <div style={{ fontSize: 27, fontWeight: 600, marginTop: 30 }}>{cur ? cur[1] : 'La cacería empezó'}</div>
+      <div style={{ fontSize: 15, color: '#c7c2d4', marginTop: 6 }}>{cur ? 'Sello conquistado' : 'Primer sello a la vista'}</div>
+      <div style={{ fontSize: 16.5, marginTop: 14 }}>{next ? `Faltan ${brlx(next[0] - rev)} para ${next[1]}` : 'Todos los sellos conquistados 👑'}</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 9, justifyContent: 'center', marginTop: 16 }}>
+        <span className="tr-chip"><Briefcase size={17} color="#e879f9" /><span><small>Operación</small><b>{co.name}</b></span></span>
+        <span className="tr-chip"><Users size={17} color="#e879f9" /><span><small>Leads</small><b>{contacts.length}</b></span></span>
+        <span className="tr-chip"><TrendingUp size={17} color="#e879f9" /><span><small>Facturación</small><b>{brlx(rev)}</b></span></span></div>
+    </div>
+    <div style={{ fontSize: 20, fontWeight: 500, marginTop: 40 }}>La ruta</div><div style={{ fontSize: 15, color: '#a19cb0', marginTop: 8 }}>Toca un sello para abrir la historia de ese hito.</div>
+    <div style={{ marginTop: 22 }}>{LEVELS.map(([v, t, Ic], i) => { const ok = rev >= v, isN = i === ni, right = i % 2 === 1
+      return <div key={v}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexDirection: right ? 'row-reverse' : 'row', padding: '0 14px', cursor: 'pointer' }} onClick={() => setOpen(i)}>
+          <span className={'tr-seal' + (isN ? ' next' : ok ? ' ok' : '')}>{ok ? <Ic size={30} /> : <Lock size={isN ? 34 : 28} fill="currentColor" strokeWidth={1.6} />}</span>
+          <div style={{ textAlign: right ? 'right' : 'left' }}><div style={{ fontSize: 20, color: ok || isN ? '#fff' : '#d4d0dc' }}>{t}</div><div style={{ fontSize: 16, color: isN ? '#f59e0b' : ok ? '#4ade80' : '#c7c2d4', marginTop: 6 }}>{brli(v)}</div><div style={{ fontSize: 14.5, color: '#c7c2d4', marginTop: 4 }}>{ok ? 'Conquistado' : `Faltan ${brli(Math.ceil(v - rev))}`}</div></div></div>
+        {i < LEVELS.length - 1 && <svg viewBox="0 0 300 80" style={{ width: '62%', height: 64, display: 'block', margin: '4px auto', transform: right ? 'scaleX(-1)' : '' }}><path d="M20 8 C 30 30, 260 30, 270 58 C 272 64, 268 70, 262 72" fill="none" stroke="#2c2836" strokeWidth="12" strokeLinecap="round" /></svg>}
+      </div> })}</div>
+    {open != null && (() => { const [v, t, Ic, d] = LEVELS[open]; const ok = rev >= v; return <div className="md-ov" onClick={e => e.target === e.currentTarget && setOpen(null)}><div className="md-sh" style={{ textAlign: 'center', padding: '8px 22px 30px' }}><div className="md-hd" />
+      <span className={'tr-seal' + (ok ? ' ok' : open === ni ? ' next' : '')} style={{ margin: '10px auto 0' }}><Ic size={34} /></span>
+      <div style={{ fontSize: 22, fontWeight: 600, marginTop: 16 }}>{t}</div><div style={{ fontSize: 15, color: '#f59e0b', marginTop: 4 }}>{brli(v)}</div>
+      <p style={{ fontSize: 14.5, color: '#c7c2d4', lineHeight: 1.6, marginTop: 14 }}>{d}</p>
+      <div style={{ fontSize: 14, marginTop: 14, color: ok ? '#4ade80' : '#a19cb0' }}>{ok ? '✓ Sello conquistado' : `Faltan ${brlx(v - rev)}`}</div></div></div> })()}
+    {!seen && <div className="tr-ov"><div className="tr-wc">
+      <div className="tr-ring"><svg width="138" height="138" style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }}><circle cx="69" cy="69" r="62" fill="none" stroke="rgba(245,158,11,.22)" strokeWidth="9" /><circle cx="69" cy="69" r="62" fill="none" stroke="#f59e0b" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${Math.max(.18, pct) * 390} 390`} /></svg><i><PawIcon size={48} /></i></div>
+      <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '.3em', color: '#f59e0b', marginTop: 34 }}>DE LA MANADA</div>
+      <div style={{ fontSize: 27, fontWeight: 600, lineHeight: 1.2, marginTop: 14 }}>{co.name}, la cacería empieza ahora</div>
+      <p style={{ fontSize: 15.5, color: '#a19cb0', lineHeight: 1.5, marginTop: 16 }}>El mercado es una selva y cada sello es territorio conquistado. Este es solo el primer paso de una jornada demasiado grande para hacerla solo.</p>
+      <div className="tr-steps">{[PawIcon, ...LEVELS.slice(1, 6).map(l => l[2])].map((I, i) => <><span key={'s' + i} style={{ borderColor: STEP_C[i], color: STEP_C[i], background: STEP_C[i] + '22', boxShadow: i === 0 ? `0 0 16px ${STEP_C[0]}88` : 'none' }}><I size={16} /></span>{i < 5 && <em key={'e' + i} style={{ background: `linear-gradient(90deg,${STEP_C[i]}66,${STEP_C[i + 1]}66)` }} />}</>)}</div>
+      <p style={{ fontSize: 15.5, color: '#a19cb0', lineHeight: 1.5 }}>La manada está contigo. El equipo que construye Leona quiere quedarse cerca de quien vive el producto día a día. Si algo se traba o se siente raro, avísanos. Cazamos juntos.</p>
+      <div style={{ fontSize: 15.5, fontWeight: 500, marginTop: 18 }}>Equipo de desarrollo Leona</div>
+      <button className="tr-go" style={{ marginTop: 22 }} onClick={() => setSeen(true)}><PawIcon size={22} />Entra a la cacería</button>
+    </div></div>}
   </div>
 }
