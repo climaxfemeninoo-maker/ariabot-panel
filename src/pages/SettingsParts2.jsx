@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, RefreshCw, AtSign, Pencil, Trash2, Type, Hash, Tag, Package, ArrowLeft, House, ChevronRight, Radar, Link2, Copy, FileText, Sparkles, CreditCard, ChartLine, Bot, Mic, Gem, Receipt, Globe, Zap } from 'lucide-react'
+import { Search, Plus, RefreshCw, AtSign, Pencil, Trash2, Type, Hash, Tag, Package, ArrowLeft, House, ChevronRight, Radar, Link2, Copy, FileText, Sparkles, CreditCard, ChartLine, Bot, Mic, Gem, Receipt, Globe, Zap, CircleHelp as CircleHelpI, BookOpen, ShieldAlert } from 'lucide-react'
 import { useStore, useToast, uid } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 
@@ -18,6 +18,9 @@ function Tbl({ cols, rows, grid }) {
   </div>
 }
 const Act = ({ onEdit, onDel }) => <>{onEdit && <button className="ch-ib" style={{ width: 28, height: 28 }} onClick={onEdit}><Pencil size={14} /></button>}{onDel && <button className="ch-ib" style={{ width: 28, height: 28 }} onClick={onDel}><Trash2 size={14} color="#ef4444" /></button>}</>
+const CircleHelpIc = () => <CircleHelpI size={15} />
+const BookIc = () => <BookOpen size={17} color="#a78bfa" />
+const ShieldIc = () => <ShieldAlert size={17} color="#a78bfa" />
 const mono = { fontFamily: 'ui-monospace,Menlo,Consolas,monospace', fontWeight: 700, fontSize: 12.5 }
 
 /* ---------------- Templates de WhatsApp ---------------- */
@@ -269,4 +272,81 @@ export function Products() {
       <Foot onCancel={() => setM(null)} disabled={!m.name.trim() || !!err} label={m.id ? 'Guardar' : 'Crear'} onOk={() => { setList(x => m.id ? x.map(y => y.id === m.id ? m : y) : [...x, { ...m, name: m.name.trim(), id: uid() }]); toast(m.id ? 'Producto actualizado' : 'Producto creado'); setM(null) }} />
     </LModal>}
   </Card>
+}
+
+/* ---------------- Herramientas MCP ---------------- */
+const genTok = () => { const a = new Uint8Array(24); crypto.getRandomValues(a); return 'mcp_' + Array.from(a, b => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[b % 62]).join('') }
+export function Mcp() {
+  const toast = useToast(); const [creds, setCreds] = useStore('mcp_creds', []); const [q, setQ] = useState(''); const [m, setM] = useState(null); const [del, setDel] = useState(null)
+  const URL_ = location.origin + '/mcp'
+  const copy = (v, t) => { navigator.clipboard?.writeText(v); toast(t + ' copiado') }
+  const rows = creds.filter(c => c.name.toLowerCase().includes(q.toLowerCase()))
+  const active = creds.some(c => c.status === 'active')
+  const create = () => { const tok = m.type === 'static' ? genTok() : null; const exp = new Date(Date.now() + 90 * 864e5).toLocaleDateString('es-PE', { day: 'numeric', month: 'numeric', year: 'numeric' })
+    setCreds(x => [{ id: uid(), name: m.name.trim(), type: m.type, status: m.type === 'static' ? 'active' : 'pending', prefix: tok ? tok.slice(0, 12) : null, exp: tok ? exp : '-', used: null }, ...x]); setM({ ...m, step: 2, tok }) }
+  const Btn = ({ v, t }) => <button className="lb2 g" style={{ height: 41, minWidth: 81, fontSize: 13.3 }} onClick={() => copy(v, t)}>Copiar</button>
+  const Ro = ({ v }) => <input readOnly className="l-in" style={{ ...IN, height: 41, fontWeight: 700, fontSize: 13.3 }} value={v} onFocus={e => e.target.select()} />
+  return <>
+    <div className="st-card" style={{ marginTop: 0, padding: '22px 22px 22px' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, paddingBottom: 17, borderBottom: '1px solid var(--border)' }}>
+        <button className="lp-btn" style={{ height: 33, fontSize: 12.5 }} onClick={() => setM({ step: 'info' })}><CircleHelpIc />¿Cómo usar?</button>
+        <button className="lp-btn p" style={{ height: 33, fontSize: 12.5 }} onClick={() => setM({ step: 1, type: 'static', name: '' })}><Plus size={15} />Nueva credencial</button></div>
+      <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: 17, paddingBottom: 15, borderBottom: '1px solid var(--border)' }}>
+        <div><div style={{ fontSize: 14.2, fontWeight: 700 }}>Servidor MCP</div><div style={{ fontSize: 11.6, color: 'var(--soft)', marginTop: 6 }}>Use la URL y una credencial abajo para conectar su agente externo de IA.</div></div>
+        <span className="pf-on" style={{ marginLeft: 'auto', marginTop: 0, height: 22, fontSize: 11.6, ...(active ? {} : { color: '#94a3b8', background: '#2a2547', borderColor: '#3a3456' }) }}><i style={active ? null : { background: '#94a3b8' }} />{active ? 'Credenciales activas' : 'Sin credenciales activas'}</span></div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 19, marginTop: 15 }}>
+        <div><div style={{ fontSize: 14.2, fontWeight: 600, marginBottom: 10 }}>URL</div>
+          <div style={{ display: 'flex', gap: 9 }}><div className="pf-in" style={{ flex: 1 }}><Globe size={15} /><input readOnly value={URL_} style={{ background: 'var(--deep)', fontFamily: 'ui-monospace,Menlo,monospace', fontSize: 11.3, height: 37 }} /></div>
+            <button className="lp-btn" style={{ width: 39, padding: 0, justifyContent: 'center' }} title="Copiar URL" onClick={() => copy(URL_, 'URL')}><Copy size={15} /></button></div>
+          <div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 11, lineHeight: 1.65 }}>Cursor y n8n: token estático + Bearer.<br />Claude: OAuth, solo pegue la URL.</div></div>
+        <div style={{ border: '1px solid var(--border)', borderRadius: 6, padding: '18px 15px 16px' }}><div style={{ fontSize: 11.6, fontWeight: 700, letterSpacing: '.03em' }}>AUTENTICACIÓN</div>
+          <div style={{ fontSize: 11.6, color: 'var(--text)', marginTop: 9 }}>Envíe su token en el encabezado Authorization como Bearer:</div>
+          <code style={{ display: 'block', background: '#241e42', borderRadius: 3, padding: '7px 10px', marginTop: 10, fontSize: 9.8, fontWeight: 700 }}>Authorization: Bearer su-token</code></div>
+      </div>
+    </div>
+    <div className="st-card" style={{ marginTop: 16, padding: '27px 19px 19px' }}>
+      <div style={{ fontSize: 14.2, fontWeight: 700 }}>Credenciales</div><div style={{ fontSize: 11.6, color: 'var(--soft)', marginTop: 5 }}>Cree credenciales para Cursor, Claude, n8n y otros clientes MCP.</div>
+      <div style={{ border: '1px solid var(--border)', borderRadius: 6, height: 64, marginTop: 17, display: 'flex', alignItems: 'center', padding: '0 15px' }}><b style={{ fontSize: 11.6 }}>{creds.length} credencial(es)</b>
+        <div className="lp-srch" style={{ marginLeft: 'auto', width: 224 }}><Search size={14} /><input style={{ height: 33, fontSize: 11.6 }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar credencial..." /></div></div>
+      {creds.length > 0 && <Tbl grid="1.3fr .9fr .8fr 1.1fr 1fr 80px" cols={['NOMBRE', 'TIPO', 'ESTADO', 'ÚLTIMO USO', 'EXPIRA', 'ACCIONES']} rows={rows.map(c => [
+        <div style={{ padding: '9px 0' }}><b style={{ fontSize: 13.5 }}>{c.name}</b>{c.prefix && <div style={{ ...mono, fontWeight: 400, fontSize: 10.5, color: 'var(--soft)', marginTop: 3 }}>{c.prefix.slice(0, 12)}...</div>}</div>,
+        <Badge c={c.type === 'static' ? '#60a5fa' : '#a78bfa'}>{c.type === 'static' ? 'Estático' : 'OAuth'}</Badge>,
+        <span style={{ fontSize: 14, color: c.status === 'active' ? 'var(--text)' : '#f59e0b' }}>{c.status === 'active' ? 'Activa' : 'Pendiente'}</span>,
+        <span style={{ fontSize: 14 }}>{c.used || 'Nunca usado'}</span>, <span style={{ fontSize: 14 }}>{c.exp}</span>,
+        <button className="ch-ib" style={{ width: 28, height: 28, marginRight: 30 }} title="Revocar" onClick={() => setDel(c)}><Trash2 size={15} color="#ef4444" /></button>])} />}
+      {creds.length > 0 && rows.length === 0 && <div style={{ padding: 18, textAlign: 'center', fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Ninguna credencial coincide.</div>}
+    </div>
+    {m?.step === 'info' && <LModal open onClose={() => setM(null)} title="¿Qué es Leona MCP?" width={479} bodyStyle={{ padding: '26px 24px 0' }}>
+      <div style={{ display: 'flex', gap: 14, background: '#221c3f', border: '1px solid #4c3a8a', borderRadius: 7, padding: '17px 17px' }}><Sparkles size={20} color="#a78bfa" style={{ flexShrink: 0 }} /><div><b style={{ fontSize: 14.3 }}>Conectando inteligencia a sus datos</b><div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--soft)', marginTop: 4 }}>El Model Context Protocol (MCP) permite que agentes de IA interactúen con las herramientas y recursos de su cuenta Leona de forma segura.</div></div></div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14.3, fontWeight: 700, marginTop: 22 }}><BookIc />¿Para qué sirve?</div>
+      <p style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--soft)', marginTop: 12 }}>Con una credencial válida, clientes como Cursor y Claude pueden listar contactos, conexiones, flujos y ejecutar acciones permitidas por su cuenta.</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14.3, fontWeight: 700, marginTop: 20 }}><ShieldIc />Buenas prácticas</div>
+      {['Cree credenciales separadas por cliente y revoque las que no use.', 'Trate URL y tokens como contraseñas. Nunca los comparta públicamente.', 'Revogue de inmediato credenciales comprometidas o de colaboradores que salieron.', 'Use OAuth para Claude y token estático para Cursor/n8n.'].map(t => <p key={t} style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--soft)', marginTop: 10 }}>{t}</p>)}
+      <div style={{ borderTop: '1px solid var(--border2)', marginTop: 22, padding: '16px 0', display: 'flex', justifyContent: 'flex-end' }}><button className="lb2 g" style={{ minWidth: 95 }} onClick={() => setM(null)}>Entendido</button></div>
+    </LModal>}
+    {m?.step === 1 && <LModal open onClose={() => setM(null)} title="Nueva credencial" width={430} bodyStyle={{ padding: '21px 22px 22px' }}>
+      <div style={{ fontSize: 13.3, color: 'var(--soft)', marginBottom: 14 }}>Elija el tipo de autenticación.</div>
+      {[['static', 'Token estático', 'Cursor, n8n y similares.'], ['oauth', 'OAuth', 'Claude.ai y Claude Desktop.']].map(([k, t, d]) => <button key={k} onClick={() => setM({ ...m, type: k })} style={{ display: 'block', width: '100%', textAlign: 'left', border: '1px solid ' + (m.type === k ? '#6d4fd0' : 'var(--border)'), boxShadow: m.type === k ? '0 0 0 1px #6d4fd0' : 'none', background: m.type === k ? '#221c3f' : 'var(--deep)', borderRadius: 7, padding: '13px 13px', marginBottom: 8 }}><b style={{ fontSize: 13.3 }}>{t}</b><div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 5 }}>{d}</div></button>)}
+      <Lb mt={9}>Nombre</Lb><input className="l-in" style={IN} autoFocus value={m.name} onChange={e => setM({ ...m, name: e.target.value })} onKeyDown={e => e.key === 'Enter' && m.name.trim() && create()} placeholder="Ej.: Claude, Cursor" />
+      <div style={{ display: 'flex', gap: 11, marginTop: 20 }}><button className="lb2 g" onClick={() => setM(null)}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8', minWidth: 72 }} disabled={!m.name.trim()} onClick={create}>Crear</button></div>
+    </LModal>}
+    {m?.step === 2 && <LModal open onClose={() => setM(null)} title="Nueva credencial" width={430} bodyStyle={{ padding: '22px 22px 20px' }}>
+      {m.tok && <div className="wh-note" style={{ height: 'auto', padding: '13px 15px', marginTop: 0, fontSize: 13.3, fontWeight: 400 }}>Copie el token ahora. No se mostrará de nuevo.</div>}
+      <Lb mt={m.tok ? 14 : 0}>URL</Lb><div style={{ display: 'flex', gap: 8 }}><Ro v={URL_} /><Btn v={URL_} t="URL" /></div>
+      {m.tok ? <>
+        <Lb mt={14}>Token</Lb><div style={{ display: 'flex', gap: 8 }}><Ro v={m.tok} /><Btn v={m.tok} t="Token" /></div>
+        <div style={{ fontSize: 13.3, fontWeight: 600, marginTop: 13 }}>Conectar</div>
+        <ul style={{ fontSize: 10.5, color: '#94a3b8', lineHeight: 1.7, margin: '6px 0 0 16px' }}><li>Cursor: Settings → MCP, URL + token</li><li>n8n: nodo MCP Client, URL + Bearer</li><li>Otros: header Authorization Bearer</li></ul>
+      </> : <>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.3, color: '#94a3b8', marginTop: 17 }}><Link2 size={15} />Esperando conexión</div>
+        <div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 17 }}>En Claude</div>
+        <div style={{ fontSize: 11.6, color: '#94a3b8', lineHeight: 1.7, marginTop: 3 }}>1. Settings → Connectors → Add custom connector<br />2. Pegue la URL<br />3. Entre con su cuenta Leona<br />4. Autorice la credencial</div>
+        <div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 12 }}>El estado cambia cuando Claude se conecte.</div></>}
+      <button className="lb2 p" style={{ width: '100%', marginTop: 16 }} onClick={() => setM(null)}>Cerrar</button>
+    </LModal>}
+    <LModal open={!!del} onClose={() => setDel(null)} title="Revocar credencial" width={482} bodyStyle={{ padding: '22px 24px 0' }}>
+      <p style={{ fontSize: 14.3, lineHeight: 1.55 }}>¿Revocar la credencial "{del?.name}"? Los clientes que la usen perderán el acceso.</p>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 19, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 13 }}><button className="lb2 g" onClick={() => setDel(null)}>Cancelar</button><button className="lb2 d" onClick={() => { setCreds(x => x.filter(c => c.id !== del.id)); setDel(null); toast('Credencial revocada') }}>Revocar</button></div>
+    </LModal>
+  </>
 }

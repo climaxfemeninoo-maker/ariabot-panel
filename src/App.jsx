@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, CircleHelp, PanelLeftClose, PanelLeftOpen, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, Sparkles, Copy } from 'lucide-react'
 import { SendIcon, MegaphoneIcon } from './icons'
+import { NewAccountModal } from './pages/SettingsParts'
+import { TokensModal } from './pages/Billing'
+import { Rewards } from './pages/Huella'
 import { Logo, Modal, useStore, useOutside, useToast, uid } from './ui'
 import Dashboard from './pages/Dashboard'
 import Chats from './pages/Chats'
@@ -89,13 +92,8 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
         </div>}
       </div>
     </div>
-    <Modal open={newCo} onClose={() => setNewCo(false)} title="Nueva empresa" sub="Crea un nuevo espacio de trabajo" icon={<Building2 size={18} />}
-      footer={<><button className="btn btn-g" onClick={() => setNewCo(false)}>Cancelar</button><button className="btn btn-p" disabled={!coName.trim()} onClick={() => { const id = uid(); setCompanies(c => [...c, { id, name: coName }]); setCur(id); setCoName(''); setNewCo(false); toast('Empresa creada') }}>Crear</button></>}>
-      <label className="lb">Nombre de la empresa</label><input className="input" autoFocus value={coName} onChange={e => setCoName(e.target.value)} placeholder="Mi empresa" /></Modal>
-    <Modal open={modal === 'tokens'} onClose={() => setModal(null)} title="Tokens Aria" sub="Créditos para bloques de IA y agentes" icon={<Sparkles size={18} />}>
-      <div className="grid g3">{[['1.000', '9,90'], ['5.000', '39,90'], ['20.000', '129,90']].map(([t, p], i) => <div key={t} className="card lift" style={{ padding: 14, textAlign: 'center', borderColor: i === 1 ? 'var(--p)' : undefined }}>
-        <div className="bold" style={{ fontSize: 18 }}>{t}</div><div className="small muted">tokens</div><div style={{ margin: '10px 0', fontWeight: 700 }}>PEN {p}</div>
-        <button className="btn btn-p btn-sm" style={{ width: '100%' }} onClick={() => { setModal(null); toast('Redirigiendo al pago…', 'info') }}>Comprar</button></div>)}</div></Modal>
+    <NewAccountModal open={newCo} onClose={() => setNewCo(false)} />
+    <TokensModal open={modal === 'tokens'} onClose={() => setModal(null)} />
     <Modal open={modal === 'support'} onClose={() => setModal(null)} title="Soporte" sub="¿En qué podemos ayudarte?" icon={<HelpCircle size={18} />}
       footer={<><button className="btn btn-g" onClick={() => setModal(null)}>Cerrar</button><button className="btn btn-p" onClick={() => { setModal(null); toast('Mensaje enviado a soporte') }}>Enviar</button></>}>
       <div className="field"><label className="lb">Asunto</label><input className="input" placeholder="Describe brevemente el problema" /></div>
@@ -103,7 +101,7 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
     <Modal open={modal === 'aff'} onClose={() => setModal(null)} title="Programa de afiliación" sub="Gana hasta 40% de comisión recurrente" icon={<UserPlus size={18} />}>
       <div className="grid g3" style={{ marginBottom: 14 }}>{[['Clics', 0], ['Registros', 0], ['Comisión', 'PEN 0,00']].map(([a, b]) => <div key={a} className="card" style={{ padding: 12 }}><div className="small muted">{a}</div><div className="bold" style={{ fontSize: 16 }}>{b}</div></div>)}</div>
       <label className="lb">Tu enlace de afiliado</label>
-      <div className="row"><input className="input" readOnly value="https://ariabot.app/r/pablo-monja" /><button className="btn btn-p" onClick={() => { navigator.clipboard?.writeText('https://ariabot.app/r/pablo-monja'); toast('Enlace copiado') }}><Copy size={13} />Copiar</button></div></Modal>
+      <div className="row"><input className="input" readOnly value="https://leona.app/r/pablo-monja" /><button className="btn btn-p" onClick={() => { navigator.clipboard?.writeText('https://leona.app/r/pablo-monja'); toast('Enlace copiado') }}><Copy size={13} />Copiar</button></div></Modal>
   </aside>
 }
 
@@ -117,6 +115,7 @@ export default function App() {
     window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k)
   }, [toggle])
   const full = /\/flows\/.+\/edit/.test(loc.pathname) || loc.pathname === '/chats'
+  if (loc.pathname === '/rewards') return <Rewards />
   return <div className="app">
     <button className="mob-btn" onClick={() => setMopen(!mopen)}><MenuIcon size={18} /></button>
     <Sidebar col={col} setCol={setCol} mopen={mopen} setMopen={setMopen} />

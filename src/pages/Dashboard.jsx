@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Users, DollarSign, ShoppingBag, Trophy, CircleCheck, ShoppingCart, Gem, Megaphone, RotateCcw, BookmarkPlus, RefreshCw, Settings, Filter, Download, Plus, CreditCard, X, UserCheck, Clock, MessageSquareOff, Minus, Trash2, Award } from 'lucide-react'
 import { useStore, Modal, useToast, uid, downloadCSV, Confirm } from '../ui'
 import { AssinarModal } from './Billing'
+import { HuellaModal } from './Huella'
 import { Seg, Kpi, Section, EmptyBox, PeriodSelect, MultiSelect, CurrencySelect, IconGroup, LineChart, BarChart, Heatmap, InfoTip, fmtMoney, ddmm } from './dash/parts'
 
 const pad = n => String(n).padStart(2, '0')
@@ -92,11 +93,7 @@ export default function Dashboard() {
 
     <AssinarModal open={modal === 'assinar'} onClose={() => setModal(null)} />
     <NewSale open={modal === 'sale'} onClose={() => setModal(null)} conns={connNames} cur={cur} onSave={s => { setSales(l => [s, ...l]); toast('Venta registrada') }} />
-    <Modal open={modal === 'huella'} onClose={() => setModal(null)} title="Huella del Depredador" sub="Tus logros dentro de Leona" icon={<Award size={18} />}>
-      {[['Primer lead', contacts.length, 1], ['Primera venta', sales.length, 1], ['100 leads', contacts.length, 100], ['PEN 10.000 facturados', sales.reduce((a, s) => a + +s.value || 0, 0), 10000]].map(([t, v, g]) =>
-        <div key={t} style={{ marginBottom: 12 }}><div style={{ display: 'flex', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{t}<span style={{ marginLeft: 'auto', color: 'var(--muted)' }}>{Math.min(100, Math.round(v / g * 100))}%</span></div>
-          <div style={{ height: 6, borderRadius: 6, background: 'var(--deep)' }}><div style={{ height: '100%', width: Math.min(100, v / g * 100) + '%', background: 'var(--p)', borderRadius: 6 }} /></div></div>)}
-    </Modal>
+    <HuellaModal open={modal === 'huella'} onClose={() => setModal(null)} />
     <Modal open={modal === 'partner'} onClose={() => setModal(null)} title="Programa de afiliados" sub="Gana hasta 40% de comisión recurrente" icon={<Users size={18} />}
       footer={<><button className="btn btn-g" onClick={() => setModal(null)}>Cerrar</button><button className="btn btn-p" onClick={() => { navigator.clipboard?.writeText('https://leona.app/r/pablo'); toast('Enlace de afiliado copiado') }}>Copiar mi enlace</button></>}>
       <p style={{ fontSize: 13, color: 'var(--soft)', lineHeight: 1.6 }}>Recomienda Leona y recibe hasta el 40% de cada mensualidad pagada por tus referidos mientras sigan activos.</p>
