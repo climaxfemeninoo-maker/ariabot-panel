@@ -29,7 +29,7 @@ export default function Dashboard() {
   const [banner, setBanner] = useStore('banner', true)
   const [sales, setSales] = useStore('sales', [])
   const [contacts] = useStore('contacts', [])
-  const [chats] = useStore('chats', [])
+  const [chats] = useStore('chat_list', [])
   const [conns] = useStore('connections', [])
   const [cur, setCur] = useStore('currency', 'PEN')
   const [period, setPeriod] = useStore('dash_period', 'today')
