@@ -1733,3 +1733,13 @@ html:not(.dark) .db-mi:hover:not(.on),html:not(.dark) .l-opt:hover:not(.on),html
 .l-selm{width:max-content!important;min-width:100%!important;max-width:340px;right:auto!important}
 .l-opt{white-space:nowrap}
 .lb2,.kb-btn,.lp-btn,.db-btn,.btn{white-space:nowrap}
+/* ===== Campos para llenar (estilo oscuro con borde gris) ===== */
+html.dark{--in2:#101727}
+html.dark input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),html.dark textarea,html.dark select,
+html.dark .l-in,html.dark .l-selb,html.dark .input,html.dark .fe-vin,html.dark .fe-ed,html.dark .fbx-in,html.dark .fbm-q,html.dark .fe-curb{background-color:#101727!important;border-color:#374151!important;color:#f3f4f6}
+html.dark .fe-vin input,html.dark .fe-vin textarea,html.dark .fe-ed textarea,html.dark .fbm-q input,html.dark .fe-pal .s input,html.dark .ai-f textarea,html.dark .vp-s input{background:transparent!important;border:none!important}
+html.dark input:focus,html.dark textarea:focus,html.dark select:focus,html.dark .l-in:focus,html.dark .fe-vin:focus-within,html.dark .fe-ed:focus-within,html.dark .l-selb.open{border-color:#005ae3!important;box-shadow:0 0 0 1px #005ae3!important}
+html.dark input::placeholder,html.dark textarea::placeholder{color:#6b7280}
+/* títulos de los campos */
+.tm-lb,.fe-lb,.lm .lb,.lm label.lb{text-transform:uppercase;letter-spacing:.06em;font-size:12px!important;font-weight:600!important;color:#9ca3af!important}
+html:not(.dark) .tm-lb,html:not(.dark) .fe-lb{color:#6b7280!important}
