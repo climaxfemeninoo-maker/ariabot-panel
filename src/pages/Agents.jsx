@@ -23,7 +23,7 @@ export default function Agents() {
       <button className="btn btn-p" onClick={() => setForm(blank)}><Plus size={14} />Nuevo agente</button></PageHead>
     <div className="row" style={{ marginBottom: 14 }}>{['Agentes', 'Voces'].map(t => <button key={t} className={'chip' + (tab === t ? ' on' : '')} onClick={() => setTab(t)}>{t}</button>)}</div>
     {tab === 'Agentes' ? agents.length ? <div className="grid g3 stagger">{agents.map(a => <div key={a.id} className="card lift" style={{ padding: 16 }}>
-      <div className="row"><div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg,#1a73f0,#6366f1)', display: 'grid', placeItems: 'center', color: '#fff' }}><Bot size={20} /></div>
+      <div className="row"><div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg,#1a73f0,#639cf1)', display: 'grid', placeItems: 'center', color: '#fff' }}><Bot size={20} /></div>
         <div><b>{a.name}</b><div className="small muted">{a.model}</div></div><span className="sp" /><Switch on={a.active} onChange={v => { setAgents(x => x.map(y => y.id === a.id ? { ...y, active: v } : y)); toast(v ? 'Agente activado' : 'Agente pausado', 'info') }} /></div>
       <p className="small muted" style={{ margin: '12px 0', minHeight: 44, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{a.prompt || 'Sin instrucciones'}</p>
       <div className="row"><span className="badge b-violet"><Mic size={10} />{a.voice}</span><span className={'badge ' + (a.active ? 'b-green' : 'b-gray')}>{a.active ? 'ACTIVO' : 'PAUSADO'}</span><span className="sp" />

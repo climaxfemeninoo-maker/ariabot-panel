@@ -8,7 +8,7 @@ export const BLOCKS = {
   inicio: ['Inicio', '#16a34a', PlayCircle, 'Punto de entrada del flujo'],
   mensaje: ['Mensaje', '#3b82f6', MessageSquare, 'Envía texto, imagen, audio o video'],
   template: ['Template WhatsApp', '#0ea5e9', FileText, 'Envía una plantilla aprobada por Meta'],
-  etiquetas: ['Etiquetas', '#6366f1', Tags, 'Añadir etiquetas al cliente'],
+  etiquetas: ['Etiquetas', '#639cf1', Tags, 'Añadir etiquetas al cliente'],
   pix: ['Botón de pago', '#10b981', QrCode, 'Botón de pago rápido con QR'],
   menu: ['Menú', '#005ae3', List, 'Opciones para que el cliente elija'],
   carrusel: ['Carrusel', '#0891b2', GalleryHorizontal, 'Tarjetas deslizables con botones'],
@@ -28,7 +28,7 @@ export const BLOCKS = {
   manipulador: ['Manipulador', '#ea580c', Wrench, 'Actualizar la fecha de creación del contacto en la base y guardar en un campo personalizado'],
   venta: ['Venta aprobada', '#16a34a', BadgeCheck, 'Registra la venta en el dashboard'],
   pago: ['Pago', '#005ae3', CreditCard, 'Genera un cobro y continúa el flujo'],
-  ariapay: ['Aria Pay', '#4f46e5', Wallet, 'Cobro integrado con estados de pago'],
+  ariapay: ['Aria Pay', '#4686e5', Wallet, 'Cobro integrado con estados de pago'],
   llamar: ['Llamar', '#0d9488', Phone, 'Realiza una llamada de voz'],
   kie: ['Integración Kie.ai', '#be185d', Sparkles, 'Genera imágenes o videos con IA'],
 }

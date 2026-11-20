@@ -4,9 +4,9 @@ import { Kanban as KIcon, Plus, Search, Trash2, ChevronRight, Filter, ChartColum
 import { useStore, useToast, uid, useOutside, downloadCSV } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 
-const COLS = [['auto', 'Automático', null], ['teal', 'Verde azulado', '#0d9488'], ['terra', 'Terracota', '#c2410c'], ['indigo', 'Índigo', '#4f46e5'], ['amber', 'Ámbar', '#d97706'], ['rose', 'Rosa', '#e11d48'], ['ocean', 'Océano', '#0284c7'], ['olive', 'Oliva', '#65a30d']]
+const COLS = [['auto', 'Automático', null], ['teal', 'Verde azulado', '#0d9488'], ['terra', 'Terracota', '#c2410c'], ['indigo', 'Índigo', '#4686e5'], ['amber', 'Ámbar', '#d97706'], ['rose', 'Rosa', '#e11d48'], ['ocean', 'Océano', '#0284c7'], ['olive', 'Oliva', '#65a30d']]
 const AUTO = COLS.slice(1).map(c => c[2])
-const DEF = [['Nuevo', '#0d9488'], ['Calificación', '#c2410c'], ['Ganado', '#4f46e5', true]]
+const DEF = [['Nuevo', '#0d9488'], ['Calificación', '#c2410c'], ['Ganado', '#4686e5', true]]
 const ago = t => { const m = Math.floor((Date.now() - (t || Date.now())) / 6e4); return m < 1 ? 'hace menos de un minuto' : m < 60 ? `hace ${m} min` : m < 1440 ? `hace ${Math.floor(m / 60)} h` : `hace ${Math.floor(m / 1440)} días` }
 const num = v => +String(v || 0).replace(',', '.') || 0
 const stats = b => {
@@ -86,7 +86,7 @@ function NewBoard({ open, onClose, onCreate }) {
     <label className="l-lbl" style={{ marginTop: 20 }}>Vista previa</label>
     <div className="kb-pv">
       <div className="fn">{DEF.map(([, c]) => <i key={c} style={{ flex: 1, background: c }} />)}</div>
-      <div className="fl">{DEF.map(([n, c]) => <span key={n} style={{ color: c === '#4f46e5' ? '#6366f1' : c === '#c2410c' ? '#ea580c' : '#14b8a6' }}>{n}</span>)}</div>
+      <div className="fl">{DEF.map(([n, c]) => <span key={n} style={{ color: c === '#4686e5' ? '#639cf1' : c === '#c2410c' ? '#ea580c' : '#14b8a6' }}>{n}</span>)}</div>
       <div className="nm"><b>{name || 'Nombre del Kanban'}</b><span className="kb-badge">3 columnas</span></div>
       <p>Así aparece el tablero en la lista, con el embudo arriba.</p>
     </div>

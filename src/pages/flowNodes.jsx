@@ -121,7 +121,7 @@ export const NODE_DEF = {
   llamar: { title: 'Editar llamada', fields: [{ t: 'call' }], desc: c => (c.ring || 8) + 's' },
   kie: { title: 'Editar integración Kie.ai', fields: [{ t: 'kie' }], desc: c => c.gen ? ({ audio: 'Audio · ElevenLabs', image: 'Imagen', music: 'Música · Suno', video: 'Video · Veo 3.1' })[c.gen] : '', outs: () => [{ k: 'success', l: 'Éxito', c: 'gn', pc: '#16a34a' }, { k: 'failure', l: 'Fallo', c: 'rd', pc: '#dc2626' }] },
 }
-const PAYOUTS = [{ k: 'charge_created', l: 'Cobro generado', c: 'pu', pc: '#6366f1' }, { k: 'payment_approved', l: 'Pago aprobado', c: 'gn', pc: '#16a34a' }, { k: 'payment_expired', l: 'Pago expirado', c: 'or', pc: '#d97706' }, { k: 'error', l: 'Error', c: 'rd', pc: '#dc2626' }]
+const PAYOUTS = [{ k: 'charge_created', l: 'Cobro generado', c: 'pu', pc: '#639cf1' }, { k: 'payment_approved', l: 'Pago aprobado', c: 'gn', pc: '#16a34a' }, { k: 'payment_expired', l: 'Pago expirado', c: 'or', pc: '#d97706' }, { k: 'error', l: 'Error', c: 'rd', pc: '#dc2626' }]
 export const ESPERAR_OUTS = c => [{ k: 'main', l: 'Respuesta del cliente', c: 'pu', pc: '#005ae3' }, ...(c.forever ? [] : [{ k: 'timeout', l: 'O si no responde', s: `Após ${(c.wait || [1])[0]} ${({ seconds: 'segundo', minutes: 'minuto', hours: 'hora', days: 'día' })[(c.wait || [1, 'days'])[1]]}${(c.wait || [1])[0] > 1 ? 's' : ''}`, c: 'gr', pc: '#6b7280' }])]
 
 const useStores = () => {

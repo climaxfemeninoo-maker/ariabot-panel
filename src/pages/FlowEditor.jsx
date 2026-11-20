@@ -49,7 +49,7 @@ const newNode = (type, x, y) => ({ id: uid(), type, x, y, title: B(type)[0], des
 
 const ACT = {
   text: ['Texto', MessageSquare, '#3b82f6', 'Mensaje de texto'], image: ['Imagen', Image, '#22c55e'], video: ['Vídeo', Video, '#1a73f0'], audio: ['Audio', Mic, '#f97316'],
-  delay: ['Intervalo', Clock, '#06b6d4', 'Retraso entre mensajes'], contact: ['Contacto', User, '#ec4899'], file: ['Archivo', File, '#6366f1'], sticker: ['Sticker', Sticker, '#f59e0b'],
+  delay: ['Intervalo', Clock, '#06b6d4', 'Retraso entre mensajes'], contact: ['Contacto', User, '#ec4899'], file: ['Archivo', File, '#639cf1'], sticker: ['Sticker', Sticker, '#f59e0b'],
 }
 const actBlank = t => ({ id: uid(), type: t, text: '', src: 'file', url: '', caption: '', file: null, typing: 3, rec: 6, voice: true, once: false, del: false, delTag: '', mode: 'normal', min: 0, max: 120, cname: '', cphone: '', ai: '', fname: '' })
 
@@ -94,7 +94,7 @@ function Media({ a, set, kind, tags }) {
       <div className="fe-small" style={{ marginTop: 8 }}>Pegue una URL pública o use variables del sistema (como <code>{'{nome_campo}'}</code>, <code>{'{nome}'}</code>). La URL se resuelve al ejecutar el flujo.</div>
       {['image', 'video'].includes(kind) && <><div className="fe-lb" style={{ marginTop: 16 }}>Leyenda</div><Editor value={a.caption} onChange={v => set({ caption: v })} ph="Leyenda (opcional)..." rows={90} /></>}</>}
     {a.src === 'ai' && <div style={{ border: '1.5px dashed var(--border2)', borderRadius: 9, padding: '16px 17px' }}>
-      <div style={{ textAlign: 'center' }}><span style={{ width: 68, height: 68, borderRadius: 9, background: '#6b21a8', display: 'inline-grid', placeItems: 'center', color: '#93c5fd' }}><Mic size={30} /></span><div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 10 }}>Generar audio con IA <WandSparkles size={14} color="#4d94ff" /></div></div>
+      <div style={{ textAlign: 'center' }}><span style={{ width: 68, height: 68, borderRadius: 9, background: '#2157a8', display: 'inline-grid', placeItems: 'center', color: '#93c5fd' }}><Mic size={30} /></span><div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 10 }}>Generar audio con IA <WandSparkles size={14} color="#4d94ff" /></div></div>
       <div className="fe-lb" style={{ marginTop: 14 }}>Voz / Clave IA<span style={{ marginLeft: 'auto', fontSize: 12, color: '#60a5fa' }}>Administrar claves</span></div>
       <div className="fe-help" style={{ marginTop: 0, fontSize: 13.3 }}>No hay claves ElevenLabs registradas.</div>
       <div className="fe-lb" style={{ marginTop: 14 }}>Voz</div><select className="l-in" style={{ height: 37 }} disabled><option>Selecciona la voz...</option></select>
@@ -337,7 +337,7 @@ export default function FlowEditor() {
         <div className="l">{Object.entries(FB).filter(([k, b]) => k !== 'inicio' && b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{k === 'agente' ? <img className="av ag" src="/leona-mark.png" alt="" /> : k === 'ariapay' ? <img className="av" src="/leona-mark.png" alt="" /> : <I size={19} color={c} />}{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
-      <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#15121f)', display: 'block' }}>
+      <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#12161f)', display: 'block' }}>
         {flow.nodes.map(n => <rect key={n.id} x={n.x} y={n.y} width={NW} height={NH} fill={sel === n.id ? '#005ae3' : n.type === 'inicio' ? '#10b981' : B(n.type)[1]} />)}
         {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(0,90,227,.06)" stroke="#005ae3" strokeWidth={mmW / 140} />}
       </svg></div>
@@ -444,7 +444,7 @@ function TagsModal({ node, onClose, onSave }) {
   const [tags, setTags] = useState(node.tags || []); const [add, setAdd] = useState(node.tagMode !== 'remove'); const [q, setQ] = useState('')
   const sug = all.filter(t => !tags.includes(t) && t.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
   const pick = t => { t = t.trim(); if (!t) return; if (!all.includes(t)) setStore(x => [...x, { id: uid(), name: t, color: '#005ae3' }]); if (!tags.includes(t)) setTags([...tags, t]); setQ('') }
-  return <NModal title="Editar etiquetas" icon={<Tag size={20} />} grad="#6366f1" width={514} onClose={onClose}
+  return <NModal title="Editar etiquetas" icon={<Tag size={20} />} grad="#639cf1" width={514} onClose={onClose}
     footer={<Foot onClose={onClose} onOk={() => onSave({ ...node, tags, tagMode: add ? 'add' : 'remove', desc: tags.length ? `${add ? 'Añadir' : 'Quitar'} etiquetas: ${tags.join(', ')}` : '' })} />}>
     <div className="fe-lb" style={{ fontWeight: 600 }}>Etiquetas</div>
     <div style={{ position: 'relative' }}><div className="fe-vin" style={{ alignItems: 'center', flexWrap: 'wrap', gap: 6, padding: tags.length ? '6px 10px' : 0, minHeight: 41 }}>

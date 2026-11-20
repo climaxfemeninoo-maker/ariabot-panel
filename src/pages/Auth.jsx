@@ -24,7 +24,7 @@ const CSS = `
 .la-link:hover{text-decoration:underline}
 
 /* ---------- LOGIN (estilo violeta) ---------- */
-.lv .la-toggle{background:#100e1e;border:1px solid #262240}
+.lv .la-toggle{background:#0e131e;border:1px solid #222b40}
 .lv .la-card{max-width:524px;border-radius:18px;padding:39px 38px 35px}
 .lv .la-logo{height:65px}
 .lv .la-h{font-size:27.6px;line-height:33px;margin-top:29px}
@@ -45,22 +45,22 @@ const CSS = `
 .lv .la-copy{font-size:14.1px;margin-top:38px;text-align:center}
 .lv .la-btn{background:#005ae3}.lv .la-btn:hover{background:#004fc7}
 /* login oscuro */
-html.dark .lv{background:radial-gradient(1000px 520px at 50% -8%,rgba(91,56,176,.22),transparent 70%),#110f20;color:#fff}
+html.dark .lv{background:radial-gradient(1000px 520px at 50% -8%,rgba(56,104,176,.22),transparent 70%),#0f1420;color:#fff}
 html.dark .lv .la-toggle{color:#f59e0b}
-html.dark .lv .la-card{background:#1c1736;border:1px solid rgba(255,255,255,.045);box-shadow:0 12px 32px rgba(0,0,0,.22)}
-html.dark .lv .la-card:before{content:'';position:absolute;top:0;left:26%;width:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(216,206,255,.75),transparent)}
-html.dark .lv .la-card:after{content:'';position:absolute;top:-80px;right:-10px;width:270px;height:210px;background:radial-gradient(closest-side,rgba(139,108,246,.2),transparent);pointer-events:none}
-html.dark .lv .la-sub,html.dark .lv .la-foot{color:#d6d3e6}
-html.dark .lv .la-ic,html.dark .lv .la-eye{color:#8f89ad}
-html.dark .lv .la-in{background:#241e42;border:1px solid rgba(255,255,255,.04);color:#fff;color-scheme:dark}
-html.dark .lv .la-in::placeholder{color:#9b95b9}
+html.dark .lv .la-card{background:#182135;border:1px solid rgba(255,255,255,.045);box-shadow:0 12px 32px rgba(0,0,0,.22)}
+html.dark .lv .la-card:before{content:'';position:absolute;top:0;left:26%;width:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(206,226,255,.75),transparent)}
+html.dark .lv .la-card:after{content:'';position:absolute;top:-80px;right:-10px;width:270px;height:210px;background:radial-gradient(closest-side,rgba(108,163,246,.2),transparent);pointer-events:none}
+html.dark .lv .la-sub,html.dark .lv .la-foot{color:#d3dbe6}
+html.dark .lv .la-ic,html.dark .lv .la-eye{color:#8997ad}
+html.dark .lv .la-in{background:#1e2942;border:1px solid rgba(255,255,255,.04);color:#fff;color-scheme:dark}
+html.dark .lv .la-in::placeholder{color:#95a3b9}
 html.dark .lv .la-in:focus{border-color:#005ae3;box-shadow:0 0 0 3px rgba(0,90,227,.18)}
-html.dark .lv .la-in:-webkit-autofill{-webkit-box-shadow:0 0 0 100px #241e42 inset;-webkit-text-fill-color:#fff}
-html.dark .lv .la-row label{color:#e6e3f1}
+html.dark .lv .la-in:-webkit-autofill{-webkit-box-shadow:0 0 0 100px #1e2942 inset;-webkit-text-fill-color:#fff}
+html.dark .lv .la-row label{color:#e3e9f1}
 html.dark .lv .la-row input{color-scheme:dark}
 html.dark .lv .la-link{color:#4d94ff}
-html.dark .lv .la-div{background:rgba(228,225,244,.85)}
-html.dark .lv .la-copy{color:#9b96b3}
+html.dark .lv .la-div{background:rgba(225,233,244,.85)}
+html.dark .lv .la-copy{color:#96a2b3}
 /* login claro */
 html:not(.dark) .lv{background:radial-gradient(900px 420px at 50% -10%,rgba(77,148,255,.14),transparent 70%),radial-gradient(rgba(0,79,199,.05) 1px,transparent 1.2px) 0 0/22px 22px,#fff;color:#111827}
 html:not(.dark) .lv .la-toggle{background:#fff;border:1px solid #e5e7eb;color:#374151}

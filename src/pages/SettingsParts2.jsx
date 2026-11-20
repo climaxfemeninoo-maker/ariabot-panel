@@ -32,7 +32,7 @@ export function Templates() {
   return <Card style={{ padding: '22px 22px 23px' }}>
     <div style={{ display: 'flex', gap: 8 }}>
       <button className="lp-btn" disabled={!api.length} onClick={() => toast('Templates sincronizados con Meta')}><RefreshCw size={15} />Sincronizar</button>
-      <button className="lp-btn p" disabled={!api.length} style={!api.length ? { background: '#1e3a8a', color: '#a99bc4' } : null} onClick={() => setM({ name: '', cat: 'MARKETING', lang: 'es', body: '' })}><Plus size={16} />Crear</button></div>
+      <button className="lp-btn p" disabled={!api.length} style={!api.length ? { background: '#1e3a8a', color: '#9babc4' } : null} onClick={() => setM({ name: '', cat: 'MARKETING', lang: 'es', body: '' })}><Plus size={16} />Crear</button></div>
     <div style={{ display: 'flex', gap: 14, marginTop: 17 }}>
       <div style={{ width: 209 }}><Lb>WABA</Lb><LSelect className="l-in ct-in" disabled={!api.length} value={waba} onChange={setWaba} placeholder="Sin conexión Meta Cloud" options={api.map(c => ({ value: c.id, label: c.name }))} /></div>
       <div style={{ width: 209 }}><Lb>Estado</Lb><LSelect className="l-in ct-in" disabled={!api.length} value={st} onChange={setSt} options={[['all', 'Todos'], ['APROBADO', 'Aprobados'], ['PENDIENTE', 'Pendientes'], ['RECHAZADO', 'Rechazados']].map(([value, label]) => ({ value, label }))} /></div></div>
@@ -103,14 +103,14 @@ export function CustomFields() {
 }
 
 /* ---------------- Etiquetas ---------------- */
-const TCOL = [['#3b82f6', 'Azul'], ['#ef4444', 'Rojo'], ['#10b981', 'Verde'], ['#f59e0b', 'Ámbar'], ['#005ae3', 'Morado'], ['#f97316', 'Naranja'], ['#06b6d4', 'Cian'], ['#84cc16', 'Lima'], ['#ec4899', 'Rosa'], ['#6b7280', 'Gris'], ['#ffff00', 'Amarillo'], ['#ff00ff', 'Magenta'], ['#000000', 'Negro'], ['#ffffff', 'Blanco']]
+const TCOL = [['#3b82f6', 'Azul'], ['#ef4444', 'Rojo'], ['#10b981', 'Verde'], ['#f59e0b', 'Ámbar'], ['#005ae3', 'Morado'], ['#f97316', 'Naranja'], ['#06b6d4', 'Cian'], ['#84cc16', 'Lima'], ['#ec4899', 'Rosa'], ['#6b7280', 'Gris'], ['#ffff00', 'Amarillo'], ['#0066ff', 'Magenta'], ['#000000', 'Negro'], ['#ffffff', 'Blanco']]
 const lum = h => { const n = parseInt(h.slice(1), 16); return (((n >> 16) & 255) * .299 + ((n >> 8) & 255) * .587 + (n & 255) * .114) / 255 }
 export function Tags() {
   const toast = useToast(); const [tags, setTags] = useStore('tags', []); const [contacts] = useStore('contacts', []); const [q, setQ] = useState(''); const [m, setM] = useState(null); const [del, setDel] = useState(null)
   const rows = tags.filter(t => t.name.toLowerCase().includes(q.toLowerCase()))
   const cnt = n => contacts.filter(c => (c.tags || []).includes(n)).length
   const isPreset = c => TCOL.some(x => x[0] === c)
-  const blank = { name: '', color: '#0000ff', wa: false }
+  const blank = { name: '', color: '#0066ff', wa: false }
   return <Card>
     <div style={{ display: 'flex', justifyContent: 'flex-end' }}><button className="lp-btn p" onClick={() => setM(blank)}><Plus size={16} />Nueva etiqueta</button></div>
     <div style={{ marginTop: 9 }}><Srch v={q} set={setQ} ph="Buscar etiquetas..." /></div>
@@ -119,7 +119,7 @@ export function Tags() {
     {m && <LModal open onClose={() => setM(null)} title={m.id ? 'Editar etiqueta' : 'Nueva etiqueta'} desc="Añada una nueva etiqueta de identificación" width={480} bodyStyle={{ padding: '22px 23px 0', overflow: 'visible' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15 }}>
         <div><Lb>Nombre de la etiqueta</Lb><input className="l-in" style={IN} autoFocus value={m.name} onChange={e => setM({ ...m, name: e.target.value })} placeholder="Escriba el nombre de la etiqueta" /></div>
-        <div><Lb>Color de la etiqueta</Lb><LSelect className="l-in ct-in" bold value={isPreset(m.color) ? m.color : 'custom'} onChange={v => setM({ ...m, color: v === 'custom' ? (isPreset(m.color) ? '#0000ff' : m.color) : v })} options={[...TCOL.map(([c, l]) => ({ value: c, label: l, dot: c })), { value: 'custom', label: 'Personalizado', dot: isPreset(m.color) ? '#0000ff' : m.color }]} />
+        <div><Lb>Color de la etiqueta</Lb><LSelect className="l-in ct-in" bold value={isPreset(m.color) ? m.color : 'custom'} onChange={v => setM({ ...m, color: v === 'custom' ? (isPreset(m.color) ? '#0066ff' : m.color) : v })} options={[...TCOL.map(([c, l]) => ({ value: c, label: l, dot: c })), { value: 'custom', label: 'Personalizado', dot: isPreset(m.color) ? '#0066ff' : m.color }]} />
           {!isPreset(m.color) && <input type="color" value={m.color} onChange={e => setM({ ...m, color: e.target.value })} style={{ width: '100%', height: 26, marginTop: 6, background: 'none', border: 'none', cursor: 'pointer' }} />}</div></div>
       <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', borderRadius: 6, padding: '12px 13px', marginTop: 16 }}>
         <div><div style={{ fontSize: 13.3, fontWeight: 700 }}>Agregar a WhatsApp Business</div><div style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 3, lineHeight: 1.4 }}>Esta etiqueta se aplicará a los chats (importe primero las existentes de WhatsApp)</div></div>
@@ -138,7 +138,7 @@ export function Tags() {
 /* ---------------- Integraciones ---------------- */
 const PROV = [
   ['leonapay', 'Leona Pay', 'pagos', 'Cobra en Brasil, México y Latinoamérica.', '#004fc7', Sparkles, true],
-  ['notasy', 'Notasy NF-e', 'facturas', 'Emisión automatizada de facturas electrónicas de ventas', '#6d5dfc', Receipt],
+  ['notasy', 'Notasy NF-e', 'facturas', 'Emisión automatizada de facturas electrónicas de ventas', '#5d9dfc', Receipt],
   ['lowtrack', 'LowTrack', 'seguimiento', 'Seguimiento de ventas y envío automático al Facebook CAPI', '#2563eb', ChartLine],
   ['utmify', 'UTMify', 'seguimiento', 'Seguimiento de campañas y atribución avanzada de ventas', '#111111', ChartLine],
   ['openai', 'OpenAI GPT', 'ia', 'IA generativa para chatbots y flujos cognitivos', '#111111', Bot],

@@ -5,10 +5,10 @@ import { useStore, useToast, uid, downloadCSV, useOutside } from '../ui'
 import { LModal, LSelect } from './leona'
 import { COUNTRIES, flagUrl, findCountry, UF } from './countries'
 
-const AV = ['#004fc7', '#059669', '#d97706', '#db2777', '#0891b2', '#dc2626', '#4f46e5']
+const AV = ['#004fc7', '#059669', '#d97706', '#db2777', '#0891b2', '#dc2626', '#4686e5']
 const avc = s => AV[[...(s || 'x')].reduce((a, c) => a + c.charCodeAt(0), 0) % AV.length]
 const ini = n => (n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()
-const TAGC = { Venta: ['#1e1b6b', '#3730a3', '#4f46e5'] }
+const TAGC = { Venta: ['#1b3b6b', '#305ea3', '#4686e5'] }
 
 export default function Contacts() {
   const toast = useToast(); const nav = useNavigate()
