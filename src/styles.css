@@ -1792,3 +1792,38 @@ html.dark .fbx-filters label{font-weight:500!important;font-size:12.5px!importan
 .fbx-pop .b button{flex:1;height:34px;border-radius:5px;font-size:13px;font-weight:600}
 .fbx-pop .c{border:1px solid #d0d2d6;color:#d0d2d6}.fbx-pop .c:hover{background:rgba(255,255,255,.05)}
 .fbx-pop .p{background:#005ae3;color:#fff}.fbx-pop .p:hover{background:#004fc7}
+/* ===== Integraciones ===== */
+.it-logo{display:grid;place-items:center;border-radius:8px;flex-shrink:0;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.it-logo img{width:100%;height:100%;object-fit:cover}
+.it-card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 20px 16px;display:flex;flex-direction:column;min-height:214px;transition:border-color .2s,transform .2s}
+.it-card:hover{border-color:#3b5b99;transform:translateY(-2px)}
+.it-card.feat{border:1.5px solid #005ae3;box-shadow:0 0 22px rgba(0,90,227,.18)}
+.it-new{position:absolute;top:-10px;right:12px;background:#005ae3;color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:4px}
+.it-cat{margin-left:auto;font-size:10.5px;letter-spacing:.05em;font-weight:600;border:1px solid var(--border2);border-radius:4px;padding:3px 7px;color:var(--soft)}
+.it-desc{font-size:13.3px;line-height:1.6;color:var(--soft);margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.it-foot{border-top:1px solid var(--border);margin-top:auto;padding-top:14px;display:flex;justify-content:flex-end}
+.it-cnt{font-size:10.5px;font-weight:700;background:#005ae3;color:#fff;border-radius:9px;padding:1px 7px}
+.it-row{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--border);border-left:3px solid #22c55e;border-radius:8px;height:64px;padding:0 18px;margin-bottom:10px}
+.it-row.off{border-left-color:#64748b}
+.it-st{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:600;background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+.it-st i{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e}
+.it-st.off{background:rgba(100,116,139,.15);color:#94a3b8;border-color:rgba(100,116,139,.3)}.it-st.off i{background:#64748b;box-shadow:none}
+.it-act{height:30px;padding:0 12px;border-radius:6px;font-size:12.5px;font-weight:600;color:var(--text);border:1px solid var(--border2)}
+.it-act:hover{background:var(--btn2h)}.it-act.del{color:#f87171;border-color:rgba(239,68,68,.3)}.it-act.del:hover{background:rgba(239,68,68,.1)}
+.it-sec{position:relative}.it-sec input{padding-right:42px!important}
+.it-sec button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;display:grid;place-items:center;color:#94a3b8;border-radius:6px}.it-sec button:hover{color:#fff;background:rgba(255,255,255,.06)}
+.it-help{font-size:12px;color:#94a3b8;margin-top:7px;line-height:1.5}
+.it-link{display:inline-block;font-size:12.5px;font-weight:600;color:#4d94ff;margin-top:8px}.it-link:hover{text-decoration:underline}
+.it-info{display:flex;gap:11px;padding:13px 14px;border-radius:8px;background:rgba(0,90,227,.1);border:1px solid rgba(0,90,227,.3);font-size:13px;line-height:1.55;color:#cbd5e1}
+.it-info svg{color:#4d94ff;flex-shrink:0;margin-top:2px}
+.it-box{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:8px;border:1px solid #374151;background:rgba(0,0,0,.12)}
+.it-box.col{flex-direction:column;align-items:stretch}
+.it-empty{border:1px dashed var(--border2);border-radius:7px;padding:12px 14px;font-size:13px;color:var(--soft)}
+.it-chk{display:flex;align-items:center;gap:10px;font-size:13.5px;margin-top:16px;cursor:pointer}.it-chk input{width:17px;height:17px;accent-color:#005ae3}
+html:not(.dark) .it-info{color:#1e3a8a}
+/* búsqueda con lupa: misma caja que los demás campos */
+html.dark .lp-srch,html.dark .ch-srch,html.dark .kb-search,html.dark .db-search,html.dark .search,html.dark .pf-in,html.dark .st-in,html.dark .db-date,html.dark .tm-in{background:#101727!important;border-color:#374151!important}
+html.dark .lp-srch:focus-within,html.dark .ch-srch:focus-within,html.dark .kb-search:focus-within,html.dark .pf-in:focus-within,html.dark .st-in:focus-within{border-color:#005ae3!important}
+/* opción activa del menú lateral (como referencia) */
+.nav a.active{background:linear-gradient(90deg,#005ae3 0%,#0b55cf 55%,#1a50b0 100%)!important;color:#fff;border:1px solid rgba(255,255,255,.1);border-top-color:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 14px rgba(0,0,0,.35)!important}
+html.dark .pf-in input,html.dark .st-in input,html.dark .lp-srch input{background:transparent!important}

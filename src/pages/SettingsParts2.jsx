@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, RefreshCw, AtSign, Pencil, Trash2, Type, Hash, Tag, Package, ArrowLeft, House, ChevronRight, Radar, Link2, Copy, FileText, Sparkles, CreditCard, ChartLine, Bot, Mic, Gem, Receipt, Globe, Zap, CircleHelp as CircleHelpI, BookOpen, ShieldAlert } from 'lucide-react'
+import { Search, Plus, RefreshCw, AtSign, Pencil, Trash2, Type, Hash, Tag, Package, ArrowLeft, House, ChevronRight, Radar, Link2, Copy, FileText, Sparkles, CreditCard, ChartLine, Bot, Mic, Gem, Receipt, Globe, Zap, CircleHelp as CircleHelpI, BookOpen, ShieldAlert, Eye, EyeOff, Info } from 'lucide-react'
 import { useStore, useToast, uid } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 
@@ -136,54 +136,97 @@ export function Tags() {
 }
 
 /* ---------------- Integraciones ---------------- */
+const MetaMark = ({ s }) => <svg width={s * .62} height={s * .62} viewBox="0 0 36 36"><path fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" d="M5 23c0-6 3-12 7-12 5 0 8 14 13 14 3 0 5-3 5-7 0-5-3-9-6-9-5 0-8 14-13 14-3 0-6-2-6-6"/></svg>
+const ElevenMark = ({ s }) => <span style={{ display: 'flex', gap: s * .1 }}><i style={{ width: s * .1, height: s * .45, background: '#fff', borderRadius: 2 }} /><i style={{ width: s * .1, height: s * .45, background: '#fff', borderRadius: 2 }} /></span>
+// id, nombre, categoría, descripción, fondo, img, destacado, tipo de formulario
 const PROV = [
-  ['leonapay', 'Leona Pay', 'pagos', 'Cobra en Brasil, México y Latinoamérica.', '#004fc7', Sparkles, true],
-  ['notasy', 'Notasy NF-e', 'facturas', 'Emisión automatizada de facturas electrónicas de ventas', '#5d9dfc', Receipt],
-  ['lowtrack', 'LowTrack', 'seguimiento', 'Seguimiento de ventas y envío automático al Facebook CAPI', '#2563eb', ChartLine],
-  ['utmify', 'UTMify', 'seguimiento', 'Seguimiento de campañas y atribución avanzada de ventas', '#111111', ChartLine],
-  ['openai', 'OpenAI GPT', 'ia', 'IA generativa para chatbots y flujos cognitivos', '#111111', Bot],
-  ['xpag', 'XPag', 'pagos', 'Operación en tres vías — PIX (BRL), API LATAM y API Cripto (USDT) — con conciliación automática', '#000000', CreditCard],
-  ['gemini', 'Google Gemini', 'ia', 'Modelos multimodales rápidos y eficientes de Google', '#ffffff', Sparkles],
-  ['eleven', 'ElevenLabs', 'ia', 'Síntesis de voz con IA para audio en flujos', '#000000', Mic],
-  ['openrouter', 'OpenRouter', 'ia', 'Una clave para varios modelos (Claude, GPT, Gemini, Llama y otros)', '#111111', Zap],
-  ['biziva', 'BIZIVA', 'ia', 'IA compatible con OpenAI — modelo biziva-auto y API en biziva.com.br', '#dc2626', Bot],
-  ['zenith', 'Zenith Global', 'pagos', 'Métodos locales y operación multi-país y multi-moneda: LATAM, Europa, Asia y más', '#111111', Globe],
+  ['metacapi', 'Meta CAPI Cloud', 'seguimiento', 'Envía eventos de compra a Meta y mide tus anuncios Click to WhatsApp.', '#0866ff', null, true, 'capi'],
+  ['utmify', 'UTMify', 'seguimiento', 'Seguimiento de campañas y atribución avanzada de ventas', '#0f1320', '/int/utmify.png', false, 'utmify'],
+  ['xpag', 'XPag', 'pagos', 'Operación en tres vías — PIX (BRL), API LATAM y API Cripto (USDT) — con conciliación automática', '#000000', '/int/xpag.png', false, 'pay'],
+  ['openai', 'OpenAI GPT', 'ia', 'IA generativa para chatbots y flujos cognitivos', '#000000', '/int/openai.png', false, 'ai'],
+  ['claude', 'Claude', 'ia', 'Modelos de Anthropic para respuestas precisas, análisis y agentes de atención', '#d97757', '/int/claude.png', false, 'ai'],
+  ['gemini', 'Google Gemini', 'ia', 'Modelos multimodales rápidos y eficientes de Google', '#ffffff', '/int/gemini.png', false, 'ai'],
+  ['eleven', 'ElevenLabs', 'ia', 'Síntesis de voz con IA para audio en flujos', '#000000', null, false, 'ai'],
 ]
-const CAT = { whatsapp: 'WHATSAPP', facturas: 'FACTURAS', seguimiento: 'SEGUIMIENTO', pagos: 'PAGOS', ia: 'INTELIGENCIA ARTIFICIAL' }
-const Logo = ({ p, s = 37 }) => { const Ic = p[5]; return <span style={{ width: s, height: s, borderRadius: 7, background: p[4], display: 'grid', placeItems: 'center', color: p[4] === '#ffffff' ? '#004fc7' : '#fff', flexShrink: 0, border: '1px solid rgba(255,255,255,.08)' }}><Ic size={s * .5} /></span> }
+const AI_INFO = { openai: ['OpenAI', 'Genera en platform.openai.com → API keys.', 'sk-…'], claude: ['Claude (Anthropic)', 'Genera en console.anthropic.com → API Keys.', 'sk-ant-…'], gemini: ['Gemini', 'Genera en Google AI Studio → Get API key.', 'AIza…'], eleven: ['ElevenLabs', 'Genera en elevenlabs.io → Profile → API keys.', 'sk_…'] }
+const CAPI_EV = [['Purchase', 'Purchase - Compra completada'], ['Lead', 'Lead - Contacto calificado'], ['InitiateCheckout', 'InitiateCheckout - Inicio de pago'], ['AddToCart', 'AddToCart - Añadido al carrito'], ['CompleteRegistration', 'CompleteRegistration - Registro completo']]
+const CAT = { seguimiento: 'SEGUIMIENTO', pagos: 'PAGOS', ia: 'INTELIGENCIA ARTIFICIAL' }
+const Logo = ({ p, s = 37 }) => <span className="it-logo" style={{ width: s, height: s, background: p[4] }}>{p[5] ? <img src={p[5]} alt="" /> : p[0] === 'metacapi' ? <MetaMark s={s} /> : <ElevenMark s={s} />}</span>
+function Secret({ v, set, ph }) { const [sh, setSh] = useState(false)
+  return <div className="it-sec"><input className="l-in" style={IN} type={sh ? 'text' : 'password'} autoComplete="off" value={v} onChange={e => set(e.target.value)} placeholder={ph} /><button type="button" onClick={() => setSh(!sh)} title={sh ? 'Ocultar' : 'Mostrar'}>{sh ? <EyeOff size={16} /> : <Eye size={16} />}</button></div> }
+function IntModal({ m, setM, onClose, onSave, conns }) {
+  const p = PROV.find(x => x[0] === m.prov); const kind = p[7]; const u = o => setM({ ...m, ...o })
+  const [linking, setLinking] = useState(false)
+  const ok = kind === 'utmify' ? m.label.trim() && m.key.trim() : kind === 'ai' ? m.label.trim() && m.key.trim() : kind === 'pay' ? m.label.trim() && m.cid.trim() && m.key.trim() : !!m.acct
+  const title = kind === 'ai' ? (m.id ? 'Editar integración: IA' : 'Nueva integración: IA') : kind === 'pay' ? (m.id ? 'Editar clave de pago' : 'Nueva clave de pago') : kind === 'capi' ? (m.id ? 'Editar Meta CAPI Cloud' : 'Nueva integración Meta CAPI Cloud') : (m.id ? 'Editar integración: UTMify' : 'Nueva integración: UTMify')
+  const desc = kind === 'ai' ? AI_INFO[m.prov][1] : kind === 'pay' ? 'Se guarda cifrado. Nunca se muestra completo después de guardar.' : kind === 'capi' ? 'Eventos de compra para anuncios Click to WhatsApp.' : 'Genérela en Integraciones → Webhooks → Credenciales de API en el panel UTMify.'
+  const acct = conns.find(c => c.id === m.acct)
+  return <LModal open onClose={onClose} title={title} desc={desc} icon={<Logo p={p} s={34} />} width={520}
+    footer={<><button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" disabled={!ok} onClick={onSave}>{m.id ? 'Guardar' : kind === 'capi' ? 'Crear' : 'Guardar'}</button></>}>
+    {kind === 'utmify' && <>
+      <Lb req>Nombre de la empresa</Lb><input className="l-in" style={IN} autoFocus value={m.label} onChange={e => u({ label: e.target.value })} placeholder="Ej.: Mi Tienda S.L." />
+      <Lb mt={16} req>Credencial de API</Lb><Secret v={m.key} set={v => u({ key: v })} ph="Pega aquí la credencial generada en UTMify..." />
+      <div className="it-help">Genérela en Integraciones → Webhooks → Credenciales de API en el panel UTMify.</div>
+      <a className="it-link" href="https://app.utmify.com.br" target="_blank" rel="noreferrer">Cómo obtener la credencial</a></>}
+    {kind === 'ai' && <>
+      <Lb>Proveedor</Lb><LSelect className="l-in" bold value={m.prov} onChange={v => u({ prov: v })} options={['openai', 'claude', 'gemini', 'eleven'].map(k => ({ value: k, label: AI_INFO[k][0] }))} renderOpt={o => <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}><Logo p={PROV.find(x => x[0] === o.value)} s={20} />{o.label}</span>} renderVal={o => <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}><Logo p={PROV.find(x => x[0] === o.value)} s={20} />{o.label}</span>} />
+      <Lb mt={16} req>Nombre de la clave</Lb><input className="l-in" style={IN} value={m.label} onChange={e => u({ label: e.target.value })} placeholder={'Ej.: ' + AI_INFO[m.prov][0] + ' principal'} />
+      <Lb mt={16} req>Clave de API</Lb><Secret v={m.key} set={v => u({ key: v })} ph={AI_INFO[m.prov][2]} />
+      <div className="it-help" style={{ display: 'flex', gap: 10 }}><span>{AI_INFO[m.prov][1]}</span><a className="it-link" style={{ marginLeft: 'auto', marginTop: 0, whiteSpace: 'nowrap' }} href={{ openai: 'https://platform.openai.com/api-keys', claude: 'https://console.anthropic.com/settings/keys', gemini: 'https://aistudio.google.com/app/apikey', eleven: 'https://elevenlabs.io/app/settings/api-keys' }[m.prov]} target="_blank" rel="noreferrer">Cómo obtener la clave</a></div></>}
+    {kind === 'pay' && <>
+      <Lb req>Nombre amigable</Lb><input className="l-in" style={IN} autoFocus value={m.label} onChange={e => u({ label: e.target.value })} placeholder="Ej.: Cuenta principal México" />
+      <Lb mt={16}>Gateway</Lb><LSelect className="l-in" bold value="xpag" onChange={() => { }} options={[{ value: 'xpag', label: 'XPag' }]} />
+      <Lb mt={16} req>Client ID</Lb><input className="l-in" style={IN} value={m.cid} onChange={e => u({ cid: e.target.value })} placeholder="client_id" autoComplete="off" />
+      <Lb mt={16} req>Client Secret</Lb><Secret v={m.key} set={v => u({ key: v })} ph="client_secret" />
+      <div className="it-help">Se guarda cifrado. Nunca se muestra completo después de guardar.</div></>}
+    {kind === 'capi' && <>
+      <div className="it-info"><Info size={17} /><span>Esta integración usa el método oficial de Business Messaging con Dataset ID para una mejor atribución de anuncios Click to WhatsApp. Puedes usar el token de la cuenta Cloud o configurar un token separado con permisos de eventos.</span></div>
+      <Lb mt={18} req>Cuenta WhatsApp Cloud</Lb>
+      {conns.length ? <LSelect className="l-in" bold value={m.acct} onChange={v => u({ acct: v })} placeholder="Seleccione una cuenta" options={conns.map(c => ({ value: c.id, label: (c.phone ? c.phone + ' - ' : '') + c.name }))} />
+        : <div className="it-empty">No hay cuentas WhatsApp Cloud. Conecte una en Conexiones (API oficial).</div>}
+      {m.id && <>
+        <div className="it-box" style={{ marginTop: 18 }}><div><Lb>Dataset ID</Lb><div style={{ fontSize: 14, fontWeight: 600, color: m.dataset ? 'var(--text)' : '#4d94ff', fontFamily: m.dataset ? 'ui-monospace,monospace' : undefined }}>{m.dataset || 'No configurado'}</div></div>
+          <button className="lb2 g sm" style={{ marginLeft: 'auto', minWidth: 0 }} disabled={!acct || linking} onClick={() => { setLinking(true); setTimeout(() => { u({ dataset: String(Math.floor(1e14 + Math.random() * 9e14)) }); setLinking(false) }, 900) }}><RefreshCw size={14} className={linking ? 'spin' : ''} />Vincular Dataset</button></div>
+        <div style={{ fontSize: 14.5, fontWeight: 700, margin: '20px 0 10px' }}>Permisos de eventos</div>
+        <div className="it-box col"><b style={{ fontSize: 13.5 }}>Token de eventos (Conversions API)</b><div className="it-help" style={{ marginTop: 4 }}>Opcional. Si lo deja vacío se usa el token de la cuenta Cloud.</div>
+          <div style={{ marginTop: 10 }}><Secret v={m.token || ''} set={v => u({ token: v })} ph="Token de Pixel / Dataset" /></div>
+          <div className="it-help">Ve a Meta Events Manager → tu Pixel/Dataset → Configuración → Generar token de acceso. Pega el token aquí.</div></div></>}
+      <div style={{ fontSize: 14.5, fontWeight: 700, margin: '20px 0 10px' }}>Filtros</div>
+      <Lb>Tipos de evento</Lb><LSelect className="l-in" bold value={m.ev || 'Purchase'} onChange={v => u({ ev: v })} options={CAPI_EV.map(([value, label]) => ({ value, label }))} />
+      {m.id && <label className="it-chk"><input type="checkbox" checked={m.on !== false} onChange={e => u({ on: e.target.checked })} />Integración activa</label>}</>}
+  </LModal>
+}
 export function Integrations() {
-  const toast = useToast(); const [act, setAct] = useStore('integrations', []); const [tab, setTab] = useState('all'); const [q, setQ] = useState(''); const [m, setM] = useState(null); const [del, setDel] = useState(null)
+  const toast = useToast(); const [actR, setAct] = useStore('integrations', []); const [conns] = useStore('connections', []); const [tab, setTab] = useState('all'); const [q, setQ] = useState(''); const [m, setM] = useState(null); const [del, setDel] = useState(null)
   const P = id => PROV.find(p => p[0] === id)
+  const act = (Array.isArray(actR) ? actR : []).filter(a => P(a.prov))
   const inTab = p => (tab === 'all' || p[2] === tab) && (p[1] + p[3]).toLowerCase().includes(q.toLowerCase())
   const cnt = k => act.filter(a => k === 'all' || P(a.prov)[2] === k).length
   const actives = act.filter(a => inTab(P(a.prov)))
   const avail = PROV.filter(p => !p[6] && inTab(p))
-  const Cardi = ({ p, feat }) => <div style={{ position: 'relative', background: 'var(--card)', border: feat ? '2px solid #005ae3' : '1px solid var(--border)', borderRadius: 7, padding: '20px 20px 18px', display: 'flex', flexDirection: 'column', minHeight: 222 }}>
-    {feat && <span style={{ position: 'absolute', top: -10, right: 12, background: '#005ae3', color: '#fff', fontSize: 10.5, fontWeight: 700, letterSpacing: '.04em', padding: '3px 8px', borderRadius: 4 }}>NOVEDAD</span>}
-    <div style={{ display: 'flex', alignItems: 'flex-start' }}><Logo p={p} /><span className="bl-tag" style={{ marginLeft: 'auto', fontSize: 10.5, letterSpacing: '.05em', fontWeight: 600, background: 'transparent', border: '1px solid var(--border)' }}>{CAT[p[2]]}</span></div>
+  const blank = id => ({ prov: id, label: '', key: '', cid: '', acct: '', ev: 'Purchase', token: '', dataset: '' })
+  const Cardi = ({ p, feat }) => <div className={'it-card' + (feat ? ' feat' : '')}>
+    {feat && <span className="it-new">NOVEDAD</span>}
+    <div style={{ display: 'flex', alignItems: 'flex-start' }}><Logo p={p} /><span className="it-cat">{CAT[p[2]]}</span></div>
     <div style={{ fontSize: 15.5, fontWeight: 700, marginTop: 15 }}>{p[1]}</div>
-    <div style={{ fontSize: 13.3, lineHeight: 1.6, color: 'var(--soft)', marginTop: 8, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p[3]}</div>
-    <div style={{ borderTop: '1px solid var(--border)', marginTop: 'auto', paddingTop: 15, display: 'flex', justifyContent: 'flex-end' }}><button className="lb2 g sm" style={{ height: 31, minWidth: 0, fontSize: 12.5 }} onClick={() => setM({ prov: p[0], label: '', key: '' })}>Configurar</button></div></div>
+    <div className="it-desc">{p[3]}</div>
+    <div className="it-foot"><button className={'lb2 sm ' + (feat ? 'p' : 'g')} style={{ height: 32, minWidth: 0, fontSize: 12.5 }} onClick={() => setM(blank(p[0]))}>{feat ? 'Conectar' : 'Configurar'}</button></div></div>
   const H = ({ t, n, r }) => <div style={{ display: 'flex', alignItems: 'center', margin: '27px 0 12px' }}><span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.18em', color: 'var(--soft)' }}>{t}{n != null && <b style={{ color: 'var(--text)', marginLeft: 6, letterSpacing: '.05em' }}>{n}</b>}</span><span style={{ marginLeft: 'auto', fontSize: 11.5, color: 'var(--soft)' }}>{r}</span></div>
+  const feat = PROV.filter(p => p[6] && inTab(p))
+  const save = () => { const p = P(m.prov); const rec = { ...m, label: m.label || (m.acct ? (conns.find(c => c.id === m.acct)?.name || p[1]) : p[1]) }; setAct(x => (Array.isArray(x) ? x : []).some(y => y.id === m.id) ? x.map(y => y.id === m.id ? rec : y) : [...(Array.isArray(x) ? x : []), { ...rec, id: uid() }]); toast(p[1] + (m.id ? ' actualizada' : ' conectada')); setM(null) }
   return <div>
-    <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border)' }}>{[['all', 'Todas'], ['whatsapp', 'WhatsApp'], ['facturas', 'Facturas'], ['seguimiento', 'Seguimiento'], ['pagos', 'Pagos'], ['ia', 'Inteligencia artificial']].map(([k, l]) => <button key={k} onClick={() => setTab(k)} style={{ height: 41, padding: '0 14px', fontSize: 13.3, fontWeight: 600, color: tab === k ? '#4d94ff' : 'var(--text)', borderBottom: '2px solid ' + (tab === k ? '#005ae3' : 'transparent'), marginBottom: -1, display: 'flex', alignItems: 'center', gap: 11 }}>{l}{cnt(k) > 0 && <small style={{ fontSize: 10.5, fontWeight: 700 }}>{cnt(k)}</small>}</button>)}</div>
+    <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border)' }}>{[['all', 'Todas'], ['seguimiento', 'Seguimiento'], ['pagos', 'Pagos'], ['ia', 'Inteligencia artificial']].map(([k, l]) => <button key={k} onClick={() => setTab(k)} style={{ height: 41, padding: '0 14px', fontSize: 13.3, fontWeight: 600, color: tab === k ? '#4d94ff' : 'var(--text)', borderBottom: '2px solid ' + (tab === k ? '#005ae3' : 'transparent'), marginBottom: -1, display: 'flex', alignItems: 'center', gap: 11 }}>{l}{cnt(k) > 0 && <small className="it-cnt">{cnt(k)}</small>}</button>)}</div>
     <div className="lp-srch" style={{ marginTop: 11 }}><Search size={15} /><input style={{ height: 30, fontWeight: 500 }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar integración..." /></div>
-    <div style={{ borderTop: '1px solid var(--border)', marginTop: 15 }} />
-    {inTab(PROV[0]) && <><H t="DESTACADOS" r="La integración nativa de Leona" /><div style={{ width: 'calc(25% - 11px)', minWidth: 260 }}><Cardi p={PROV[0]} feat /></div></>}
+    {feat.length > 0 && <><H t="DESTACADOS" r="Nuevas en la plataforma" /><div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 15 }}>{feat.map(p => <Cardi key={p[0]} p={p} feat />)}</div></>}
     {act.length > 0 && <><H t="ACTIVAS" n={actives.length} r="Conectadas en tu cuenta" />
-      {actives.map(a => { const p = P(a.prov); return <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 13, background: 'var(--card)', border: '1px solid var(--border)', borderLeft: '3px solid #22c55e', borderRadius: 7, height: 61, padding: '0 17px', marginBottom: 11 }}>
-        <Logo p={p} s={32} /><div><div style={{ fontSize: 13.5, fontWeight: 700 }}>{a.label || p[1]}</div><div style={{ fontSize: 11.5, color: '#94a3b8' }}>{p[1]}</div></div>
-        <span className="pf-on" style={{ marginTop: 0, height: 24, fontSize: 12 }}><i />Activo</span>
-        <button style={{ fontSize: 12.5, fontWeight: 500 }} onClick={() => setM({ ...a })}>Editar</button><button style={{ fontSize: 12.5, color: '#ef4444' }} onClick={() => setDel(a)}>Eliminar</button></div> })}
+      {actives.map(a => { const p = P(a.prov); const on = a.on !== false; return <div key={a.id} className={'it-row' + (on ? '' : ' off')}>
+        <Logo p={p} s={34} /><div style={{ minWidth: 0 }}><div style={{ fontSize: 13.5, fontWeight: 700 }}>{a.label || p[1]}</div><div style={{ fontSize: 11.5, color: '#94a3b8' }}>{p[1]}{a.prov === 'metacapi' && ' · ' + (CAPI_EV.find(e => e[0] === a.ev)?.[0] || 'Purchase') + (a.dataset ? ' · Dataset ' + a.dataset : ' · Dataset no configurado')}</div></div>
+        <span className={'it-st' + (on ? '' : ' off')}><i />{on ? 'Activo' : 'Pausado'}</span>
+        <span style={{ marginLeft: 'auto' }} /><button className="it-act" onClick={() => setM({ ...blank(a.prov), ...a })}>Editar</button><button className="it-act del" onClick={() => setDel(a)}>Eliminar</button></div> })}
       {actives.length === 0 && <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Ninguna activa en esta categoría.</div>}</>}
     <H t="DISPONIBLES" n={avail.length} r="Listas para conectar" />
-    {avail.length ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 15 }}>{avail.map(p => <Cardi key={p[0]} p={p} />)}</div> : <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>{tab === 'whatsapp' ? 'Las conexiones de WhatsApp se gestionan en Conexiones.' : 'Sin resultados.'}</div>}
-    {m && (() => { const p = P(m.prov); return <LModal open onClose={() => setM(null)} title={(m.id ? 'Editar ' : 'Configurar ') + p[1]} desc={p[3]} icon={<Logo p={p} s={28} />}
-      footer={<><button className="lb2 g" onClick={() => setM(null)}>Cancelar</button><button className="lb2 p" disabled={!m.key.trim()} onClick={() => { setAct(x => m.id ? x.map(y => y.id === m.id ? m : y) : [...x, { ...m, id: uid() }]); toast(p[1] + (m.id ? ' actualizada' : ' conectada')); setM(null) }}>{m.id ? 'Guardar' : 'Conectar'}</button></>}>
-      <Lb>Nombre de la integración</Lb><input className="l-in" style={IN} value={m.label} onChange={e => setM({ ...m, label: e.target.value })} placeholder={'Ej.: ' + p[1] + ' principal'} />
-      <Lb mt={16} req>{p[2] === 'ia' ? 'API Key' : 'Token / API Key'}</Lb><input className="l-in" type="password" style={IN} value={m.key} onChange={e => setM({ ...m, key: e.target.value })} placeholder="••••••••••••" />
-      <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 7 }}>La clave se guarda solo en este navegador.</div>
-    </LModal> })()}
+    {avail.length ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 15 }}>{avail.map(p => <Cardi key={p[0]} p={p} />)}</div> : <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Sin resultados.</div>}
+    {m && <IntModal m={m} setM={setM} conns={Array.isArray(conns) ? conns : []} onClose={() => setM(null)} onSave={save} />}
     <LModal open={!!del} onClose={() => setDel(null)} title="Eliminar integración" width={482} bodyStyle={{ padding: '22px 24px 0' }}>
       <p style={{ fontSize: 14.3, lineHeight: 1.55 }}>¿Desconectar "{del?.label || (del && P(del.prov)[1])}"?</p>
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 19, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 13 }}><button className="lb2 g" onClick={() => setDel(null)}>Cancelar</button><button className="lb2 d" onClick={() => { setAct(x => x.filter(a => a.id !== del.id)); setDel(null); toast('Integración eliminada') }}>Eliminar</button></div>
