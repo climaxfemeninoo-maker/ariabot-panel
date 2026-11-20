@@ -60,8 +60,8 @@ export function PeriodSelect({ value, onChange, range, setRange }) {
   return <>
     <div className="db-dd" ref={ref}>
       <button className={'db-ddb' + (open ? ' open' : '')} style={{ width: 142 }} onClick={() => setOpen(!open)}>{label}<ChevronDown size={14} className="chev" /></button>
-      {open && <div className="db-menu" style={{ width: 142 }}>
-        {PERIODS.map(([v, l]) => <button key={v} className={'db-mi' + (v === value ? ' on' : '')} onClick={() => { onChange(v); setOpen(false) }}>{l}{v === value && <Check size={14} style={{ marginLeft: 'auto' }} />}</button>)}
+      {open && <div className="db-menu">
+        {PERIODS.map(([v, l]) => <button key={v} className={'db-mi' + (v === value ? ' on' : '')} onClick={() => { onChange(v); setOpen(false) }}>{l}</button>)}
       </div>}
     </div>
     {value === 'custom' && <>

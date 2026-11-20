@@ -1717,10 +1717,16 @@ html:not(.dark) .lm .fe-lb{color:#6b7280}
 .btn-p,.db-btn.v,.lb2.p,.kb-btn.p,.lp-btn.p,.lp-btn.on,.fbx-btn:not(.g),.fbm-b2.p,.ai-f .r .snd,.fe-drop .bt,.md-btn,.tr-go,
 .seg button.on,.db-seg button.on,.fe-seg button.on,.fl-chip.on,.st-tabs button.on,.fe-tb.p,.fbx-sc{background:var(--btnb)!important;border-color:var(--btnb)!important;color:#fff!important;box-shadow:none}
 .btn-p:hover,.db-btn.v:hover,.lb2.p:hover:not(:disabled),.kb-btn.p:hover,.lp-btn.p:hover,.fbx-btn:not(.g):hover,.fbm-b2.p:hover,.md-btn:hover{background:var(--btnbh)!important;border-color:var(--btnbh)!important}
-/* ===== Opciones de menús de filo a filo ===== */
-.db-menu,.l-selm,.fbx-menu{padding:0!important;overflow-x:hidden}
-.db-mi,.l-opt,.fbx-menu button{border-radius:0!important;height:40px;padding:0 14px!important;font-size:13.3px}
-.db-mi.on,.l-opt.on,.fbx-menu button.on{background:#005ae3!important;color:#fff}
-.db-mi:hover:not(.on),.l-opt:hover:not(.on),.fbx-menu button:hover:not(.on){background:var(--btn2h)}
+/* ===== Menús desplegables estilo lista pegada (como Utmify) ===== */
+.db-ddb.open,.l-selb.open{border-color:#005ae3!important;box-shadow:none!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important}
+.db-ddb:hover,.l-selb:hover{border-color:#3b4b6b}
+.db-menu,.l-selm,.fbx-menu{top:100%!important;margin-top:-1px!important;left:0!important;right:0!important;min-width:100%!important;width:auto!important;padding:0!important;overflow-x:hidden;border-radius:0 0 5px 5px!important;border:1px solid #3b4253!important;border-top:none!important;background:#283046!important;box-shadow:0 12px 26px rgba(0,0,0,.35)!important;animation:none!important}
+.db-mi,.l-opt,.fbx-menu button{border-radius:0!important;height:36px!important;padding:0 14px!important;font-size:13px!important;font-weight:400!important;color:#d0d2d6!important;background:transparent}
+.db-mi:hover:not(.on),.l-opt:hover:not(.on),.fbx-menu button:hover:not(.on){background:#222a3d!important;color:#fff!important}
+.db-mi.on,.l-opt.on,.fbx-menu button.on{background:#005ae3!important;color:#fff!important}
+.l-opt svg,.db-mi svg{display:none}
+html:not(.dark) .db-menu,html:not(.dark) .l-selm,html:not(.dark) .fbx-menu{background:#fff!important;border-color:#d1d5db!important}
+html:not(.dark) .db-mi,html:not(.dark) .l-opt,html:not(.dark) .fbx-menu button{color:#374151!important}
+html:not(.dark) .db-mi:hover:not(.on),html:not(.dark) .l-opt:hover:not(.on),html:not(.dark) .fbx-menu button:hover:not(.on){background:#f3f4f6!important;color:#111827!important}
 .db-btn:not(:disabled),.bg-purple{background:var(--btnb)!important;color:#fff}
 .db-btn:not(:disabled):hover,.bg-purple:hover{background:var(--btnbh)!important;box-shadow:0 6px 18px rgba(0,90,227,.35)}
