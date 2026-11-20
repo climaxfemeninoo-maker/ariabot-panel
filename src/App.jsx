@@ -8,7 +8,9 @@ import Kanban from './pages/Kanban'
 import Contacts from './pages/Contacts'
 import Flows, { FlowEditor } from './pages/Flows'
 import Agents from './pages/Agents'
-import { Connections, Webhooks, Mass } from './pages/Ops'
+import { Mass } from './pages/Ops'
+import Connections from './pages/Connections'
+import Webhooks from './pages/Webhooks'
 import Facebook from './pages/Facebook'
 import Billing from './pages/Billing'
 import Settings from './pages/Settings'
@@ -129,6 +131,7 @@ export default function App() {
         <Route path="/agentes" element={<Agents />} />
         <Route path="/connections" element={<Connections />} />
         <Route path="/settings/inbound-webhooks" element={<Webhooks />} />
+        <Route path="/settings/inbound-webhooks/:id" element={<Webhooks />} />
         <Route path="/mass-dispatches" element={<Mass />} />
         <Route path="/facebook/campaigns" element={<Facebook />} />
         <Route path="/billing" element={<Billing />} />

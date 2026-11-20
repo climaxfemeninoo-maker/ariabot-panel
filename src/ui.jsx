@@ -6,19 +6,19 @@ const listeners = new Set()
 export function load(key, def) {
   try { const v = localStorage.getItem('aria_' + key); if (v) return JSON.parse(v); localStorage.setItem('aria_' + key, JSON.stringify(def)); return def } catch { return def }
 }
+const cache = {}
 export function useStore(key, def) {
-  const [v, setV] = useState(() => load(key, typeof def === 'function' ? def() : def))
+  const [v, setV] = useState(() => key in cache ? cache[key] : (cache[key] = load(key, typeof def === 'function' ? def() : def)))
   useEffect(() => {
     const fn = (k, val) => { if (k === key) setV(val) }
     listeners.add(fn); return () => listeners.delete(fn)
   }, [key])
   const set = useCallback(upd => {
-    setV(prev => {
-      const next = typeof upd === 'function' ? upd(prev) : upd
-      try { localStorage.setItem('aria_' + key, JSON.stringify(next)) } catch {}
-      setTimeout(() => listeners.forEach(l => l(key, next)), 0)
-      return next
-    })
+    const prev = key in cache ? cache[key] : load(key, typeof def === 'function' ? def() : def)
+    const next = typeof upd === 'function' ? upd(prev) : upd
+    cache[key] = next
+    try { localStorage.setItem('aria_' + key, JSON.stringify(next)) } catch {}
+    listeners.forEach(l => l(key, next))
   }, [key])
   return [v, set]
 }
