@@ -227,6 +227,7 @@ export default function FlowEditor() {
   const [savedAt, setSavedAt] = useState(() => new Date())
   const setFlow = useCallback(fn => { setFlows(fs => fs.map(f => f.id === id ? { ...fn(f), updated: nowStr() } : f)); setSavedAt(new Date()) }, [id, setFlows])
   const toWorld = (cx, cy) => { const r = box.current.getBoundingClientRect(); return { x: (cx - r.left - view.x) / view.k, y: (cy - r.top - view.y) / view.k } }
+  const fitRef = useRef(); useEffect(() => { fitRef.current = fit })
   const fit = () => { if (!flow?.nodes.length || !box.current) return; const r = box.current.getBoundingClientRect(); const xs = flow.nodes.map(n => n.x), ys = flow.nodes.map(n => n.y)
     const minX = Math.min(...xs) - 60, minY = Math.min(...ys) - 60, w = Math.max(...xs) + NW + 60 - minX, h = Math.max(...ys) + NH + 60 - minY, k = Math.min(1.8, r.width / w, (r.height - 60) / h); setView({ k, x: -minX * k + (r.width - w * k) / 2, y: -minY * k + (r.height - h * k) / 2 + 10 }) }
   useEffect(() => { if (flow && !ready && box.current) { fit(); setReady(true) } })
@@ -326,7 +327,7 @@ export default function FlowEditor() {
       {panel === 'tools' && <div className="fe-pal"><div className="s"><div><Search size={16} color="#8f8a9e" /><input autoFocus value={pq} onChange={e => setPq(e.target.value)} placeholder="Buscar bloques..." /></div></div>
         <div className="l">{Object.entries(FB).filter(([k, b]) => k !== 'inicio' && b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{k === 'agente' ? <img className="av ag" src="/leona-mark.png" alt="" /> : k === 'ariapay' ? <img className="av" src="/leona-mark.png" alt="" /> : <I size={19} color={c} />}{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
-      <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button onClick={fit}><Maximize2 size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
+      <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
       <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#15121f)', display: 'block' }}>
         {flow.nodes.map(n => <rect key={n.id} x={n.x} y={n.y} width={NW} height={NH} fill={sel === n.id ? '#8b5cf6' : n.type === 'inicio' ? '#10b981' : B(n.type)[1]} />)}
         {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(139,92,246,.06)" stroke="#8b5cf6" strokeWidth={mmW / 140} />}
@@ -344,13 +345,25 @@ export default function FlowEditor() {
         if (NODE_DEF[edit.type]) return <GenericNodeModal node={edit} def={NODE_DEF[edit.type]} color={c} icon={<I size={20} />} flowId={flow.id} onClose={() => setEdit(null)} onSave={save} />
         return <NodeModal node={edit} onClose={() => setEdit(null)} onSave={save} /> })())}
     {modal === 'tr' && <TranslateModal flow={flow} onClose={() => setModal(null)} />}
-    {modal === 'ai' && <AiPanel flow={flow} onClose={() => setModal(null)} onGen={types => { const base = flow.nodes.length ? Math.max(...flow.nodes.map(n => n.y)) + 220 : 100; const ns = types.map((t, i) => newNode(t, 80 + i * 330, base + (i % 2) * 60)); const last = flow.nodes.length ? flow.nodes[flow.nodes.length - 1] : null
+    {modal === 'ai' && <AiPanel flow={flow} onLayout={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120) }} onClose={() => setModal(null)} onGen={types => { const base = flow.nodes.length ? Math.max(...flow.nodes.map(n => n.y)) + 220 : 100; const ns = types.map((t, i) => newNode(t, 80 + i * 330, base + (i % 2) * 60)); const last = flow.nodes.length ? flow.nodes[flow.nodes.length - 1] : null
       setFlow(f => ({ ...f, nodes: [...f.nodes, ...ns], edges: [...f.edges, ...(last ? [{ id: uid(), from: last.id, to: ns[0].id }] : []), ...ns.slice(1).map((n, i) => ({ id: uid(), from: ns[i].id, to: n.id }))] })); setModal(null); setReady(false); toast('Flujo generado con LeonaAI') }} />}
   </div>
 }
 
 const AI_SUG = ['Armar bienvenida con menú de opciones', 'Agregar cobro PIX después de elegir el plan', 'Reorganizar el canvas y conectar los caminos que faltan', 'Crea una imagen de portada para el mensaje de bienvenida']
-function AiPanel({ flow, onClose, onGen }) {
+export function autoLayout(f) {
+  const out = {}; f.edges.forEach(e => (out[e.from] = out[e.from] || []).push(e.to))
+  const start = f.nodes.find(n => n.type === 'inicio') || f.nodes[0]; if (!start) return f
+  const depth = { [start.id]: 0 }; const q = [start.id]
+  while (q.length) { const id = q.shift(); (out[id] || []).forEach(t => { if (depth[t] == null) { depth[t] = depth[id] + 1; q.push(t) } }) }
+  const H = n => 230 + (nodeOuts(n) || []).length * 50 + (n.type === 'carrusel' ? 160 : n.type === 'template' ? 60 : 0)
+  const cols = {}; f.nodes.filter(n => depth[n.id] != null).forEach(n => (cols[depth[n.id]] = cols[depth[n.id]] || []).push(n))
+  const pos = {}; let bottom = 0; Object.entries(cols).forEach(([d, ns]) => { let y = 0; ns.forEach(n => { pos[n.id] = { x: +d * 360, y }; y += H(n) + 40 }); bottom = Math.max(bottom, y) })
+  const loose = f.nodes.filter(n => depth[n.id] == null); let row = 0, rowH = 0
+  loose.forEach((n, i) => { const c = i % 6; if (c === 0 && i) { row += rowH + 60; rowH = 0 } pos[n.id] = { x: c * 360, y: bottom + 120 + row }; rowH = Math.max(rowH, H(n)) })
+  return { ...f, nodes: f.nodes.map(n => ({ ...n, ...pos[n.id] })) }
+}
+function AiPanel({ flow, onClose, onGen, onLayout }) {
   const nav = useNavigate(); const toast = useToast()
   const [tokR] = useStore('tokens', {}); const bal = +(tokR && tokR.balance) || 0
   const [threads, setThreads] = useStore('ai_threads_' + flow.id, [])
@@ -361,7 +374,7 @@ function AiPanel({ flow, onClose, onGen }) {
   const send = q => { q = (q ?? txt).trim(); if (!q || bal <= 0 || busy) return; setTxt('')
     let id = cur; const um = { r: 'u', t: q }
     if (!th) { id = uid(); setThreads(ts => [{ id, title: q.slice(0, 48), at: Date.now(), msgs: [um] }, ...ts]); setCur(id) } else setThreads(ts => ts.map(t => t.id === id ? { ...t, msgs: [...t.msgs, um] } : t))
-    setBusy(true); setTimeout(() => { const types = plan(q); if (!/reorganiz|imagen|portada/.test(q.toLowerCase())) onGen(types)
+    setBusy(true); setTimeout(() => { const types = plan(q); if (/reorganiz/.test(q.toLowerCase())) onLayout(); else if (!/imagen|portada/.test(q.toLowerCase())) onGen(types)
       const a = /reorganiz/.test(q.toLowerCase()) ? 'Reorganicé el canvas: alineé los bloques por columnas y revisé las conexiones que faltaban.' : /imagen|portada/.test(q.toLowerCase()) ? 'Generar imágenes requiere la integración de imagen activa. Configúrala en Integraciones y lo intento de nuevo.' : `Listo. Agregué ${types.length} bloques al canvas: ${types.map(t => FB[t][0]).join(' → ')}. Revisa cada bloque y ajusta los textos.`
       setThreads(ts => ts.map(t => t.id === id ? { ...t, msgs: [...t.msgs, { r: 'a', t: a }] } : t)); setBusy(false) }, 1400) }
   return <div className="ai-pn">
