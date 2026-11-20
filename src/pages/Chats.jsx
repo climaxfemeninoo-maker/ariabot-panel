@@ -221,7 +221,7 @@ function ContactForm({ ConnPick, tags, onBack, onClose, onSave }) {
       <input className="l-in slate2" placeholder="Valor" value={x.v} onChange={e => setF({ ...f, fields: f.fields.map((y, j) => j === i ? { ...y, v: e.target.value } : y) })} />
       <button className="ch-ib" style={{ height: 39, width: 39 }} onClick={() => setF({ ...f, fields: f.fields.filter((_, j) => j !== i) })}><Trash2 size={15} /></button></div>)}
     <button className="ch-dash" onClick={() => setF({ ...f, fields: [...f.fields, { k: '', v: '' }] })}><Plus size={16} />Añadir campo</button>
-    <div style={{ height: 1, background: '#3a3550', margin: '26px 0 22px' }} />
+    <div style={{ height: 1, background: 'var(--border2)', margin: '26px 0 22px' }} />
     <div style={{ display: 'flex', gap: 9 }}>
       <button className="lb2 o" style={{ height: 34, fontSize: 13, padding: '0 13px' }} disabled={!ok} onClick={() => save(false)}><Save size={15} />Guardar contacto</button>
       <button className="lb2 p" style={{ height: 34, fontSize: 13, padding: '0 13px' }} disabled={!ok} onClick={() => save(true)}><MessageSquare size={15} />Guardar y abrir conversación</button>

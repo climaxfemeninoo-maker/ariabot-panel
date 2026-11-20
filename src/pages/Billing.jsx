@@ -20,7 +20,7 @@ export function AssinarModal({ open, onClose }) {
     if (ct === 'br' && pay === 'card' && (c.num.replace(/\D/g, '').length < 13 || !c.name.trim() || !c.mm || !c.aa || c.cvv.length < 3 || c.doc.replace(/\D/g, '').length < 11)) return toast('Complete los datos de la tarjeta', 'err')
     onClose(); toast(`Redirigiendo al pago de ${n} instancia${n > 1 ? 's' : ''}…`, 'info')
   }
-  const In = (k, ph, f = x => x, extra = {}) => <input className="l-in" style={{ height: 37, background: '#221c3f' }} value={c[k]} placeholder={ph} onChange={e => setC({ ...c, [k]: f(e.target.value) })} {...extra} />
+  const In = (k, ph, f = x => x, extra = {}) => <input className="l-in" style={{ height: 37, background: 'var(--in2)' }} value={c[k]} placeholder={ph} onChange={e => setC({ ...c, [k]: f(e.target.value) })} {...extra} />
   return <div className="overlay" onMouseDown={e => e.target === e.currentTarget && onClose()}>
     <div className="modal db-m" style={{ maxHeight: '94vh' }}>
       <div className="mh"><div><h2>Assinar agora</h2><p>Escolha quantas instâncias deseja contratar. A cobrança mensal é recorrente por instância.</p></div>
@@ -59,7 +59,7 @@ export function TokensModal({ open, onClose }) {
     <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 3 }}>1.000 tokens Leona = R$ 1,00. Arrastra la barra o escribe el monto.</div>
     <input type="range" className="rng" style={{ marginTop: 17, background: `linear-gradient(90deg,#8b5cf6 ${(n - 10000) / 990000 * 100}%,#e5e7eb 0)` }} min={10000} max={1000000} step={10000} value={n} onChange={e => setN(+e.target.value)} />
     <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 25 }}>Tokens</div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 7 }}><input className="l-in" style={{ height: 37, background: '#221c3f', fontWeight: 700 }} value={n.toLocaleString('en-US')} onChange={e => setN(Math.min(10000000, +e.target.value.replace(/\D/g, '') || 0))} onBlur={() => setN(x => Math.max(10000, x))} /><span style={{ fontSize: 13.3, color: '#94a3b8', whiteSpace: 'nowrap' }}>tokens Leona</span></div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 7 }}><input className="l-in" style={{ height: 37, background: 'var(--in2)', fontWeight: 700 }} value={n.toLocaleString('en-US')} onChange={e => setN(Math.min(10000000, +e.target.value.replace(/\D/g, '') || 0))} onBlur={() => setN(x => Math.max(10000, x))} /><span style={{ fontSize: 13.3, color: '#94a3b8', whiteSpace: 'nowrap' }}>tokens Leona</span></div>
     <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 6 }}>Pagas</div>
     <div style={{ fontSize: 16.8, fontWeight: 700, marginTop: 2 }}>BRL {(n / 1000).toFixed(2)}</div>
     <button className="ms-b1" style={{ width: '100%', marginTop: 11, borderRadius: 5, fontWeight: 600 }} onClick={() => pay('Pix o tarjeta')}><small>BR</small>Pix o tarjeta</button>

@@ -9,7 +9,7 @@ const Srch = ({ v, set, ph, label = 'Buscar' }) => <div>{label && <label classNa
 const EmptyIn = ({ ic: Ic, t, d, btn, onClick }) => <div className="sa-empty" style={{ height: 258, marginTop: 17 }}><Ic size={44} strokeWidth={1.9} className="big" /><h3 style={{ fontSize: 16.3 }}>{t}</h3><p>{d}</p>{btn && <button className="lp-btn p" style={{ marginTop: 18 }} onClick={onClick}><Plus size={16} />{btn}</button>}</div>
 const Foot = ({ onCancel, onOk, ok, label, disabled }) => <div style={{ borderTop: '1px solid var(--border2)', marginTop: 20, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11 }}><button className="lb2 g" onClick={onCancel}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8' }} disabled={disabled} onClick={onOk}>{label}</button></div>
 const Lb = ({ children, req, mt = 0 }) => <label className="tm-lb" style={{ marginTop: mt }}>{children}{req && <span style={{ color: '#ef4444' }}> *</span>}</label>
-const IN = { background: '#221c3f', height: 37 }
+const IN = { background: 'var(--in2)', height: 37 }
 const Badge = ({ c = '#a78bfa', children }) => <span className="tm-badge" style={{ color: c, background: c + '22', borderColor: c + '55', fontSize: 13.3, height: 24, borderRadius: 12, fontWeight: 500 }}>{children}</span>
 function Tbl({ cols, rows, grid }) {
   return <div style={{ border: '1px solid var(--border)', borderRadius: 5, marginTop: 17, overflow: 'hidden' }}>
@@ -164,7 +164,7 @@ export function Integrations() {
     <div style={{ fontSize: 15.5, fontWeight: 700, marginTop: 15 }}>{p[1]}</div>
     <div style={{ fontSize: 13.3, lineHeight: 1.6, color: 'var(--soft)', marginTop: 8, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p[3]}</div>
     <div style={{ borderTop: '1px solid var(--border)', marginTop: 'auto', paddingTop: 15, display: 'flex', justifyContent: 'flex-end' }}><button className="lb2 g sm" style={{ height: 31, minWidth: 0, fontSize: 12.5 }} onClick={() => setM({ prov: p[0], label: '', key: '' })}>Configurar</button></div></div>
-  const H = ({ t, n, r }) => <div style={{ display: 'flex', alignItems: 'center', margin: '27px 0 12px' }}><span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.18em', color: '#cbd5e1' }}>{t}{n != null && <b style={{ color: 'var(--text)', marginLeft: 6, letterSpacing: '.05em' }}>{n}</b>}</span><span style={{ marginLeft: 'auto', fontSize: 11.5, color: 'var(--soft)' }}>{r}</span></div>
+  const H = ({ t, n, r }) => <div style={{ display: 'flex', alignItems: 'center', margin: '27px 0 12px' }}><span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.18em', color: 'var(--soft)' }}>{t}{n != null && <b style={{ color: 'var(--text)', marginLeft: 6, letterSpacing: '.05em' }}>{n}</b>}</span><span style={{ marginLeft: 'auto', fontSize: 11.5, color: 'var(--soft)' }}>{r}</span></div>
   return <div>
     <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border)' }}>{[['all', 'Todas'], ['whatsapp', 'WhatsApp'], ['facturas', 'Facturas'], ['seguimiento', 'Seguimiento'], ['pagos', 'Pagos'], ['ia', 'Inteligencia artificial']].map(([k, l]) => <button key={k} onClick={() => setTab(k)} style={{ height: 41, padding: '0 14px', fontSize: 13.3, fontWeight: 600, color: tab === k ? '#a78bfa' : 'var(--text)', borderBottom: '2px solid ' + (tab === k ? '#8b5cf6' : 'transparent'), marginBottom: -1, display: 'flex', alignItems: 'center', gap: 11 }}>{l}{cnt(k) > 0 && <small style={{ fontSize: 10.5, fontWeight: 700 }}>{cnt(k)}</small>}</button>)}</div>
     <div className="lp-srch" style={{ marginTop: 11 }}><Search size={15} /><input style={{ height: 30, fontWeight: 500 }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar integración..." /></div>
@@ -199,7 +199,7 @@ export function Tracking({ onBack }) {
   const Sec = ({ t, btn, onAdd, children }) => <div className="st-card" style={{ marginTop: 24, padding: '22px 22px 22px' }}><div style={{ display: 'flex', alignItems: 'center' }}><span style={{ fontSize: 15, fontWeight: 700 }}>{t}</span><button className="wh-btn" style={{ marginLeft: 'auto' }} onClick={onAdd}><Plus size={15} />{btn}</button></div>{children}</div>
   const Emp = ({ ic: Ic, t, d, btn, onAdd }) => <div style={{ border: '1px dashed var(--border)', borderRadius: 5, height: 256, marginTop: 17, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}><Ic size={44} strokeWidth={1.9} color="#94a3b8" /><div style={{ fontSize: 16, fontWeight: 700, marginTop: 17 }}>{t}</div><div style={{ fontSize: 13.3, color: '#94a3b8', marginTop: 9, maxWidth: 370, lineHeight: 1.45 }}>{d}</div>{btn && <button className="wh-btn" style={{ marginTop: 17 }} onClick={onAdd}><Plus size={15} />{btn}</button>}</div>
   const code = 'código'
-  const preview = msg => { const i = Math.min(5, msg.length); return <>{msg.slice(0, i)}<span style={{ background: '#2e2654', color: '#a78bfa', borderRadius: 4, padding: '1px 6px', margin: '0 4px' }}>{code}</span>{msg.slice(i)}</> }
+  const preview = msg => { const i = Math.min(5, msg.length); return <>{msg.slice(0, i)}<span style={{ background: 'var(--btn2h)', color: '#a78bfa', borderRadius: 4, padding: '1px 6px', margin: '0 4px' }}>{code}</span>{msg.slice(i)}</> }
   const sum = lm ? Object.values(lm.inst).reduce((a, b) => a + (+b || 0), 0) : 0
   const lOk = lm && lm.name.trim() && lm.msg.trim().length >= 6 && sum === 100
   const base = location.origin + '/r/'
@@ -293,7 +293,7 @@ export function Mcp() {
         <button className="lp-btn p" style={{ height: 33, fontSize: 12.5 }} onClick={() => setM({ step: 1, type: 'static', name: '' })}><Plus size={15} />Nueva credencial</button></div>
       <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: 17, paddingBottom: 15, borderBottom: '1px solid var(--border)' }}>
         <div><div style={{ fontSize: 14.2, fontWeight: 700 }}>Servidor MCP</div><div style={{ fontSize: 11.6, color: 'var(--soft)', marginTop: 6 }}>Use la URL y una credencial abajo para conectar su agente externo de IA.</div></div>
-        <span className="pf-on" style={{ marginLeft: 'auto', marginTop: 0, height: 22, fontSize: 11.6, ...(active ? {} : { color: '#94a3b8', background: '#2a2547', borderColor: '#3a3456' }) }}><i style={active ? null : { background: '#94a3b8' }} />{active ? 'Credenciales activas' : 'Sin credenciales activas'}</span></div>
+        <span className="pf-on" style={{ marginLeft: 'auto', marginTop: 0, height: 22, fontSize: 11.6, ...(active ? {} : { color: '#94a3b8', background: 'var(--chip)', borderColor: 'var(--border2)' }) }}><i style={active ? null : { background: '#94a3b8' }} />{active ? 'Credenciales activas' : 'Sin credenciales activas'}</span></div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 19, marginTop: 15 }}>
         <div><div style={{ fontSize: 14.2, fontWeight: 600, marginBottom: 10 }}>URL</div>
           <div style={{ display: 'flex', gap: 9 }}><div className="pf-in" style={{ flex: 1 }}><Globe size={15} /><input readOnly value={URL_} style={{ background: 'var(--deep)', fontFamily: 'ui-monospace,Menlo,monospace', fontSize: 11.3, height: 37 }} /></div>
@@ -301,7 +301,7 @@ export function Mcp() {
           <div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 11, lineHeight: 1.65 }}>Cursor y n8n: token estático + Bearer.<br />Claude: OAuth, solo pegue la URL.</div></div>
         <div style={{ border: '1px solid var(--border)', borderRadius: 6, padding: '18px 15px 16px' }}><div style={{ fontSize: 11.6, fontWeight: 700, letterSpacing: '.03em' }}>AUTENTICACIÓN</div>
           <div style={{ fontSize: 11.6, color: 'var(--text)', marginTop: 9 }}>Envíe su token en el encabezado Authorization como Bearer:</div>
-          <code style={{ display: 'block', background: '#241e42', borderRadius: 3, padding: '7px 10px', marginTop: 10, fontSize: 9.8, fontWeight: 700 }}>Authorization: Bearer su-token</code></div>
+          <code style={{ display: 'block', background: 'var(--btn3)', borderRadius: 3, padding: '7px 10px', marginTop: 10, fontSize: 9.8, fontWeight: 700 }}>Authorization: Bearer su-token</code></div>
       </div>
     </div>
     <div className="st-card" style={{ marginTop: 16, padding: '27px 19px 19px' }}>
@@ -317,7 +317,7 @@ export function Mcp() {
       {creds.length > 0 && rows.length === 0 && <div style={{ padding: 18, textAlign: 'center', fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Ninguna credencial coincide.</div>}
     </div>
     {m?.step === 'info' && <LModal open onClose={() => setM(null)} title="¿Qué es Leona MCP?" width={479} bodyStyle={{ padding: '26px 24px 0' }}>
-      <div style={{ display: 'flex', gap: 14, background: '#221c3f', border: '1px solid #4c3a8a', borderRadius: 7, padding: '17px 17px' }}><Sparkles size={20} color="#a78bfa" style={{ flexShrink: 0 }} /><div><b style={{ fontSize: 14.3 }}>Conectando inteligencia a sus datos</b><div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--soft)', marginTop: 4 }}>El Model Context Protocol (MCP) permite que agentes de IA interactúen con las herramientas y recursos de su cuenta Leona de forma segura.</div></div></div>
+      <div style={{ display: 'flex', gap: 14, background: 'var(--in2)', border: '1px solid #4c3a8a', borderRadius: 7, padding: '17px 17px' }}><Sparkles size={20} color="#a78bfa" style={{ flexShrink: 0 }} /><div><b style={{ fontSize: 14.3 }}>Conectando inteligencia a sus datos</b><div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--soft)', marginTop: 4 }}>El Model Context Protocol (MCP) permite que agentes de IA interactúen con las herramientas y recursos de su cuenta Leona de forma segura.</div></div></div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14.3, fontWeight: 700, marginTop: 22 }}><BookIc />¿Para qué sirve?</div>
       <p style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--soft)', marginTop: 12 }}>Con una credencial válida, clientes como Cursor y Claude pueden listar contactos, conexiones, flujos y ejecutar acciones permitidas por su cuenta.</p>
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14.3, fontWeight: 700, marginTop: 20 }}><ShieldIc />Buenas prácticas</div>
@@ -326,7 +326,7 @@ export function Mcp() {
     </LModal>}
     {m?.step === 1 && <LModal open onClose={() => setM(null)} title="Nueva credencial" width={430} bodyStyle={{ padding: '21px 22px 22px' }}>
       <div style={{ fontSize: 13.3, color: 'var(--soft)', marginBottom: 14 }}>Elija el tipo de autenticación.</div>
-      {[['static', 'Token estático', 'Cursor, n8n y similares.'], ['oauth', 'OAuth', 'Claude.ai y Claude Desktop.']].map(([k, t, d]) => <button key={k} onClick={() => setM({ ...m, type: k })} style={{ display: 'block', width: '100%', textAlign: 'left', border: '1px solid ' + (m.type === k ? '#6d4fd0' : 'var(--border)'), boxShadow: m.type === k ? '0 0 0 1px #6d4fd0' : 'none', background: m.type === k ? '#221c3f' : 'var(--deep)', borderRadius: 7, padding: '13px 13px', marginBottom: 8 }}><b style={{ fontSize: 13.3 }}>{t}</b><div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 5 }}>{d}</div></button>)}
+      {[['static', 'Token estático', 'Cursor, n8n y similares.'], ['oauth', 'OAuth', 'Claude.ai y Claude Desktop.']].map(([k, t, d]) => <button key={k} onClick={() => setM({ ...m, type: k })} style={{ display: 'block', width: '100%', textAlign: 'left', border: '1px solid ' + (m.type === k ? '#6d4fd0' : 'var(--border)'), boxShadow: m.type === k ? '0 0 0 1px #6d4fd0' : 'none', background: m.type === k ? 'var(--in2)' : 'var(--deep)', borderRadius: 7, padding: '13px 13px', marginBottom: 8 }}><b style={{ fontSize: 13.3 }}>{t}</b><div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 5 }}>{d}</div></button>)}
       <Lb mt={9}>Nombre</Lb><input className="l-in" style={IN} autoFocus value={m.name} onChange={e => setM({ ...m, name: e.target.value })} onKeyDown={e => e.key === 'Enter' && m.name.trim() && create()} placeholder="Ej.: Claude, Cursor" />
       <div style={{ display: 'flex', gap: 11, marginTop: 20 }}><button className="lb2 g" onClick={() => setM(null)}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8', minWidth: 72 }} disabled={!m.name.trim()} onClick={create}>Crear</button></div>
     </LModal>}

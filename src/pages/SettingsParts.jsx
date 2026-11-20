@@ -6,7 +6,7 @@ import { LModal, LSelect, Toggle } from './leona'
 const ME = { id: 'me', name: 'Pablo Monja Suclupe', email: 'k4el.ux@gmail.com', role: 'owner', dep: '' }
 const ROLES = { owner: ['Propietario', '#f59e0b', Crown], admin: ['Administrador', '#a78bfa', ShieldCheck], member: ['Miembro', '#60a5fa', Shield] }
 const Info = ({ children, ic: Ic = Mail }) => <div className="pf-hint" style={{ height: 'auto', padding: '11px 14px', alignItems: 'flex-start', lineHeight: 1.5, marginTop: 9 }}><Ic size={15} style={{ marginTop: 2, flexShrink: 0 }} />{children}</div>
-const EmailIn = ({ v, set }) => <div className="pf-in"><Mail size={15} /><input type="email" autoFocus style={{ background: '#221c3f', fontWeight: 500 }} value={v} onChange={e => set(e.target.value)} placeholder="usuario@ejemplo.com" /></div>
+const EmailIn = ({ v, set }) => <div className="pf-in"><Mail size={15} /><input type="email" autoFocus style={{ background: 'var(--in2)', fontWeight: 500 }} value={v} onChange={e => set(e.target.value)} placeholder="usuario@ejemplo.com" /></div>
 const okMail = v => /^\S+@\S+\.\S+$/.test(v.trim())
 export const Empty = ({ ic: Ic, t, d, children, h = 178 }) => <div className="sa-empty" style={{ height: h }}><Ic size={40} strokeWidth={1.9} className="big" /><h3>{t}</h3>{d && <p>{d}</p>}{children}</div>
 
@@ -18,9 +18,9 @@ export function NewAccountModal({ open, onClose }) {
   const slugify = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   const save = () => { setCompanies(cs => [...cs, { id: uid(), name: f.name.trim(), desc: f.desc.trim(), slug: f.slug || slugify(f.name), active: f.active }]); toast('Cuenta creada: ' + f.name.trim()); setF({ name: '', desc: '', slug: '', active: true }); onClose() }
   return <LModal open onClose={onClose} title="Nueva cuenta" width={491} bodyStyle={{ padding: '24px 24px 0' }}>
-    <label className="tm-lb">Nombre de la cuenta *</label><input className="l-in" style={{ background: '#221c3f', height: 37 }} autoFocus value={f.name} onChange={e => setF({ ...f, name: e.target.value })} placeholder="Ingrese el nombre de la cuenta" />
-    <label className="tm-lb" style={{ marginTop: 20 }}>Descripción</label><textarea className="l-in" style={{ background: '#221c3f', height: 73, padding: '10px 13px', resize: 'vertical' }} value={f.desc} onChange={e => setF({ ...f, desc: e.target.value })} placeholder="Descripción opcional" />
-    <label className="tm-lb" style={{ marginTop: 16 }}>Slug</label><input className="l-in" style={{ background: '#221c3f', height: 37 }} value={f.slug} onChange={e => setF({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })} placeholder={f.name ? slugify(f.name) : 'slug-de-cuenta (opcional)'} />
+    <label className="tm-lb">Nombre de la cuenta *</label><input className="l-in" style={{ background: 'var(--in2)', height: 37 }} autoFocus value={f.name} onChange={e => setF({ ...f, name: e.target.value })} placeholder="Ingrese el nombre de la cuenta" />
+    <label className="tm-lb" style={{ marginTop: 20 }}>Descripción</label><textarea className="l-in" style={{ background: 'var(--in2)', height: 73, padding: '10px 13px', resize: 'vertical' }} value={f.desc} onChange={e => setF({ ...f, desc: e.target.value })} placeholder="Descripción opcional" />
+    <label className="tm-lb" style={{ marginTop: 16 }}>Slug</label><input className="l-in" style={{ background: 'var(--in2)', height: 37 }} value={f.slug} onChange={e => setF({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })} placeholder={f.name ? slugify(f.name) : 'slug-de-cuenta (opcional)'} />
     <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 6 }}>El slug se genera a partir del nombre. Use solo minúsculas, números y guiones.</div>
     <label style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.3, marginTop: 17, cursor: 'pointer' }}><input type="checkbox" checked={f.active} onChange={e => setF({ ...f, active: e.target.checked })} style={{ width: 15, height: 15, accentColor: '#3b82f6' }} />Cuenta activa</label>
     <div style={{ borderTop: '1px solid var(--border2)', marginTop: 21, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11 }}>
@@ -184,7 +184,7 @@ function QRModal({ init, onClose, onSave }) {
   const pick = (i, t) => { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = TYPES[t][3]; inp.onchange = () => { const f = inp.files[0]; if (!f) return; if (f.size > TYPES[t][2]) return toast(`El archivo supera ${lim(TYPES[t][2])}`, 'err'); set(i, { file: { name: f.name, size: f.size } }) }; inp.click() }
   return <LModal open onClose={onClose} title={init ? 'Editar respuesta rápida' : 'Nueva respuesta rápida'} desc="Configure el atajo y las acciones enviadas al disparar" width={649} bodyStyle={{ padding: '20px 20px 0' }}>
     <label className="tm-lb">Atajo</label>
-    <div className="pf-in"><Hash size={15} /><input style={{ background: '#221c3f', fontWeight: 500 }} autoFocus value={short} onChange={e => setShort(e.target.value.toLowerCase())} placeholder="ej.: saludo" /></div>
+    <div className="pf-in"><Hash size={15} /><input style={{ background: 'var(--in2)', fontWeight: 500 }} autoFocus value={short} onChange={e => setShort(e.target.value.toLowerCase())} placeholder="ej.: saludo" /></div>
     <div style={{ fontSize: 11.5, color: short && !/^[a-z0-9 _-]+$/.test(short) ? '#ef4444' : '#94a3b8', marginTop: 6 }}>Use solo minúsculas, números, guiones, guiones bajos y espacios</div>
     <label className="tm-lb" style={{ marginTop: 17 }}>Agregar acción</label>
     <div className="qr-acts">{Object.entries(TYPES).map(([k, [l, Ic]]) => <button key={k} className="qr-act" onClick={() => setActs(a => [...a, { id: uid(), type: k, text: '', file: null }])}><Ic size={17} />{l}</button>)}</div>

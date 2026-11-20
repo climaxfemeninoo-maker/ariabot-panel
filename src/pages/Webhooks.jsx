@@ -232,7 +232,7 @@ function Detail({ id }) {
 
       <div className="wh-box" style={{ paddingTop: 23 }}>
         <div className="wh-h3">Conexión y disparo de flujo</div>
-        <div className="wh-sub wh-trig" style={{ marginTop: 19, display: "flex", gap: 11, background: "#221c3f", padding: "14px 15px 18px 13px" }}>
+        <div className="wh-sub wh-trig" style={{ marginTop: 19, display: "flex", gap: 11, background: "var(--in2)", padding: "14px 15px 18px 13px" }}>
           <span className="wh-ib" style={{ background: 'rgba(245,158,11,.14)' }}><Workflow size={14} color="#f59e0b" /></span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}><span style={{ fontSize: 13.3, fontWeight: 600 }}>Número que dispara{d.trigger.on && <span style={{ color: '#ef4444' }}> *</span>}</span>
