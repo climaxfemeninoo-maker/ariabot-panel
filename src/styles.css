@@ -1678,8 +1678,8 @@ html:not(.dark) .fe-edge{stroke:#9ca3af}
 /* ===== Animaciones de entrada (como Leona) ===== */
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes spinR{to{transform:rotate(360deg)}}
-.rt-in{animation:fadeIn .3s ease-out both}
-.rt-in .card,.rt-in .st-card,.rt-in .lp-card,.rt-in .db-card,.rt-in .kpi,.rt-in .fl-panel,.rt-in .ct-tbl,.rt-in .wh-card,.rt-in .fbx-panel,.rt-in .bl-card{animation:fadeIn .3s ease-out both}
+.rt-in{animation:fadeIn .3s ease-out backwards}
+.rt-in .card,.rt-in .st-card,.rt-in .lp-card,.rt-in .db-card,.rt-in .kpi,.rt-in .fl-panel,.rt-in .ct-tbl,.rt-in .wh-card,.rt-in .fbx-panel,.rt-in .bl-card{animation:fadeIn .3s ease-out backwards}
 .rt-load{position:fixed;inset:0;left:var(--sidew,240px);z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);animation:fadeIn .15s both;pointer-events:none}
 .rt-load .rt-sp{width:32px;height:32px;border-radius:50%;border:2px solid #8b5cf6;border-top-color:transparent;animation:spinR 1s linear infinite}
 .rt-load span{font-size:13.5px;color:var(--muted)}
