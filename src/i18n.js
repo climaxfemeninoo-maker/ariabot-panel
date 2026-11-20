@@ -452,13 +452,55 @@ sello|selo|seal
 progreso|progresso|progress
 faltan|faltam|remaining
 niveles|níveis|levels`
+const PTS = `Acompanhe seu faturamento e monte um pedido só com os prêmios desbloqueados. Frete grátis na hora de fechar.|Sigue tu facturación y arma un pedido solo con los premios desbloqueados. Envío gratis al cerrar.|Track your revenue and build an order with only your unlocked rewards. Free shipping at checkout.
+Atualizado pela Nubify.|Actualizado por Nubify.|Updated by Nubify.
+Conta #13120|Cuenta #13120|Account #13120
+Em produção|En producción|In production
+Este primeiro lote está sendo produzido de uma vez, então o envio pode levar cerca de 30 dias úteis. Assim que as peças ficarem prontas, saem na hora. Agradecemos a paciência de todos.|Este primer lote se está produciendo de una vez, así que el envío puede tardar unos 30 días hábiles. Apenas las piezas estén listas, salen de inmediato. Agradecemos la paciencia de todos.|This first batch is being produced all at once, so shipping may take about 30 business days. As soon as the pieces are ready, they ship right away. Thanks for your patience.
+Faturamento acumulado|Facturación acumulada|Accumulated revenue
+Premiações|Premios|Rewards
+Primeiro lote em produção|Primer lote en producción|First batch in production
+Requisitos para resgate|Requisitos para canjear|Requirements to redeem
+SUA JORNADA|TU RECORRIDO|YOUR JOURNEY
+UNIDADES EXTRAS|UNIDADES EXTRA|EXTRA UNITS
+Unidades extras|Unidades extra|Extra units
+cada|c/u|each
+Você ainda não tem pedidos nesta trilha.|Aún no tienes pedidos en esta ruta.|You don't have any orders on this track yet.
+BLOQUEADO|BLOQUEADO|LOCKED
+DESBLOQUEADO|DESBLOQUEADO|UNLOCKED
+Faturamento atingido|Facturación alcanzada|Revenue reached
+Marcos desbloqueados|Hitos desbloqueados|Milestones unlocked
+Meta não atingida|Meta no alcanzada|Goal not reached
+Pedidos e rastreio|Pedidos y seguimiento|Orders & tracking
+Plano Nubify|Plan Nubify|Nubify plan
+Prontos para resgatar|Listos para canjear|Ready to redeem
+Requisitos pendentes|Requisitos pendientes|Pending requirements
+Resgatar|Canjear|Redeem
+3 meses de Nubify|3 meses de Nubify|3 months of Nubify
+Carta + Pulseira + Pin 50k|Carta + Pulsera + Pin 50k|Letter + Bracelet + Pin 50k
+Carta comemorativa|Carta conmemorativa|Commemorative letter
+Pulseira Nubify|Pulsera Nubify|Nubify bracelet
+Kit Placa Premium|Kit Placa Premium|Premium Plaque Kit
+Placa Premium|Placa Premium|Premium plaque
+Pin 100k (para grudar na placa)|Pin 100k (para pegar en la placa)|Pin 100k (to attach to the plaque)
+Acesso ao Grupo VIP + Eventos privados futuros|Acceso al Grupo VIP + futuros eventos privados|VIP Group access + future private events
+Pin 250k + Carta|Pin 250k + Carta|Pin 250k + Letter
+Pin 500k + Carta|Pin 500k + Carta|Pin 500k + Letter
+Pin 1M + Carta|Pin 1M + Carta|Pin 1M + Letter
+Pin 2M + Carta|Pin 2M + Carta|Pin 2M + Letter
+Olá,|Hola,|Hi,
+Bem-vindo!|¡Bienvenido!|Welcome!`
 const parse = s => { const pt = {}, en = {}; s.split('\n').forEach(l => { const [a, b, c] = l.split('|'); if (a) { pt[a] = b; en[a] = c } }); return { pt, en } }
 const PH = parse(P), WD = parse(W)
+const PX = (() => { const es = {}, en = {}; PTS.split('\n').forEach(l => { const [a, b, c] = l.split('|'); if (a) { es[a] = b; en[a] = c } }); return { es, en } })()
 const L = { 'pt-BR': 'pt', 'en-US': 'en' }
 export function tr(text, lang) {
-  const k = L[lang]; if (!k) return text
   const t = text.trim(); if (!t) return text
   const pre = text.slice(0, text.indexOf(t[0])), post = text.slice(text.lastIndexOf(t[t.length - 1]) + 1)
+  const px = lang === 'pt-BR' ? null : lang === 'en-US' ? PX.en : PX.es
+  if (px) { if (px[t] != null) return pre + px[t] + post; const ol = t.match(/^(Olá,)(.*)$/); if (ol) return pre + px['Olá,'] + ol[2] + post
+    for (const [a, es, en] of [['Próxima meta:', 'Próxima meta:', 'Next goal:'], ['Faltam', 'Faltan', 'Remaining'], ['Pedido criado:', 'Pedido creado:', 'Order created:'], ['instâncias', 'instancias', 'instances'], ['milhões', 'millones', 'million'], ['milhão', 'millón', 'million']]) if (t.includes(a)) return pre + t.replace(a, lang === 'en-US' ? en : es) + post }
+  const k = L[lang]; if (!k) return text
   if (PH[k][t] != null) return pre + PH[k][t] + post
   const m = t.match(/^(.*?)([:*…!?.]+)$/); if (m && PH[k][m[1].trim()] != null) return pre + PH[k][m[1].trim()] + m[2] + post
   const words = t.split(/(\s+)/); let known = 0, total = 0
@@ -490,7 +532,6 @@ export function applyLang(lang) {
   const it = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT); let n
   while ((n = it.nextNode())) { if (n.nodeType === 3) { const o = orig.get(n); if (o != null && done.get(n) === n.nodeValue) { n.nodeValue = o; done.set(n, o) } } else { const m = attrO.get(n); if (m) for (const a of ['placeholder', 'title']) if (m[a] != null && n.getAttribute(a) === m[a + '_t']) { n.setAttribute(a, m[a]); m[a + '_t'] = m[a] } } }
   document.documentElement.lang = lang === 'pt-BR' ? 'pt-BR' : lang === 'en-US' ? 'en' : 'es'
-  if (!L[lang]) return
   walk(document.body, lang)
   obs = new MutationObserver(ms => { for (const m of ms) { if (m.type === 'characterData') doText(m.target, lang); else if (m.type === 'attributes') doAttr(m.target, lang); else m.addedNodes.forEach(x => walk(x, lang)) } })
   obs.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['placeholder', 'title'] })
