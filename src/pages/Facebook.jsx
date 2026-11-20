@@ -83,8 +83,8 @@ export const usd = v => '$' + (+v || 0).toLocaleString('en-US', { minimumFractio
 const rnd = (a, b) => a + Math.random() * (b - a)
 const mkMetrics = () => { const imp = Math.round(rnd(1800, 9000)); const clics = Math.round(imp * rnd(.012, .035)); const ic = Math.round(clics * rnd(.08, .2)); const ventas = Math.round(ic * rnd(.2, .5)); return { gastos: rnd(18, 70), ingresos: ventas * rnd(27, 47), ventas, imp, clics, ic, vistas: Math.round(clics * .8), conv: Math.round(clics * .3) } }
 export function demo() {
-  const acc = [{ id: 'act_1', name: 'CP3', status: 'ACTIVE', card: 'Visa •••• 4821', ciclo: 74.3, total: 1840.55 }]
-  const camps = [['[CBO] Ebook Recetas - Conversión', 'Ebook Recetas'], ['[ABO] Ebook Uñas - Mensajes WhatsApp', 'Ebook Uñas'], ['Remarketing 7 días', 'Ebook Recetas']].map(([name, prod], i) => ({ id: 'c' + i, acc: 'act_1', name, prod, status: i === 2 ? 'PAUSED' : 'ACTIVE', budget: [50, 30, 20][i], m: mkMetrics(), created: Date.now() - (i + 3) * 864e5 }))
+  const acc = [{ id: 'act_1', name: 'CP1', status: 'PENDING', card: 'VISA *8844', ciclo: 3.73, total: 24.24 }]
+  const camps = [['[CBO]-[Ventas]-[PDF]-[Recetas]-[2026]-[PE]', 'Ebook Recetas'], ['[ABO]-[Mensajes]-[PDF]-[Uñas]-[2026]-[PE]', 'Ebook Uñas'], ['[Remarketing]-[7 días]-[Recetas]-[PE]', 'Ebook Recetas'], ['[CBO]-[Ventas]-[PDF]-[Telas]-[2026]-[PE]', 'Ebook Recetas'], ['[ABO]-[Ventas]-[Uñas]-[MX]', 'Ebook Uñas'], ['[Prueba]-[Creativos]-[Recetas]-[PE]', 'Ebook Recetas']].map(([name, prod], i) => ({ id: 'c' + i, acc: 'act_1', name, prod, status: i === 2 || i === 5 ? 'PAUSED' : 'ACTIVE', budget: [50, 30, 20, 25, 15, 10][i], m: mkMetrics(), created: Date.now() - (i + 3) * 864e5 }))
   const sets = camps.flatMap(c => [1, 2].map(j => ({ id: c.id + 's' + j, camp: c.id, acc: c.acc, prod: c.prod, name: `Público ${j === 1 ? 'Abierto' : 'Lookalike 1%'} - ${c.name.split(' ')[1] || 'Ebook'}`, status: c.status, budget: c.budget / 2, m: mkMetrics(), created: c.created })))
   const ads = sets.flatMap(s => [1, 2].map(k => ({ id: s.id + 'a' + k, set: s.id, camp: s.camp, acc: s.acc, prod: s.prod, name: `AD${String(k).padStart(2, '0')} - ${k === 1 ? 'Vídeo testimonio' : 'Imagen oferta'}`, status: s.status, m: mkMetrics(), created: s.created })))
   return { acc, camps, sets, ads, products: ['Ebook Recetas', 'Ebook Uñas'] }
@@ -147,7 +147,7 @@ export default function Facebook() {
   const [cols, setCols] = useStore('fbx_cols', DEF_ORDER)
   const [adv, setAdv] = useStore('fbx_adv', { skipUnselected: false })
   const [upd, setUpd] = useStore('fbx_upd', Date.now())
-  const [st, setSt] = useState({}); const [, tick] = useState(0)
+  const [st, setSt] = useState({}); const [sort, setSort] = useState({ k: null, dir: -1 }); const [, tick] = useState(0)
   const [sel, setSel] = useState({ acc: [], camp: [], set: [], ad: [] })
   const [menu, setMenu] = useState(false); const [modal, setModal] = useState(null); const [folded, setFolded] = useState(false); const [spin, setSpin] = useState(false)
   const mref = useRef(); useOutside(mref, () => setMenu(false))
@@ -162,17 +162,19 @@ export default function Facebook() {
   const rows = useMemo(() => {
     const accOk = x => !F.accs || F.accs.includes(d.acc.find(a => a.id === x.acc)?.name)
     const prodOk = x => !F.prods || F.prods.includes(x.prod)
-    const parentOk = x => { if (!adv.skipUnselected) return true; if (tab === 'set' && sel.camp.length) return sel.camp.includes(x.camp); if (tab === 'ad') { if (sel.set.length) return sel.set.includes(x.set); if (sel.camp.length) return sel.camp.includes(x.camp) } if (tab !== 'acc' && sel.acc.length) return sel.acc.includes(x.acc); return true }
+    const parentOk = x => { if (tab === 'set' && sel.camp.length) return sel.camp.includes(x.camp); if (tab === 'ad') { if (sel.set.length) return sel.set.includes(x.set); if (sel.camp.length) return sel.camp.includes(x.camp) } if (tab !== 'acc' && sel.acc.length) return sel.acc.includes(x.acc); return true }
     const now = new Date(upd).toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
     const base = x => ({ ultAct: now, id: x.id, creacion: x.created ? new Date(x.created).toLocaleDateString('es-PE') : null, distribucion: x.status === 'ACTIVE' ? 'Activa' : 'Desactivada', ca: d.acc.find(a => a.id === x.acc)?.name })
     let list
     if (tab === 'acc') list = d.acc.map(a => { const ms = d.camps.filter(c => c.acc === a.id).map(c => c.m); const m = ms.reduce((s, x) => Object.fromEntries(Object.keys(x).map(k => [k, (s[k] || 0) + x[k]])), {})
       const b = d.camps.filter(c => c.acc === a.id && c.status === 'ACTIVE').reduce((s, c) => s + c.budget, 0)
-      return { ...a, prod: null, row: calc(m, f, { ...base({ ...a, acc: a.id }), ciclo: a.ciclo, tarjeta: a.card, estadoCuenta: a.status === 'ACTIVE' ? 'Activa' : 'Deshabilitada', totalGastado: a.total, presupuesto: b, limiteOferta: null, gastoMin: null, gastoMax: null, ca: a.name }) } })
+      return { ...a, prod: null, row: calc(m, f, { ...base({ ...a, acc: a.id }), ciclo: a.ciclo, tarjeta: a.card, estadoCuenta: ({ ACTIVE: 'Activa', PENDING: 'Pago pendiente' })[a.status] || 'Deshabilitada', totalGastado: a.total, presupuesto: b, limiteOferta: null, gastoMin: null, gastoMax: null, ca: a.name }) } })
     else { const src = tab === 'camp' ? d.camps : tab === 'set' ? d.sets : d.ads
       list = src.filter(x => accOk(x) && prodOk(x) && parentOk(x)).map(x => ({ ...x, row: calc(x.m, f, { ...base(x), presupuesto: x.budget ?? null, limiteOferta: x.budget ? x.budget * .35 : null, gastoMin: x.budget ? x.budget * .5 : null, gastoMax: x.budget ? x.budget * 1.5 : null }) })) }
-    return list.filter(x => x.name.toLowerCase().includes(name.toLowerCase()) && (status === 'any' || status === '' || x.status === status))
-  }, [data, tab, st, f, adv, sel, upd])
+    list = list.filter(x => x.name.toLowerCase().includes(name.toLowerCase()) && (status === 'any' || status === '' || x.status === status))
+    if (sort.k) { const g = x => sort.k === 'name' ? x.name : sort.k === 'status' ? x.status : (x.row[sort.k] ?? -Infinity); list = [...list].sort((a, b) => (g(a) > g(b) ? 1 : g(a) < g(b) ? -1 : 0) * sort.dir) }
+    return list
+  }, [data, tab, st, f, adv, sel, upd, sort])
 
   const shown = cols.filter(k => CM[k] && (tab === 'acc' || !ACC_ONLY.includes(k)))
   const tot = useMemo(() => { const s = {}; ['gastos', 'ingresos', 'ventas', 'imp', 'clics', 'ic', 'presupuesto', 'ciclo', 'totalGastado', 'conv', 'vistas', 'ventasInd', 'ventasTot', 'ingBrutos', 'impuesto', 'costoProd', 'ventasPend', 'ventasRech', 'ventasReemb', 'ingReemb', 'ingPend', 'registros', 'limiteOferta', 'gastoMin', 'gastoMax'].forEach(k => s[k] = rows.reduce((a, r) => a + (+r.row[k] || 0), 0))
@@ -186,12 +188,22 @@ export default function Facebook() {
   const S = sel[tab]; const setS = v => setSel(s => ({ ...s, [tab]: v }))
   const exportCsv = () => downloadCSV(`${plural}.csv`, [[ent, ...shown.map(k => CM[k][2])], ...rows.map(r => [r.name, ...shown.map(k => fmt(k, r.row[k]))])])
   const nameHdr = tab === 'acc' ? 'Cuenta' : ent
+  const pl = (n, a, b) => `${n} ${n === 1 ? a : b}`
+  const tabLabel = (k, l) => { if (k === 'camp' && sel.acc.length) return 'Camp. de ' + pl(sel.acc.length, 'cuenta', 'cuentas')
+    if (k === 'set') { if (sel.camp.length) return 'Conj. de ' + pl(sel.camp.length, 'campaña', 'campañas'); if (sel.acc.length) return 'Conj. de ' + pl(sel.acc.length, 'cuenta', 'cuentas') }
+    if (k === 'ad') { if (sel.set.length) return 'Anun. de ' + pl(sel.set.length, 'conjunto', 'conjuntos'); if (sel.camp.length) return 'Anun. de ' + pl(sel.camp.length, 'campaña', 'campañas'); if (sel.acc.length) return 'Anun. de ' + pl(sel.acc.length, 'cuenta', 'cuentas') }
+    return l }
+  const anySel = Object.values(sel).some(v => v.length)
+  const H = ({ k, children, cls = '' }) => <th className={cls + ' srt' + (sort.k === k ? ' on' : '')} onClick={() => setSort(s => ({ k, dir: s.k === k ? -s.dir : -1 }))}><span>{children}<ArrowUp size={12} className="ar" style={{ transform: sort.k === k && sort.dir < 0 ? 'rotate(180deg)' : '' }} /></span></th>
+  const red = (k, v) => v != null && ((k === 'ganancia' || k === 'roi' || k === 'margen') ? v < 0 : k === 'roas' ? v < 1 : false)
+  const cell = (k, v) => k === 'ganancia' && v < 0 ? '$ -' + usd(-v).slice(1) : k === 'roas' && v != null ? (+v).toFixed(2).replace('.', ',') : fmt(k, v)
 
   return <div className="fbx">
-    <div className="fbx-tabs">{TABS.map(([k, l, I]) => <button key={k} className={tab === k ? 'on' : ''} onClick={() => { setTab(k); setMenu(false) }}><I size={20} strokeWidth={1.8} />{l}{k !== 'acc' && sel[{ camp: 'acc', set: 'camp', ad: 'set' }[k]]?.length > 0 && adv.skipUnselected && <i />}</button>)}</div>
+    <div className="fbx-tabs">{TABS.map(([k, l, I]) => <button key={k} className={tab === k ? 'on' : ''} onClick={() => { setTab(k); setMenu(false); setSort({ k: null, dir: -1 }) }}><I size={20} strokeWidth={1.8} /><span className="lb">{tabLabel(k, l)}</span>
+      {sel[k].length > 0 && <span className="fbx-sc" onClick={e => { e.stopPropagation(); setSel(s => ({ ...s, [k]: [] })) }}>{sel[k].length} {sel[k].length === 1 ? 'ítem' : 'ítems'}<X size={14} strokeWidth={2.4} /></span>}</button>)}</div>
     <div className="fbx-panel">
       <div className="fbx-bar">
-        <div className="fbx-ib" ref={mref}><button title="Configuración" className={menu ? 'on' : ''} onClick={() => setMenu(!menu)}><Settings size={17} /></button><button title="Exportar" onClick={exportCsv}><ArrowUp size={17} /></button><button title="Diagnóstico" onClick={() => setModal('diag')}><Activity size={17} /></button><button title={folded ? 'Mostrar filtros' : 'Ocultar filtros'} onClick={() => setFolded(!folded)}><ChevronDown size={17} style={{ transform: folded ? 'rotate(180deg)' : '' }} /></button>
+        <div className="fbx-ib" ref={mref}><button title="Configuración" className={menu ? 'on' : ''} onClick={() => setMenu(!menu)}><Settings size={17} /></button><button title="Exportar" onClick={exportCsv}><ArrowUp size={17} /></button><button title="Diagnóstico" onClick={() => setModal('diag')}><Activity size={17} /></button>{anySel && <a className="fbx-gestor" href="https://adsmanager.facebook.com/adsmanager/manage/campaigns" target="_blank" rel="noreferrer"><LayoutGrid size={16} />Abrir en Gestor</a>}<button title={folded ? 'Mostrar filtros' : 'Ocultar filtros'} onClick={() => setFolded(!folded)}><ChevronDown size={17} style={{ transform: folded ? 'rotate(180deg)' : '' }} /></button>
           {menu && <div className="fbx-menu" style={{ top: 44, width: 230 }}><button onClick={() => { setMenu(false); setModal('cols') }}><Columns2 size={16} />Personalizar Columnas</button><button onClick={() => { setMenu(false); setModal('adv') }}><SlidersHorizontal size={16} />Configuración Avanzada</button></div>}</div>
         <span className="fbx-chip"><CircleCheck size={12} strokeWidth={2.6} />Todas las ventas rastreadas</span>
         <span style={{ marginLeft: 'auto' }} className="fbx-upd">Actualizado {ago(upd)}</span>
@@ -205,16 +217,17 @@ export default function Facebook() {
         <div><label>Producto</label><Multi all={prods} value={F.prods ?? null} onChange={v => setF({ prods: v })} allLabel="Seleccionar todos" /></div>
       </div>}
       <div className="fbx-tw"><table className="fbx-t"><thead><tr>
-        {tab !== 'acc' && <><th className="ck"><input type="checkbox" checked={!!rows.length && S.length === rows.length} onChange={e => setS(e.target.checked ? rows.map(r => r.id) : [])} /></th><th>Estado</th></>}
-        <th className="nm">{tab === 'acc' ? 'Cuenta' : ent}</th>
-        {shown.map(k => <th key={k} className={CM[k][4] === 't' ? '' : 'r'}><span>{CM[k][3]}{CM[k][6] && <Tip text={CM[k][6]} />}</span></th>)}</tr></thead>
+        {tab !== 'acc' && <><th className="ck"><input type="checkbox" checked={!!rows.length && S.length === rows.length} onChange={e => setS(e.target.checked ? rows.map(r => r.id) : [])} /></th><H k="status">Estado</H></>}
+        <H k="name" cls="nm">{tab === 'acc' ? 'Cuenta' : ent}</H>
+        {shown.map(k => <H key={k} k={k} cls={CM[k][4] === 't' ? '' : 'r'}>{CM[k][3]}{CM[k][6] && <Tip text={CM[k][6]} />}</H>)}</tr></thead>
         <tbody>
-          <tr className="tot">{tab !== 'acc' && <><td className="ck">N/A</td><td>N/A</td></>}<td className="nm">{rows.length} {(rows.length === 1 ? (tab === 'acc' ? 'cuenta' : ent) : plural).toUpperCase()}</td>{shown.map(k => <td key={k} className={CM[k][4] === 't' ? '' : 'r'}>{totVal(k)}</td>)}</tr>
-          {rows.map(r => <tr key={r.id} className={S.includes(r.id) ? 'sel' : ''}>
-            {tab !== 'acc' && <><td className="ck"><input type="checkbox" checked={S.includes(r.id)} onChange={e => setS(e.target.checked ? [...S, r.id] : S.filter(x => x !== r.id))} /></td><td><Switch on={r.status === 'ACTIVE'} onChange={v => toggle(r, v)} /></td></>}
-            <td className="nm"><span className="fbx-name" title={r.name} onClick={() => { const nx = { acc: 'camp', camp: 'set', set: 'ad' }[tab]; if (nx) { setSel(s => ({ ...s, [tab]: [r.id] })); setAdv(a => ({ ...a, skipUnselected: true })); setTab(nx) } }}>{r.name}</span>{r.status === 'RESTRICTED' && <small>Con restricciones</small>}</td>
-            {shown.map(k => <td key={k} className={(CM[k][4] === 't' ? '' : 'r') + (k === 'ganancia' ? (r.row.ganancia >= 0 ? ' pos' : ' neg') : '')}>{k === 'estadoCuenta' ? <span className={'fbx-st ' + (r.status === 'ACTIVE' ? 'ok' : 'bad')}>{fmt(k, r.row[k])}</span> : fmt(k, r.row[k])}</td>)}</tr>)}
-        </tbody></table></div>
+          {rows.map(r => <tr key={r.id} className={(S.includes(r.id) ? 'sel' : '') + (tab === 'camp' ? ' tall' : '')}>
+            {tab !== 'acc' && <><td className="ck"><input type="checkbox" checked={S.includes(r.id)} onChange={e => setS(e.target.checked ? [...S, r.id] : S.filter(x => x !== r.id))} /></td><td className="swc"><Switch on={r.status === 'ACTIVE'} onChange={v => toggle(r, v)} /></td></>}
+            <td className={'nm' + (tab === 'camp' ? ' wrap' : '')}><span className="fbx-name" title={r.name} onClick={() => { const nx = { acc: 'camp', camp: 'set', set: 'ad' }[tab]; if (nx) { setSel(s => ({ ...s, [tab]: [r.id] })); setTab(nx) } }}>{tab === 'camp' && <i className={'fbx-dot' + (r.status === 'ACTIVE' && r.row.ganancia >= 0 ? ' g' : '')} />}{r.name}</span>{r.status === 'RESTRICTED' && <small>Con restricciones</small>}</td>
+            {shown.map(k => <td key={k} className={(CM[k][4] === 't' ? '' : 'r') + (red(k, r.row[k]) ? ' neg' : '') + (k === 'ganancia' && r.row[k] > 0 ? ' pos' : '')}>{k === 'estadoCuenta' ? <span className={'fbx-st ' + (r.status === 'ACTIVE' ? 'ok' : 'bad')}>{fmt(k, r.row[k])}</span>
+              : k === 'presupuesto' && r.row[k] != null && tab !== 'acc' ? <span className="fbx-bud"><small>Diario</small>{usd(r.row[k])}</span> : cell(k, r.row[k])}</td>)}</tr>)}
+        </tbody>
+        <tfoot><tr className="tot">{tab !== 'acc' && <><td className="ck">N/A</td><td>N/A</td></>}<td className="nm">{rows.length} {(rows.length === 1 ? (tab === 'acc' ? 'cuenta' : ent) : plural).toUpperCase()}</td>{shown.map(k => <td key={k} className={(CM[k][4] === 't' ? '' : 'r') + (red(k, tot[k]) ? ' neg' : '')}>{k === 'ganancia' || k === 'roas' ? (tot[k] == null ? 'N/A' : cell(k, tot[k])) : totVal(k)}</td>)}</tr></tfoot></table></div>
     </div>
     <div className="fbx-why"><span>¿Por qué no aparecen {plural}?</span><Tip text={data ? `Revise los filtros: estado, período, cuenta de anuncio y producto. ${adv.skipUnselected ? 'La opción "No buscar datos de campañas no seleccionadas" está activa.' : ''}` : 'Aún no hay ninguna cuenta de anuncios de Meta conectada. Conecte su perfil para importar cuentas, campañas, conjuntos y anuncios.'} />
       {!data ? <button className="fbx-link" onClick={() => setModal('connect')}>Conectar cuenta de Meta</button> : <button className="fbx-link" style={{ color: 'var(--muted)' }} onClick={() => { setData(null); setSel({ acc: [], camp: [], set: [], ad: [] }); toast('Cuenta desconectada', 'info') }}>Desconectar</button>}</div>

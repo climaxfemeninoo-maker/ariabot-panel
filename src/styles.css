@@ -1486,3 +1486,30 @@ html:not(.dark) .fl-tr{border-bottom-color:var(--border)}html:not(.dark) .fl-tr:
 .fbm-t{height:100%}
 .fbm-t tbody tr.fbm-fill td{height:auto;background:#0d0a13;border-bottom:none}
 .fbm-t tbody tr.fbm-fill .ck{background:#0d0a13}
+/* Facebook escritorio: tabla con encabezado y totales fijos */
+.fbx-tw{max-height:calc(100vh - 262px);overflow:auto}
+.fbx-t{border-collapse:separate;border-spacing:0}
+.fbx-t thead th{position:sticky;top:0;z-index:3}
+.fbx-t th.srt{cursor:pointer;user-select:none}
+.fbx-t th .ar{opacity:0;color:#a78bfa;transition:.15s}
+.fbx-t th.srt:hover .ar{opacity:.5}.fbx-t th.srt.on .ar{opacity:1}
+.fbx-t th.srt.on{color:var(--text)}
+.fbx-t td{background:var(--card2);border-right:1px solid var(--border)}
+.fbx-t td:last-child,.fbx-t th:last-child{border-right:none}
+.fbx-t tbody tr:first-child td{border-top:none}
+.fbx-t tr.tall td{height:112px}
+.fbx-t td.nm.wrap{white-space:normal;text-align:center;min-width:120px;max-width:128px}
+.fbx-t td.nm.wrap .fbx-name{word-break:break-word;line-height:1.45}
+.fbx-t td.swc{text-align:center}
+.fbx-dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;background:radial-gradient(circle at 35% 30%,#fca5a5,#dc2626 60%,#7f1d1d)}
+.fbx-dot.g{background:radial-gradient(circle at 35% 30%,#86efac,#16a34a 60%,#14532d)}
+.fbx-bud{display:flex;align-items:center;justify-content:space-between;gap:22px}
+.fbx-bud small{font-size:11.5px;color:var(--muted);margin-top:16px}
+.fbx-t tfoot td{position:sticky;bottom:0;z-index:3;background:var(--btn2h);border-top:1px solid var(--border2);height:38px;font-weight:600;font-size:12px;color:var(--text)}
+.fbx-t tfoot td.nm{text-transform:uppercase;font-size:11px;letter-spacing:.04em}
+.fbx-t td.neg{color:#f87171}
+.fbx-tabs .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbx-sc{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px 0 12px;border-radius:13px;background:#8b5cf6;color:#fff;font-size:12px;font-weight:700;flex-shrink:0}
+.fbx-sc:hover{background:#7c3aed}
+.fbx-gestor{display:flex;align-items:center;gap:8px;height:32px;padding:0 14px;background:var(--btn3);color:var(--soft);font-size:13.3px;font-weight:500}
+.fbx-gestor:hover{background:var(--btn2h);color:var(--text)}
