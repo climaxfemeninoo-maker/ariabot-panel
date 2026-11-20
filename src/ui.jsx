@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, createContext, useContext, useCallback } from 'react'
-import { X, ChevronDown, Check, CheckCircle2, AlertCircle, Info, Bot } from 'lucide-react'
+import { X, ChevronDown, Check, CheckCircle2, AlertCircle, Info, Bot, CircleCheck, CircleX } from 'lucide-react'
 
 /* ---------- persistent store ---------- */
 const listeners = new Set()
@@ -38,11 +38,12 @@ export function ToastProvider({ children }) {
   const [list, setList] = useState([])
   const push = useCallback((msg, type = 'ok') => {
     const id = uid(); setList(l => [...l, { id, msg, type }])
-    setTimeout(() => setList(l => l.filter(t => t.id !== id)), 3000)
+    setTimeout(() => setList(l => l.filter(t => t.id !== id)), 4000)
   }, [])
+  const close = id => setList(l => l.filter(t => t.id !== id))
   return <ToastCtx.Provider value={push}>{children}
-    <div className="toasts">{list.map(t => <div key={t.id} className={'toast ' + t.type}>
-      {t.type === 'ok' ? <CheckCircle2 size={16} color="#22c55e" /> : t.type === 'err' ? <AlertCircle size={16} color="#ef4444" /> : <Info size={16} color="#8b5cf6" />}{t.msg}</div>)}</div>
+    <div className="toasts">{list.map(t => <div key={t.id} role="status" className={'toast ' + t.type}>
+      {t.type === 'ok' ? <CircleCheck size={21} color="#16a34a" strokeWidth={1.9} /> : t.type === 'err' ? <CircleX size={21} color="#dc2626" strokeWidth={1.9} /> : <Info size={21} color="#7c3aed" strokeWidth={1.9} />}<span className="tx">{t.msg}</span><button className="x" aria-label="Cerrar" onClick={() => close(t.id)}><X size={16} /></button></div>)}</div>
   </ToastCtx.Provider>
 }
 

@@ -21,6 +21,7 @@ import Profile from './pages/Profile'
 import Connections from './pages/Connections'
 import Webhooks from './pages/Webhooks'
 import Facebook from './pages/Facebook'
+import FacebookMobile from './pages/FacebookMobile'
 import Billing from './pages/Billing'
 import Settings from './pages/Settings'
 import Tutorials from './pages/Tutorials'
@@ -150,7 +151,7 @@ export default function App() {
         <Route path="/settings/inbound-webhooks" element={<Webhooks />} />
         <Route path="/settings/inbound-webhooks/:id" element={<Webhooks />} />
         <Route path="/mass-dispatches" element={<Mass />} />
-        <Route path="/facebook/campaigns" element={mobile ? <MobileCampaigns /> : <Facebook />} />
+        <Route path="/facebook/campaigns" element={mobile ? <FacebookMobile /> : <Facebook />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing/:sub" element={<Billing />} />
         <Route path="/trilha" element={mobile ? <TrilhaMobile /> : <TrilhaDesk />} />

@@ -4,8 +4,8 @@ import { useStore, useToast, uid, useOutside, downloadCSV, Switch } from '../ui'
 import { Toggle } from './leona'
 
 /* ---------- Columnas (igual que el original) ---------- */
-const ACC_ONLY = ['ciclo', 'tarjeta', 'estadoCuenta', 'totalGastado']
-const COLS = [
+export const ACC_ONLY = ['ciclo', 'tarjeta', 'estadoCuenta', 'totalGastado']
+export const COLS = [
   ['ciclo', '[Ciclo] - Ciclo de Tarjeta', 'Ciclo de Tarjeta', 'Ciclo', 'm', 1, 'Monto acumulado en el ciclo actual de facturación de la tarjeta.'],
   ['tarjeta', '[Tarjeta] - Tarjeta de Crédito', 'Tarjeta de Crédito', 'Tarjeta', 't', 1, 'Tarjeta registrada en la cuenta de anuncios.'],
   ['estadoCuenta', 'Estado de Cuenta', 'Estado de Cuenta', 'Estado de Cuenta', 't', 1, 'Estado de la cuenta en Meta (activa, deshabilitada, pendiente de pago).'],
@@ -70,19 +70,19 @@ const COLS = [
   ['gastoMin', '[Gasto mín.] - Gasto mínimo', 'Gasto mínimo', 'Gasto mín.', 'm', 1],
   ['gastoMax', '[Gasto máx.] - Gasto máximo', 'Gasto máximo', 'Gasto máx.', 'm', 1],
 ]
-const CM = Object.fromEntries(COLS.map(c => [c[0], c]))
-const DEF_ORDER = ['ciclo', 'tarjeta', 'estadoCuenta', 'totalGastado', 'presupuesto', 'ultAct', 'ventas', 'cpa', 'gastos', 'ingresos', 'ganancia', 'roas', 'margen', 'roi', 'ic', 'cpi', 'cpc', 'ctr', 'cpm', 'imp', 'clics', 'limiteOferta', 'gastoMin', 'gastoMax']
+export const CM = Object.fromEntries(COLS.map(c => [c[0], c]))
+export const DEF_ORDER = ['ciclo', 'tarjeta', 'estadoCuenta', 'totalGastado', 'presupuesto', 'ultAct', 'ventas', 'cpa', 'gastos', 'ingresos', 'ganancia', 'roas', 'margen', 'roi', 'ic', 'cpi', 'cpc', 'ctr', 'cpm', 'imp', 'clics', 'limiteOferta', 'gastoMin', 'gastoMax']
 
-const TABS = [['acc', 'Cuentas', Archive, 'Cuenta', 'cuentas'], ['camp', 'Campañas', FolderPlus, 'Campaña', 'campañas'], ['set', 'Conjuntos', LayoutGrid, 'Conjunto', 'conjuntos'], ['ad', 'Anuncios', Tablet, 'Anuncio', 'anuncios']]
-const PERIODS = [['', 'Seleccione una opción'], ['max', 'Máximo (36 meses)'], ['today', 'Hoy'], ['yest', 'Ayer'], ['7d', 'Últimos 7 días'], ['month', 'Este mes'], ['last', 'Mes pasado'], ['custom', 'Personalizado']]
-const PF = { max: 160, today: 1, yest: .85, '7d': 6.4, month: 17, last: 27, custom: 3, '': 1 }
-const STATES = [['', 'Seleccione una opción'], ['any', 'Cualquiera'], ['ACTIVE', 'Activo'], ['PAUSED', 'Pausado'], ['RESTRICTED', 'Con Restricciones']]
-const usd = v => '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+export const TABS = [['acc', 'Cuentas', Archive, 'Cuenta', 'cuentas'], ['camp', 'Campañas', FolderPlus, 'Campaña', 'campañas'], ['set', 'Conjuntos', LayoutGrid, 'Conjunto', 'conjuntos'], ['ad', 'Anuncios', Tablet, 'Anuncio', 'anuncios']]
+export const PERIODS = [['', 'Seleccione una opción'], ['max', 'Máximo (36 meses)'], ['today', 'Hoy'], ['yest', 'Ayer'], ['7d', 'Últimos 7 días'], ['month', 'Este mes'], ['last', 'Mes pasado'], ['custom', 'Personalizado']]
+export const PF = { max: 160, today: 1, yest: .85, '7d': 6.4, month: 17, last: 27, custom: 3, '': 1 }
+export const STATES = [['', 'Seleccione una opción'], ['any', 'Cualquiera'], ['ACTIVE', 'Activo'], ['PAUSED', 'Pausado'], ['RESTRICTED', 'Con Restricciones']]
+export const usd = v => '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 /* ---------- Datos de ejemplo al conectar ---------- */
 const rnd = (a, b) => a + Math.random() * (b - a)
 const mkMetrics = () => { const imp = Math.round(rnd(1800, 9000)); const clics = Math.round(imp * rnd(.012, .035)); const ic = Math.round(clics * rnd(.08, .2)); const ventas = Math.round(ic * rnd(.2, .5)); return { gastos: rnd(18, 70), ingresos: ventas * rnd(27, 47), ventas, imp, clics, ic, vistas: Math.round(clics * .8), conv: Math.round(clics * .3) } }
-function demo() {
+export function demo() {
   const acc = [{ id: 'act_1', name: 'CP3', status: 'ACTIVE', card: 'Visa •••• 4821', ciclo: 74.3, total: 1840.55 }]
   const camps = [['[CBO] Ebook Recetas - Conversión', 'Ebook Recetas'], ['[ABO] Ebook Uñas - Mensajes WhatsApp', 'Ebook Uñas'], ['Remarketing 7 días', 'Ebook Recetas']].map(([name, prod], i) => ({ id: 'c' + i, acc: 'act_1', name, prod, status: i === 2 ? 'PAUSED' : 'ACTIVE', budget: [50, 30, 20][i], m: mkMetrics(), created: Date.now() - (i + 3) * 864e5 }))
   const sets = camps.flatMap(c => [1, 2].map(j => ({ id: c.id + 's' + j, camp: c.id, acc: c.acc, prod: c.prod, name: `Público ${j === 1 ? 'Abierto' : 'Lookalike 1%'} - ${c.name.split(' ')[1] || 'Ebook'}`, status: c.status, budget: c.budget / 2, m: mkMetrics(), created: c.created })))
@@ -90,12 +90,12 @@ function demo() {
   return { acc, camps, sets, ads, products: ['Ebook Recetas', 'Ebook Uñas'] }
 }
 
-function calc(m, f, extra = {}) {
+export function calc(m, f, extra = {}) {
   const g = m.gastos * f, ing = m.ingresos * f, v = Math.round(m.ventas * f), imp = Math.round(m.imp * f), cl = Math.round(m.clics * f), ic = Math.round(m.ic * f), vi = Math.round(m.vistas * f), cv = Math.round(m.conv * f)
   const d = (a, b) => b ? a / b : null
   return { gastos: g, ingresos: ing, ventas: v, ventasInd: v, ventasTot: v, imp, clics: cl, ic, vistas: vi, conv: cv, ganancia: ing - g, roas: d(ing, g), margen: d(ing - g, ing), roi: d(ing - g, g), cpa: d(g, v), cpi: d(g, ic), cpc: d(g, cl), ctr: d(cl, imp), cpm: d(g * 1000, imp), cpv: d(g, vi), costoConv: d(g, cv), icr: d(ic, vi), con: d(vi, cl), conversion: d(v, vi), convCheckout: d(v, ic), convClics: d(v, cl), arpu: d(ing, v), frecuencia: imp ? 1.1 + (imp % 40) / 100 : null, ingBrutos: ing * 1.06, costoProd: 0, ventasPend: 0, ventasRech: 0, ventasReemb: 0, ingReemb: 0, ingPend: 0, registros: 0, impuesto: g * .1215, ...extra }
 }
-const fmt = (k, v) => { const t = CM[k]?.[4]; if (v == null || v === '' || (typeof v === 'number' && !isFinite(v))) return 'N/A'; if (t === 'm') return usd(v); if (t === 'p') return (v * 100).toFixed(2) + '%'; if (t === 'x') return (+v).toFixed(2); if (t === 'n') return Math.round(v).toLocaleString('es'); return v }
+export const fmt = (k, v) => { const t = CM[k]?.[4]; if (v == null || v === '' || (typeof v === 'number' && !isFinite(v))) return 'N/A'; if (t === 'm') return usd(v); if (t === 'p') return (v * 100).toFixed(2) + '%'; if (t === 'x') return (+v).toFixed(2); if (t === 'n') return Math.round(v).toLocaleString('es'); return v }
 
 /* ---------- UI helpers ---------- */
 function Tip({ text, children }) {
@@ -137,7 +137,7 @@ function Mod({ title, sub, onClose, children, foot, w = 980, h }) {
     <div className="fbx-mh"><div><h3>{title}</h3>{sub && <p>{sub}</p>}</div><button onClick={onClose}><X size={20} /></button></div>
     <div className="fbx-mb">{children}</div>{foot && <div className="fbx-mf">{foot}</div>}</div></div>
 }
-const ago = t => { const s = Math.floor((Date.now() - t) / 1000); if (s < 10) return 'hace unos segundos'; if (s < 60) return `hace ${Math.floor(s / 10) * 10} segundos`; const m = Math.floor(s / 60); if (m < 60) return `hace ${m} minuto${m > 1 ? 's' : ''}`; const h = Math.floor(m / 60); return `hace ${h} hora${h > 1 ? 's' : ''}` }
+export const ago = t => { const s = Math.floor((Date.now() - t) / 1000); if (s < 10) return 'hace unos segundos'; if (s < 60) return `hace ${Math.floor(s / 10) * 10} segundos`; const m = Math.floor(s / 60); if (m < 60) return `hace ${m} minuto${m > 1 ? 's' : ''}`; const h = Math.floor(m / 60); return `hace ${h} hora${h > 1 ? 's' : ''}` }
 
 /* ---------- Página ---------- */
 export default function Facebook() {
