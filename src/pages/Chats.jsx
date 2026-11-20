@@ -24,6 +24,8 @@ export default function Chats() {
   const blankF = { resp: '', from: '', to: '', crm: 'all', tags: [], conns: [], deps: [] }
   const [flt, setFlt] = useState(blankF)
   const end = useRef()
+  const [openId, setOpenId] = useStore('chat_open', null)
+  useEffect(() => { if (!openId) return; const c = chats.find(x => x.id === openId); if (c) { setTab(c.status); setChip('Todo'); setSel(c.id) } setOpenId(null) }, [openId, chats.length])
   const fActive = JSON.stringify(flt) !== JSON.stringify(blankF)
   const list = chats.filter(c => c.status === tab
     && (chip !== 'No leídos' || c.unread) && (chip !== 'Sin responder' || c.msgs.at(-1)?.f === 'in')

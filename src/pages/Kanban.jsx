@@ -210,7 +210,7 @@ function ColMenu({ col, onConv, onRename, onAdd, onDel }) {
 function NewColumn({ idx, onClose, onCreate }) {
   const [f, setF] = useState({ name: '', color: 'auto', conv: false })
   const color = f.color === 'auto' ? AUTO[idx % 7] : COLS.find(c => c[0] === f.color)[2]
-  return <LModal open onClose={onClose} title="Nueva columna" desc="Crea una nueva etapa para organizar las tarjetas de tu Kanban." width={479} bodyStyle={{ padding: '23px 24px 23px' }}
+  return <LModal open onClose={onClose} title="Nueva columna" desc="Crea una nueva etapa para organizar las tarjetas de tu Kanban." width={479} bodyStyle={{ padding: '23px 24px 23px', overflow: 'visible' }}
     footer={<><button className="lb2 g" style={{ minWidth: 87 }} onClick={onClose}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8', minWidth: 129 }} disabled={!f.name.trim()} onClick={() => onCreate(f)}>Crear columna</button></>}>
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15 }}>
       <div><label className="l-lbl">Nombre de la columna</label><input className="l-in soft" autoFocus value={f.name} onChange={e => setF({ ...f, name: e.target.value })} onKeyDown={e => e.key === 'Enter' && f.name.trim() && onCreate(f)} placeholder="Ej.: Por hacer, En progreso, Hecho" style={{ fontWeight: f.name ? 600 : 400 }} /></div>
