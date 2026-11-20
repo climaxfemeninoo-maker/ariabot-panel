@@ -1370,3 +1370,8 @@ html:not(.dark) .fbx-name{color:#7c3aed}
 .fbx-dr i{width:34px;height:34px;border-radius:34px;display:grid;place-items:center;flex-shrink:0}
 .fbx-dr b{display:block;font-size:14.5px}.fbx-dr span{font-size:12.5px;color:var(--muted)}
 @media (max-width:1200px){.fbx-filters{grid-template-columns:1fr 1fr 1fr}.fbx-tabs{gap:8px}.fbx-bar{gap:14px;flex-wrap:wrap}}
+/* móvil: un solo color de fondo en todos los apartados (sin franjas ni tintes) */
+@media(max-width:760px){
+  html.dark,html.dark body,html.dark #root,html.dark .app,html.dark .main,html.dark .md,html.dark .mv,html.dark .tr,html.dark .page{background:#0d0a13 !important;background-image:none !important}
+  html.dark .md-top{background:linear-gradient(#0d0a13 75%,rgba(13,10,19,0)) !important}
+}
