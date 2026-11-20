@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { Mail, Lock, Eye, EyeOff, User, Phone, ArrowLeft, Sun, Moon } from 'lucide-react'
 import { useStore, useToast } from '../ui'
 
-/* Medidas tomadas de las capturas de referencia (pantalla) / 0.9 por el zoom global del 90% */
+/* Medidas de las capturas de referencia. zoom .8 sobre tarjeta/copy/toggle => escala de pantalla 1.125*.8 = .9 (calibrado) */
 const CSS = `
-.la-page{position:fixed;inset:0;z-index:1000;overflow-y:auto;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
-.la-page.top{justify-content:flex-start;padding-top:6px}
+.la-page{position:fixed;inset:0;z-index:1000;overflow-y:auto;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:19px 13px}
+.la-card,.la-copy,.la-toggle{zoom:.8}
+.la-page.top{justify-content:flex-start;padding-top:5px}
 .la-page *{box-sizing:border-box}
 .la-toggle{position:fixed;top:14px;right:17px;width:44px;height:44px;border-radius:10px;display:grid;place-items:center;cursor:pointer;z-index:2;transition:.2s}
 .la-card{position:relative;width:100%;overflow:hidden;flex-shrink:0}
@@ -33,7 +34,7 @@ const CSS = `
 .lv .la-ic{left:17px}
 .lv .la-in{height:49px;border-radius:11px;padding:0 46px 0 48px;font-size:16.6px}
 .lv .la-eye{right:13px}
-.lv .la-row{display:flex;align-items:center;justify-content:space-between;margin-top:26px;font-size:16.5px}
+.lv .la-row{display:flex;align-items:center;justify-content:space-between;margin-top:23px;font-size:16.5px}
 .lv .la-row label{display:flex;align-items:center;gap:11px;cursor:pointer}
 .lv .la-row input{width:17px;height:17px;margin:0;cursor:pointer}
 .lv .la-row .la-link{font-size:16.4px;font-weight:500}
@@ -98,7 +99,7 @@ html:not(.dark) .lv .la-copy{color:#6b7280}
 .gv .la-copy{font-size:15.5px;margin:40px 0 20px;text-align:center}
 .gv.reg .la-card{padding-bottom:41px}
 .gv.reg .la-btn{margin-top:28px}
-.gv.fp{padding-bottom:54px}
+.gv.fp{padding-bottom:43px}
 .gv.fp .la-field{margin-top:38px}
 .gv.fp .la-btn{margin-top:29px}
 /* gris oscuro */

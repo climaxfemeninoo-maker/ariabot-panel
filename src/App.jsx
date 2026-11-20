@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutGrid, MessageSquare, Columns3, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, PlayCircle, PanelLeft, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, Sparkles, Copy } from 'lucide-react'
+import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, CircleHelp, PanelLeftClose, PanelLeftOpen, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, Sparkles, Copy } from 'lucide-react'
 import { Logo, Modal, useStore, useOutside, useToast, uid } from './ui'
 import Dashboard from './pages/Dashboard'
 import Chats from './pages/Chats'
@@ -15,9 +15,9 @@ import Settings from './pages/Settings'
 import Tutorials from './pages/Tutorials'
 
 const NAV = [
-  ['PRINCIPAL', [['/welcome', 'Dashboard', LayoutGrid], ['/chats', 'Chats en vivo', MessageSquare], ['/crms', 'Kanban', Columns3], ['/customers', 'Contactos', Users]]],
+  ['PRINCIPAL', [['/welcome', 'Dashboard', LayoutGrid], ['/chats', 'Chats en vivo', MessageSquare], ['/crms', 'Kanban', KanbanIc], ['/customers', 'Contactos', Users]]],
   ['OPERACIONES', [['/flows', 'Flujos', Workflow], ['/agentes', 'Agentes de IA', Bot], ['/connections', 'Conexiones', Plug], ['/settings/inbound-webhooks', 'Webhooks de entrada', Webhook], ['/mass-dispatches', 'Envíos masivos', Send], ['/facebook/campaigns', 'Facebook', Megaphone]]],
-  ['GESTIÓN', [['/billing', 'Cobros y suscripciones', CreditCard], ['/settings', 'Configuración', Cog], ['/tutoriales', 'Tutoriales', PlayCircle]]],
+  ['GESTIÓN', [['/billing', 'Cobros y suscripciones', CreditCard], ['/settings', 'Configuración', Cog], ['/tutoriales', 'Tutoriales', CircleHelp]]],
 ]
 
 export function useTheme() {
@@ -39,15 +39,15 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
   const toast = useToast(); const nav = useNavigate()
   const company = companies.find(c => c.id === cur) || companies[0]
   const [notifs, setNotifs] = useStore('notifs', [
-    { id: 1, t: 'Bienvenido a AriaBot', d: 'Configura tu primera conexión de WhatsApp para empezar.', r: false },
+    { id: 1, t: 'Bienvenido a Leona', d: 'Configura tu primera conexión de WhatsApp para empezar.', r: false },
     { id: 2, t: 'Nuevo tutorial disponible', d: 'Aprende a crear flujos con IA en 5 minutos.', r: false }])
   const unread = notifs.filter(n => !n.r).length
   return <aside className={'side' + (col ? ' col' : '') + (mopen ? ' mopen' : '')}>
-    <div className="side-top"><NavLink to="/welcome" className="logo"><Logo h={24} /></NavLink>
-      <button className="collapse" onClick={() => setCol(!col)} title="Contraer menú"><PanelLeft size={15} /></button></div>
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div className="side-top"><NavLink to="/welcome" className="logo"><img src={theme === 'dark' ? '/leona-white.png' : '/leona-color.png'} alt="Leona" /></NavLink>
+      <button className="collapse" onClick={() => setCol(!col)} title="Contraer menú">{col ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button></div>
+    <div ref={ref} className="co-wrap" style={{ position: 'relative' }}>
       <div className="company" onClick={() => setDd(!ddOpen)}>
-        {col ? <Building2 size={16} /> : <><div style={{ flex: 1, minWidth: 0 }}><div className="n">{company.name}</div><div className="s">Leads: {contacts.length}</div></div><ChevronDown size={14} className="muted" /></>}
+        {col ? <Building2 size={16} /> : <><div style={{ flex: 1, minWidth: 0 }}><div className="n">{company.name}</div><div className="s">Leads: {contacts.length}</div></div><ChevronDown size={16} style={{ color: 'var(--muted)', flexShrink: 0 }} /></>}
       </div>
       {ddOpen && <div className="dd-menu" style={{ left: 6, right: 6, top: 'calc(100% - 2px)', minWidth: 200 }}>
         <div className="small muted" style={{ padding: '6px 9px' }}>Empresas</div>
@@ -58,16 +58,16 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
     </div>
     <nav className="nav">
       {NAV.map(([sec, items]) => <div key={sec}><div className="nav-sec">{sec}</div>
-        {items.map(([to, label, Ic]) => <NavLink key={to} to={to} end={to === '/settings'} title={label} onClick={() => setMopen(false)}><Ic size={15} /><span>{label}</span></NavLink>)}</div>)}
+        {items.map(([to, label, Ic]) => <NavLink key={to} to={to} end={to === '/settings'} title={label} onClick={() => setMopen(false)}><Ic size={16} strokeWidth={1.9} /><span>{label}</span></NavLink>)}</div>)}
     </nav>
     <div className="side-bottom">
-      <div className="tokens" onClick={() => setModal('tokens')}>0 tokens Aria</div>
-      <div className="duo"><button className="bg-amber" onClick={() => setModal('support')}><HelpCircle size={13} /><span>Soporte</span></button>
+      <div className="tokens" onClick={() => setModal('tokens')}>0 tokens Leona</div>
+      <div className="duo"><button className="bg-amber" onClick={() => setModal('support')}><CircleHelp size={13} /><span>Soporte</span></button>
         <button className="bg-purple" onClick={() => setModal('aff')}><UserPlus size={13} /><span>Afiliación</span></button></div>
       <div className="theme-row" onClick={toggle} title="Ctrl+M">
-        {theme === 'dark' ? <Sun size={15} color="#f59e0b" /> : <Moon size={15} />}
+        {theme === 'dark' ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} />}
         <div><div className="t">{theme === 'dark' ? 'Claro' : 'Oscuro'}</div><div className="k">Ctrl+M · ⌘M</div></div>
-        <div className="bell" ref={nref} onClick={e => { e.stopPropagation(); setNotif(!notifOpen) }}><Bell size={14} />{unread > 0 && <span className="dot-badge" />}
+        <div className="bell" ref={nref} onClick={e => { e.stopPropagation(); setNotif(!notifOpen) }}><Bell size={16} />{unread > 0 && <span className="dot-badge" />}
           {notifOpen && <div className="dd-menu notif card" style={{ position: 'absolute', left: -150, bottom: 26, top: 'auto', width: 290, cursor: 'default' }} onClick={e => e.stopPropagation()}>
             <div className="row" style={{ padding: '6px 8px' }}><b style={{ color: 'var(--text)' }}>Notificaciones</b><button className="sp" /><button className="small" style={{ color: 'var(--p)' }} onClick={() => setNotifs(n => n.map(x => ({ ...x, r: true })))}>Marcar todo leído</button></div>
             {notifs.map(n => <div key={n.id} className="dd-item" style={{ alignItems: 'flex-start', whiteSpace: 'normal', color: 'var(--text)' }} onClick={() => setNotifs(l => l.map(x => x.id === n.id ? { ...x, r: true } : x))}>
@@ -75,7 +75,7 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
           </div>}</div>
       </div>
       <div className="user" ref={uref} onClick={() => setUser(!userOpen)}>
-        <div className="avatar">PM</div><div className="info" style={{ minWidth: 0 }}><div className="n">Pablo Monja Suclupe</div><div className="e">k4el.ux@gmail.com</div></div><ChevronsUpDown size={13} className="muted chev" style={{ marginLeft: 'auto' }} />
+        <div className="avatar">PM</div><div className="info" style={{ minWidth: 0 }}><div className="n">Pablo Monja Suclupe</div><div className="e">k4el.ux@gmail.com</div></div><ChevronDown size={15} className="chev" style={{ marginLeft: 'auto', color: 'var(--muted)' }} />
         {userOpen && <div className="dd-menu" style={{ top: 'auto', bottom: 'calc(100% + 6px)', left: 0, right: 0 }} onClick={e => e.stopPropagation()}>
           <button className="dd-item" onClick={() => { nav('/settings'); setUser(false) }}><User size={14} />Mi perfil</button>
           <button className="dd-item" onClick={() => { nav('/billing'); setUser(false) }}><CreditCard size={14} />Facturación</button>
