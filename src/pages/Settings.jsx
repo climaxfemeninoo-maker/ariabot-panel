@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Building2, Users, UserPlus, LifeBuoy, Languages, Sparkles, Workflow, Send, Zap, FileText, Braces, ListPlus, Tags, Puzzle, Activity, Package, Server, ChevronLeft, Plus, Save, LogOut, Trash2, Pencil, Clock, Copy, Store, Building, CalendarClock, Bell } from 'lucide-react'
+import { Building2, Users, UserPlus, LifeBuoy, Languages, Sparkles, Workflow, Send, Zap, FileText, Braces, ListPlus, Tags, Puzzle, Activity, Package, Server, ChevronLeft, Plus, Save, LogOut, Trash2, Pencil, Clock, Copy, Store, Building, CalendarClock, Bell , Headphones, MessageCircle, AtSign, Database, Tag, Plug, Radar, Bot, Network, PowerOff, Search, Briefcase, Info } from 'lucide-react'
 import { useStore, Modal, Empty, useToast, uid, Switch, Confirm } from '../ui'
+import { LModal, LSelect, Toggle } from './leona'
+import { SendIcon } from '../icons'
 
-const NAV = [['CUENTA', [['accounts', 'Empresa', Building2], ['team', 'Equipo', Users], ['invites', 'Invitaciones a la plataforma', UserPlus], ['support', 'Acceso de soporte', LifeBuoy], ['translations', 'Traducciones de flujo', Languages], ['ai', 'Uso de Aria AI', Sparkles]]],
-['AUTOMATIZACIÓN', [['stdflows', 'Flujos estándar', Workflow], ['mass', 'Envíos masivos', Send], ['quick', 'Respuestas rápidas', Zap], ['templates', 'Templates de WhatsApp', FileText], ['vars', 'Variables globales', Braces], ['fields', 'Campos personalizados', ListPlus], ['tags', 'Etiquetas', Tags]]],
-['INTEGRACIONES', [['integrations', 'Integraciones', Puzzle], ['tracking', 'Seguimiento', Activity], ['products', 'Productos', Package], ['mcp', 'Herramientas MCP', Server]]]]
+const NAV = [['CUENTA', [['accounts', 'Empresa', Building2], ['team', 'Equipo', Users], ['invites', 'Invitaciones a la plataforma', UserPlus], ['support', 'Acceso de soporte', Headphones], ['translations', 'Traducciones de flujo', Languages], ['ai', 'Uso de Leona AI', Sparkles]]],
+['AUTOMATIZACIÓN', [['stdflows', 'Flujos estándar', Zap], ['mass', 'Envíos masivos', SendIcon], ['quick', 'Respuestas rápidas', MessageCircle], ['templates', 'Templates de WhatsApp', FileText], ['vars', 'Variables globales', AtSign], ['fields', 'Campos personalizados', Database], ['tags', 'Etiquetas', Tag]]],
+['INTEGRACIONES', [['integrations', 'Integraciones', Plug], ['tracking', 'Seguimiento', Radar], ['products', 'Productos', Package], ['mcp', 'Herramientas MCP', Bot]]]]
 
 const CRUD = {
   quick: ['Respuestas rápidas', 'Atajos para responder más rápido en el chat', [['short', 'Atajo', '/precio'], ['text', 'Mensaje', 'El precio es…', 'area']]],
@@ -34,31 +36,96 @@ function Crud({ k }) {
   </div>
 }
 
+const DCOL = [['#3b82f6', 'Azul'], ['#10b981', 'Verde'], ['#8b5cf6', 'Morado'], ['#f97316', 'Naranja'], ['#ef4444', 'Rojo'], ['#f59e0b', 'Amarillo'], ['#6b7280', 'Gris']]
+const TZ = ['Lima (America/Lima)', 'Brasília (America/Sao_Paulo)', 'Ciudad de México (America/Mexico_City)', 'Bogotá (America/Bogota)', 'Santiago (America/Santiago)', 'Buenos Aires (America/Argentina/Buenos_Aires)', 'Caracas (America/Caracas)', 'La Paz (America/La_Paz)', 'Guayaquil (America/Guayaquil)', 'Madrid (Europe/Madrid)', 'Nueva York (America/New_York)']
+const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+
 function Company() {
   const toast = useToast(); const [tab, setTab] = useState('data')
-  const [co, setCo] = useStore('companyData', { name: 'Empresa Pablo Monja Suclupe', desc: 'Empresa creada automáticamente', slug: 'empresa-pablo-monja-suclupe', tz: 'Lima (America/Lima)', notif: true })
-  const [hours, setHours] = useStore('hours', ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map((d, i) => ({ d, on: i < 6, from: '09:00', to: '18:00' })))
-  const [leave, setLeave] = useState(false); const [newAcc, setNewAcc] = useState(false)
+  const CODEF = { name: 'Empresa Pablo Monja Suclupe', desc: 'Empresa criada automaticamente', slug: 'empresa-pablo-monja-suclupe', tz: 'Brasília (America/Sao_Paulo)', notif: true }
+  const [coRaw, setCo] = useStore('companyData', CODEF); const co = { ...CODEF, ...coRaw }
+  const [companies, setCompanies] = useStore('companies', [{ id: 'c1', name: 'Empresa Pablo Monja Suclupe' }]); const [curCo] = useStore('company', 'c1')
+  const [f, setF] = useState(co)
+  const [deps, setDeps] = useStore('departments', []); const [dq, setDq] = useState(''); const [dm, setDm] = useState(null); const [dd, setDd] = useState(null)
+  const [hrs, setHrs] = useStore('work_hours', { on: false, wa: '', days: DAYS.map((d, i) => ({ d, on: i < 5, from: '09:00', to: '18:00' })) })
+  const [h, setH] = useState(hrs); const dirty = JSON.stringify(h) !== JSON.stringify(hrs)
+  const [conns] = useStore('connections', [])
+  const [mod, setMod] = useState(null); const [mv, setMv] = useState(''); const [leave, setLeave] = useState(false)
+  const saveCo = () => { if (!f.name.trim()) return toast('El nombre de la empresa es obligatorio', 'err'); setCo({ ...f, name: f.name.trim() }); setCompanies(cs => cs.map(c => c.id === curCo ? { ...c, name: f.name.trim() } : c)); toast('Empresa guardada') }
+  const dlist = deps.filter(d => d.name.toLowerCase().includes(dq.toLowerCase()))
   return <>
-    <div className="row" style={{ marginBottom: 14 }}>{[['data', 'Datos corporativos', Store], ['deps', 'Departamentos', Building], ['hours', 'Horarios de trabajo', CalendarClock]].map(([k, l, Ic]) => <button key={k} className={'chip' + (tab === k ? ' on' : '')} style={{ padding: '7px 12px' }} onClick={() => setTab(k)}><Ic size={13} />{l}</button>)}<span className="sp" /><button className="btn btn-p" onClick={() => setNewAcc(true)}><Plus size={14} />Nueva cuenta</button></div>
-    {tab === 'data' && <div className="card" style={{ padding: 18, animation: 'pop .3s' }}><div className="row"><div><div className="row"><b style={{ fontSize: 14 }}>Datos de la empresa</b><span className="badge b-green">Activa</span></div><div className="small muted">Información mostrada a sus clientes y en informes</div></div><span className="sp" /><Bell size={15} color="#ef4444" /></div>
-      <div className="grid g2" style={{ marginTop: 18 }}>
-        <div className="field"><label className="lb">Nombre de la empresa <span style={{ color: '#ef4444' }}>*</span></label><input className="input" value={co.name} onChange={e => setCo({ ...co, name: e.target.value })} /></div>
-        <div className="field"><label className="lb">Descripción</label><input className="input" value={co.desc} onChange={e => setCo({ ...co, desc: e.target.value })} /></div>
-        <div className="field"><label className="lb">Slug</label><input className="input" style={{ fontFamily: 'monospace' }} value={co.slug} onChange={e => setCo({ ...co, slug: e.target.value })} /></div>
-        <div className="field"><label className="lb">Zona horaria</label><select className="input" value={co.tz} onChange={e => setCo({ ...co, tz: e.target.value })}>{['Lima (America/Lima)', 'Ciudad de México (America/Mexico_City)', 'Bogotá (America/Bogota)', 'Brasilia (America/Sao_Paulo)', 'Madrid (Europe/Madrid)'].map(z => <option key={z}>{z}</option>)}</select><div className="small muted" style={{ marginTop: 5 }}>Define la zona horaria usada en el panel, filtros, condiciones de flujo, intervalo inteligente, horario comercial y variables de fecha/hora.</div></div></div>
-      <div className="row" style={{ marginTop: 6 }}><div><b>Notificaciones por correo de instancias</b><div className="small muted">Envía un correo al propietario cuando una instancia se desconecta o queda restringida (API Oficial). Disponible con más de 4 instancias; activo por defecto.</div></div><span className="sp" /><Switch on={co.notif} onChange={v => setCo({ ...co, notif: v })} /></div>
-      <div className="row" style={{ justifyContent: 'flex-end', margin: '18px 0' }}><button className="btn btn-p" onClick={() => toast('Empresa guardada')}><Save size={14} />Guardar empresa</button></div>
-      <div className="row" style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}><div><b>Miembros del equipo</b><div className="small muted">Invite o cree usuarios para la empresa actual.</div></div><span className="sp" /><button className="btn btn-p" onClick={() => setNewAcc('member')}><Plus size={14} />Invitar miembro</button></div>
-      <button className="btn" style={{ color: '#ef4444', border: '1px solid #ef444444', marginTop: 12 }} onClick={() => setLeave(true)}><LogOut size={14} />Salir de la empresa</button></div>}
-    {tab === 'deps' && <Crud k="departments" />}
-    {tab === 'hours' && <div className="card" style={{ padding: 18, animation: 'pop .3s' }}><b style={{ fontSize: 14 }}>Horarios de trabajo</b><div className="small muted" style={{ marginBottom: 14 }}>Fuera de este horario, los flujos pueden usar un mensaje de ausencia.</div>
-      {hours.map((h, i) => <div key={h.d} className="row" style={{ padding: '9px 0', borderBottom: '1px solid var(--border)' }}><Switch on={h.on} onChange={v => setHours(x => x.map((y, j) => j === i ? { ...y, on: v } : y))} /><b style={{ width: 100 }}>{h.d}</b>
-        {h.on ? <><Clock size={13} className="muted" /><input type="time" className="input" style={{ width: 120 }} value={h.from} onChange={e => setHours(x => x.map((y, j) => j === i ? { ...y, from: e.target.value } : y))} /><span className="muted">a</span><input type="time" className="input" style={{ width: 120 }} value={h.to} onChange={e => setHours(x => x.map((y, j) => j === i ? { ...y, to: e.target.value } : y))} /></> : <span className="muted small">Cerrado</span>}</div>)}
-      <div className="row" style={{ justifyContent: 'flex-end', marginTop: 14 }}><button className="btn btn-p" onClick={() => toast('Horarios guardados')}><Save size={14} />Guardar</button></div></div>}
-    <Confirm open={leave} onClose={() => setLeave(false)} onOk={() => toast('No puedes salir: eres el propietario', 'err')} title="Salir de la empresa" text="Perderás el acceso a todos los datos de esta empresa." ok="Salir" />
-    <Modal open={!!newAcc} onClose={() => setNewAcc(false)} title={newAcc === 'member' ? 'Invitar miembro' : 'Nueva cuenta'} icon={<UserPlus size={18} />} footer={<><button className="btn btn-g" onClick={() => setNewAcc(false)}>Cancelar</button><button className="btn btn-p" onClick={() => { setNewAcc(false); toast(newAcc === 'member' ? 'Invitación enviada' : 'Cuenta creada') }}>{newAcc === 'member' ? 'Enviar invitación' : 'Crear'}</button></>}>
-      <div className="field"><label className="lb">{newAcc === 'member' ? 'Correo' : 'Nombre de la cuenta'}</label><input className="input" autoFocus /></div></Modal>
+    <div className="st-tabs">
+      {[['data', 'Datos corporativos', Building2], ['deps', 'Departamentos', Network], ['hours', 'Horarios de trabajo', Clock]].map(([k, l, Ic]) => <button key={k} className={'st-tab' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}><Ic size={14} />{l}</button>)}
+      <button className="lp-btn p" style={{ marginLeft: 'auto', marginBottom: -1 }} onClick={() => { setMv(''); setMod('account') }}><Plus size={16} />Nueva cuenta</button>
+    </div>
+    {tab === 'data' && <div className="st-card">
+      <div style={{ display: 'flex' }}><div><h3>Datos de la empresa<span className="st-act">Activa</span></h3><div className="sd">Información mostrada a sus clientes y en informes</div></div>
+        <button style={{ marginLeft: 'auto', color: '#ef4444', alignSelf: 'flex-start', marginTop: 6 }} title="Desactivar empresa" onClick={() => toast('No puede desactivar la empresa principal', 'err')}><PowerOff size={17} /></button></div>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 3 }} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 15px' }}>
+        <div><label className="pf-lb">Nombre de la empresa <span style={{ color: '#ef4444' }}>*</span></label><div className="st-in"><Building2 size={15} /><input value={f.name} onChange={e => setF({ ...f, name: e.target.value })} /></div></div>
+        <div><label className="pf-lb">Descripción</label><div className="st-in"><Building2 size={15} /><input value={f.desc} onChange={e => setF({ ...f, desc: e.target.value })} /></div></div>
+        <div><label className="pf-lb">Slug</label><div className="st-in"><input style={{ paddingLeft: 12, fontFamily: 'ui-monospace,Menlo,monospace', fontWeight: 400, fontSize: 12.5 }} value={f.slug} onChange={e => setF({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })} /></div></div>
+        <div><label className="pf-lb">Zona horaria</label><LSelect className="l-in ct-in" bold value={f.tz} onChange={v => setF({ ...f, tz: v })} options={TZ.map(t => ({ value: t, label: t }))} />
+          <div style={{ fontSize: 11.5, lineHeight: 1.45, color: '#94a3b8', marginTop: 7 }}>Define la zona horaria usada en el panel, filtros, condiciones de flujo, intervalo inteligente, horario comercial y variables de fecha/hora.</div></div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: 14 }}><div><div style={{ fontSize: 13.3, fontWeight: 600 }}>Notificaciones por correo de instancias</div><div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 5 }}>Envía un correo al propietario cuando una instancia se desconecta o queda restringida (API Oficial). Disponible con más de 4 instancias; activo por defecto.</div></div>
+        <span style={{ marginLeft: 'auto' }}><Toggle on={f.notif} onChange={v => setF({ ...f, notif: v })} /></span></div>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 23, paddingTop: 16, display: 'flex', justifyContent: 'flex-end' }}><button className="lp-btn p" onClick={saveCo}><Save size={15} />Guardar empresa</button></div>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 0, paddingTop: 23, display: 'flex', alignItems: 'flex-start' }}>
+        <div><div style={{ fontSize: 13.3, fontWeight: 600 }}>Miembros del equipo</div><div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 5 }}>Invite o cree usuarios para la empresa actual.</div></div>
+        <button className="lp-btn p" style={{ marginLeft: 'auto', marginTop: -2 }} onClick={() => { setMv(''); setMod('member') }}><Plus size={16} />Invitar miembro</button></div>
+      <button className="lp-btn" style={{ color: '#ef4444', marginTop: 5 }} onClick={() => setLeave(true)}><LogOut size={15} />Salir de la empresa</button>
+    </div>}
+    {tab === 'deps' && <>
+      <div style={{ display: 'flex', gap: 15, marginTop: 24 }}><div className="lp-srch" style={{ flex: 1 }}><Search size={15} /><input value={dq} onChange={e => setDq(e.target.value)} placeholder="Buscar por nombre del departamento" style={{ fontWeight: 500 }} /></div>
+        <button className="lp-btn p" onClick={() => setDm({ name: '', color: DCOL[0][0] })}><Plus size={16} />Nuevo departamento</button></div>
+      <div className="st-card" style={{ marginTop: 15 }}><h3>Departamentos activos</h3><div className="sd">Configure sectores de distribución automática de contactos</div>
+        {deps.length === 0 ? <div style={{ marginTop: 17, border: '1px dashed var(--border)', borderRadius: 5, height: 218, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 40 }}>
+          <Briefcase size={37} color="#94a3b8" strokeWidth={1.9} /><div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 13 }}>No hay departamentos</div><div style={{ fontSize: 13.3, color: '#94a3b8', marginTop: 6 }}>Cree su primer departamento para organizarse</div>
+          <button className="lp-btn p" style={{ marginTop: 14 }} onClick={() => setDm({ name: '', color: DCOL[0][0] })}><Plus size={16} />Crear primer departamento</button></div>
+          : <div style={{ marginTop: 17 }}>{dlist.map(d => <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
+            <span className="st-dep" style={{ background: d.color }}><i />{d.name}</span>
+            <span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}><button className="ch-ib" onClick={() => setDm(d)}><Pencil size={14} /></button><button className="ch-ib" onClick={() => setDd(d)}><Trash2 size={14} color="#ef4444" /></button></span></div>)}
+            {dlist.length === 0 && <div style={{ padding: 20, textAlign: 'center', fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Ningún departamento coincide con la búsqueda.</div>}</div>}
+      </div></>}
+    {tab === 'hours' && <div className="st-card">
+      <div style={{ display: 'flex' }}><div><h3>Horarios de atención</h3><div className="sd">Defina las escalas comerciales semanales de la empresa</div></div>
+        <button className="lp-btn p" style={{ marginLeft: 'auto', opacity: dirty ? 1 : .55, cursor: dirty ? 'pointer' : 'default' }} onClick={() => { if (!dirty) return; if (h.on && !h.wa) return toast('Seleccione el WhatsApp', 'err'); setHrs(h); toast('Horarios guardados') }}><Save size={15} />Guardar</button></div>
+      <div className="pf-hint" style={{ marginTop: 6, height: 45 }}><Info size={17} />Los cambios se confirman con el botón&nbsp;<b>Guardar</b>&nbsp;arriba.</div>
+      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', borderRadius: 5, padding: '16px 15px', marginTop: 20 }}>
+        <div><div style={{ fontSize: 13.3, fontWeight: 600 }}>Estado</div><div style={{ fontSize: 13.3, color: 'var(--soft)', marginTop: 4 }}>{h.on ? 'Horarios de atención activados' : 'Horarios de atención desactivados'}</div></div>
+        <span style={{ marginLeft: 'auto' }}><Toggle on={h.on} onChange={v => setH({ ...h, on: v })} /></span></div>
+      <div style={{ fontSize: 13.3, fontWeight: 600, marginTop: 23 }}>WhatsApp *</div><div style={{ fontSize: 13.3, color: 'var(--soft)', marginTop: 9 }}>Seleccione el WhatsApp para configurar esta instancia</div>
+      <div style={{ marginTop: 10 }}><LSelect className="l-in ct-in" value={h.wa} onChange={v => setH({ ...h, wa: v })} placeholder={conns.length ? 'Seleccione...' : 'No hay conexiones disponibles'} options={conns.map(c => ({ value: c.id, label: c.name }))} style={{ height: 24 }} /></div>
+      {h.on && <div style={{ marginTop: 22 }}>{h.days.map((x, i) => { const set = p => setH({ ...h, days: h.days.map((y, j) => j === i ? { ...y, ...p } : y) })
+        return <div key={x.d} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '9px 0', borderBottom: '1px solid var(--border)' }}><Toggle on={x.on} onChange={v => set({ on: v })} /><b style={{ width: 90, fontSize: 13 }}>{x.d}</b>
+          {x.on ? <><input type="time" className="l-in" style={{ width: 120, height: 32 }} value={x.from} onChange={e => set({ from: e.target.value })} /><span style={{ color: '#94a3b8' }}>a</span><input type="time" className="l-in" style={{ width: 120, height: 32 }} value={x.to} onChange={e => set({ to: e.target.value })} /></> : <span style={{ fontSize: 12.5, color: '#94a3b8' }}>Cerrado</span>}</div> })}</div>}
+    </div>}
+
+    {dm && <LModal open onClose={() => setDm(null)} title={dm.id ? 'Editar departamento' : 'Nuevo departamento'} desc="Configure un nuevo sector de atención" width={495} bodyStyle={{ padding: '21px 24px 0', overflow: 'visible' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15 }}>
+        <div><label className="l-lbl" style={{ color: 'var(--text)' }}>Nombre del departamento</label><input className="l-in ct-in" autoFocus value={dm.name} onChange={e => setDm({ ...dm, name: e.target.value })} /></div>
+        <div><label className="l-lbl" style={{ color: 'var(--text)' }}>Color del departamento</label><LSelect className="l-in ct-in" bold value={dm.color} onChange={v => setDm({ ...dm, color: v })} options={DCOL.map(([c, l]) => ({ value: c, label: l, dot: c }))} /></div></div>
+      <label className="l-lbl" style={{ color: 'var(--text)', marginTop: 16 }}>Vista previa</label>
+      <div style={{ border: '1px solid var(--border)', borderRadius: 6, padding: '15px 17px' }}><span className="st-dep" style={{ background: dm.color }}><i />{dm.name || 'Nombre del departamento'}</span></div>
+      <div style={{ borderTop: '1px solid var(--border2)', marginTop: 23, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11 }}>
+        <button className="lb2 g" onClick={() => setDm(null)}>Cancelar</button>
+        <button className="lb2 p" style={{ background: '#9b6cf8' }} disabled={!dm.name.trim()} onClick={() => { if (dm.id) setDeps(x => x.map(d => d.id === dm.id ? { ...dm, name: dm.name.trim() } : d)); else setDeps(x => [...x, { ...dm, id: uid(), name: dm.name.trim() }]); toast(dm.id ? 'Departamento actualizado' : 'Departamento creado'); setDm(null) }}>Guardar</button></div>
+    </LModal>}
+    <LModal open={!!dd} onClose={() => setDd(null)} title="Eliminar departamento" width={482} bodyStyle={{ padding: '22px 24px 0' }}>
+      <p style={{ fontSize: 14.3, lineHeight: 1.55 }}>¿Eliminar el departamento "{dd?.name}"?</p>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 19, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 13 }}><button className="lb2 g" onClick={() => setDd(null)}>Cancelar</button><button className="lb2 d" onClick={() => { setDeps(x => x.filter(d => d.id !== dd.id)); setDd(null); toast('Departamento eliminado') }}>Eliminar</button></div>
+    </LModal>
+    <LModal open={!!mod} onClose={() => setMod(null)} title={mod === 'member' ? 'Invitar miembro' : 'Nueva cuenta'} desc={mod === 'member' ? 'Enviaremos una invitación por correo' : 'Cree otra empresa para separar conexiones, flujos y contactos'} icon={mod === 'member' ? <UserPlus size={19} /> : <Building2 size={19} />}
+      footer={<><button className="lb2 g" onClick={() => setMod(null)}>Cancelar</button><button className="lb2 p" disabled={!mv.trim() || (mod === 'member' && !/\S+@\S+\.\S+/.test(mv))} onClick={() => {
+        if (mod === 'member') { toast('Invitación enviada a ' + mv.trim()) } else { setCompanies(cs => [...cs, { id: uid(), name: mv.trim() }]); toast('Cuenta creada: ' + mv.trim()) } setMod(null) }}>{mod === 'member' ? 'Enviar invitación' : 'Crear cuenta'}</button></>}>
+      <label className="l-lbl">{mod === 'member' ? 'Correo del miembro' : 'Nombre de la empresa'}</label><input className="l-in ct-in" autoFocus value={mv} onChange={e => setMv(e.target.value)} placeholder={mod === 'member' ? 'nombre@correo.com' : 'Ej.: Mi tienda online'} />
+    </LModal>
+    <LModal open={leave} onClose={() => setLeave(false)} title="Salir de la empresa" width={482} bodyStyle={{ padding: '22px 24px 0' }}>
+      <p style={{ fontSize: 14.3, lineHeight: 1.55 }}>Usted es el propietario de esta empresa. Transfiera la propiedad a otro miembro antes de salir.</p>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 19, padding: '16px 0', display: 'flex', justifyContent: 'flex-end' }}><button className="lb2 g" onClick={() => setLeave(false)}>Entendido</button></div>
+    </LModal>
   </>
 }
 
@@ -70,10 +137,10 @@ function Simple({ k }) {
   const Row = ({ t, d, a }) => <div className="row" style={{ padding: '11px 0', borderBottom: '1px solid var(--border)' }}><div><b>{t}</b>{d && <div className="small muted">{d}</div>}</div><span className="sp" /><Switch on={!!cfg[a]} onChange={v => { set(a, v); toast('Preferencia guardada') }} /></div>
   if (k === 'support') return <C title="Acceso de soporte" sub="Permite que el equipo de soporte vea tu cuenta para ayudarte"><Row t="Permitir acceso temporal" d="El acceso expira automáticamente en 48 horas" a="on" /></C>
   if (k === 'translations') return <C title="Traducciones de flujo" sub="Traduce automáticamente los mensajes según el idioma del contacto"><Row t="Traducción automática" d="Detecta el idioma del cliente" a="auto" /><div className="field" style={{ marginTop: 14 }}><label className="lb">Idioma base</label><select className="input" value={cfg.lang || 'Español'} onChange={e => set('lang', e.target.value)}>{['Español', 'Portugués', 'Inglés'].map(l => <option key={l}>{l}</option>)}</select></div></C>
-  if (k === 'ai') return <C title="Uso de Aria AI" sub="Consumo de tokens de los bloques de IA y agentes en este ciclo">{[['Bloques de IA', 0], ['Agentes de IA', 0], ['Generación de flujos', 0]].map(([l, v]) => <div key={l} style={{ marginBottom: 14 }}><div className="row small"><b>{l}</b><span className="sp" />{v} tokens</div><div className="progress" style={{ marginTop: 6 }}><div style={{ width: '2%' }} /></div></div>)}</C>
+  if (k === 'ai') return <C title="Uso de Leona AI" sub="Consumo de tokens de los bloques de IA y agentes en este ciclo">{[['Bloques de IA', 0], ['Agentes de IA', 0], ['Generación de flujos', 0]].map(([l, v]) => <div key={l} style={{ marginBottom: 14 }}><div className="row small"><b>{l}</b><span className="sp" />{v} tokens</div><div className="progress" style={{ marginTop: 6 }}><div style={{ width: '2%' }} /></div></div>)}</C>
   if (k === 'stdflows') return <C title="Flujos estándar" sub="Flujos que se disparan automáticamente ante eventos">{['Primer mensaje de un contacto nuevo', 'Fuera del horario de trabajo', 'Venta aprobada', 'Pago pendiente'].map(ev => <div key={ev} className="field"><label className="lb">{ev}</label><select className="input" value={cfg[ev] || ''} onChange={e => { set(ev, e.target.value); toast('Flujo asignado') }}><option value="">Ninguno</option>{flows.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}</select></div>)}</C>
   if (k === 'mass') return <C title="Envíos masivos" sub="Protege tu número con límites de envío"><Row t="Intervalo aleatorio entre mensajes" d="Simula comportamiento humano" a="rand" /><Row t="Pausar fuera del horario de trabajo" a="hours" /><div className="field" style={{ marginTop: 14 }}><label className="lb">Máximo de envíos por hora: {cfg.max || 200}</label><input type="range" min="50" max="1000" step="50" value={cfg.max || 200} onChange={e => set('max', e.target.value)} style={{ width: '100%', accentColor: '#8b5cf6' }} /></div></C>
-  if (k === 'integrations') return <C title="Integraciones" sub="Conecta AriaBot con tus plataformas de venta"><div className="grid g3">{['Hotmart', 'Kiwify', 'Shopify', 'Mercado Pago', 'Stripe', 'Google Sheets', 'OpenAI', 'Gemini', 'Zapier'].map(n => <div key={n} className="card lift row" style={{ padding: 12, background: 'var(--card2)' }}><div className="kpi-ic" style={{ background: 'var(--psoft)', color: 'var(--p)', width: 32, height: 32, fontWeight: 800 }}>{n[0]}</div><b>{n}</b><span className="sp" /><Switch on={!!cfg[n]} onChange={v => { set(n, v); toast(v ? n + ' conectado' : n + ' desconectado', v ? 'ok' : 'info') }} /></div>)}</div></C>
+  if (k === 'integrations') return <C title="Integraciones" sub="Conecta Leona con tus plataformas de venta"><div className="grid g3">{['Hotmart', 'Kiwify', 'Shopify', 'Mercado Pago', 'Stripe', 'Google Sheets', 'OpenAI', 'Gemini', 'Zapier'].map(n => <div key={n} className="card lift row" style={{ padding: 12, background: 'var(--card2)' }}><div className="kpi-ic" style={{ background: 'var(--psoft)', color: 'var(--p)', width: 32, height: 32, fontWeight: 800 }}>{n[0]}</div><b>{n}</b><span className="sp" /><Switch on={!!cfg[n]} onChange={v => { set(n, v); toast(v ? n + ' conectado' : n + ' desconectado', v ? 'ok' : 'info') }} /></div>)}</div></C>
   if (k === 'tracking') return <C title="Seguimiento" sub="Atribución de ventas por UTM y origen"><Row t="Capturar UTMs del enlace de WhatsApp" a="utm" /><Row t="Enviar eventos de compra al Pixel" a="pixel" /><Row t="Registrar origen del anuncio (CTWA)" a="ctwa" /></C>
   if (k === 'mcp') return <C title="Herramientas MCP" sub="Conecta tu cuenta a asistentes de IA externos"><label className="lb">URL del servidor MCP</label><div className="row"><input className="input" readOnly value="https://mcp.ariabot.app/v1/13120" /><button className="btn btn-p" onClick={() => { navigator.clipboard?.writeText('https://mcp.ariabot.app/v1/13120'); toast('URL copiada') }}><Copy size={13} />Copiar</button></div><Row t="Permitir lectura de contactos" a="read" /><Row t="Permitir crear ventas" a="write" /></C>
   return null
@@ -82,13 +149,15 @@ function Simple({ k }) {
 export default function Settings() {
   const [sp, setSp] = useSearchParams(); const tab = sp.get('tab') || 'accounts'; const [col, setCol] = useState(false)
   const cur = NAV.flatMap(n => n[1]).find(x => x[0] === tab) || NAV[0][1][0]
-  return <div className="page">
-    <div className="small muted bold" style={{ fontSize: 10 }}>CONFIGURACIÓN</div><h1 style={{ fontSize: 18, fontWeight: 700, marginTop: 4 }}>{cur[1]}</h1><p className="small muted" style={{ marginBottom: 18 }}>{tab === 'accounts' ? 'Datos de la empresa seleccionada en el menú lateral.' : 'Ajustes de ' + cur[1].toLowerCase()}</p>
-    <div style={{ display: 'flex', gap: 18, alignItems: 'flex-start' }}>
-      <div className="settings-nav" style={{ width: col ? 44 : 190, flexShrink: 0, transition: 'width .25s', position: 'relative', overflow: 'hidden' }}>
-        <button className="icon-btn" style={{ position: 'absolute', right: 0, top: 0, width: 22, height: 22 }} onClick={() => setCol(!col)}><ChevronLeft size={13} style={{ transform: col ? 'rotate(180deg)' : null, transition: '.25s' }} /></button>
-        {NAV.map(([s, items]) => <div key={s} style={{ marginBottom: 12 }}><div className="small muted bold" style={{ fontSize: 9.5, margin: '0 9px 6px', opacity: col ? 0 : 1 }}>{s}</div>
-          {items.map(([k, l, Ic]) => <button key={k} title={l} className={tab === k ? 'on' : ''} onClick={() => setSp({ tab: k })}><Ic size={14} style={{ flexShrink: 0 }} />{!col && <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{l}</span>}</button>)}</div>)}</div>
+  const SUB = { accounts: 'Datos de la empresa seleccionada en el menú lateral.' }
+  return <div className="st-page">
+    <div className="st-cap">CONFIGURACIÓN</div><h1 style={{ fontSize: 18.3, fontWeight: 700, marginTop: 9 }}>{cur[1]}</h1><p style={{ fontSize: 13.3, color: 'var(--soft)', marginTop: 6 }}>{SUB[tab] || 'Ajustes de ' + cur[1].toLowerCase() + ' de la empresa seleccionada.'}</p>
+    <div className="st-wrap">
+      <div className={'st-nav' + (col ? ' col' : '')}>
+        <button className="cl" onClick={() => setCol(!col)} title={col ? 'Expandir' : 'Contraer'}><ChevronLeft size={12} style={{ transform: col ? 'rotate(180deg)' : '' }} /></button>
+        {NAV.map(([s, items], si) => <div key={s} style={{ marginTop: si ? 21 : 0 }}><div className="sec" style={{ opacity: col ? 0 : 1 }}>{s}</div>
+          {items.map(([k, l, Ic]) => <button key={k} title={l} className={'it' + (tab === k ? ' on' : '')} onClick={() => setSp({ tab: k })}><Ic size={15} style={{ flexShrink: 0 }} />{!col && <span>{l}</span>}</button>)}</div>)}
+      </div>
       <div style={{ flex: 1, minWidth: 0 }} key={tab}>{tab === 'accounts' ? <Company /> : CRUD[tab] ? <Crud k={tab} /> : <Simple k={tab} />}</div></div>
   </div>
 }

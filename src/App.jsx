@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, CircleHelp, PanelLeftClose, PanelLeftOpen, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, Sparkles, Copy } from 'lucide-react'
+import { SendIcon, MegaphoneIcon } from './icons'
 import { Logo, Modal, useStore, useOutside, useToast, uid } from './ui'
 import Dashboard from './pages/Dashboard'
 import Chats from './pages/Chats'
@@ -8,7 +9,8 @@ import Kanban from './pages/Kanban'
 import Contacts from './pages/Contacts'
 import Flows, { FlowEditor } from './pages/Flows'
 import Agents from './pages/Agents'
-import { Mass } from './pages/Ops'
+import Mass from './pages/Mass'
+import Profile from './pages/Profile'
 import Connections from './pages/Connections'
 import Webhooks from './pages/Webhooks'
 import Facebook from './pages/Facebook'
@@ -18,7 +20,7 @@ import Tutorials from './pages/Tutorials'
 
 const NAV = [
   ['PRINCIPAL', [['/welcome', 'Dashboard', LayoutGrid], ['/chats', 'Chats en vivo', MessageSquare], ['/crms', 'Kanban', KanbanIc], ['/customers', 'Contactos', Users]]],
-  ['OPERACIONES', [['/flows', 'Flujos', Workflow], ['/agentes', 'Agentes de IA', Bot], ['/connections', 'Conexiones', Plug], ['/settings/inbound-webhooks', 'Webhooks de entrada', Webhook], ['/mass-dispatches', 'Envíos masivos', Send], ['/facebook/campaigns', 'Facebook', Megaphone]]],
+  ['OPERACIONES', [['/flows', 'Flujos', Workflow], ['/agentes', 'Agentes de IA', Bot], ['/connections', 'Conexiones', Plug], ['/settings/inbound-webhooks', 'Webhooks de entrada', Webhook], ['/mass-dispatches', 'Envíos masivos', SendIcon], ['/facebook/campaigns', 'Facebook', MegaphoneIcon]]],
   ['GESTIÓN', [['/billing', 'Cobros y suscripciones', CreditCard], ['/settings', 'Configuración', Cog], ['/tutoriales', 'Tutoriales', CircleHelp]]],
 ]
 
@@ -79,7 +81,7 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
       <div className="user" ref={uref} onClick={() => setUser(!userOpen)}>
         <div className="avatar">PM</div><div className="info" style={{ minWidth: 0 }}><div className="n">Pablo Monja Suclupe</div><div className="e">k4el.ux@gmail.com</div></div><ChevronDown size={15} className="chev" style={{ marginLeft: 'auto', color: 'var(--muted)' }} />
         {userOpen && <div className="dd-menu" style={{ top: 'auto', bottom: 'calc(100% + 6px)', left: 0, right: 0 }} onClick={e => e.stopPropagation()}>
-          <button className="dd-item" onClick={() => { nav('/settings'); setUser(false) }}><User size={14} />Mi perfil</button>
+          <button className="dd-item" onClick={() => { nav('/profile'); setUser(false) }}><User size={14} />Mi perfil</button>
           <button className="dd-item" onClick={() => { nav('/billing'); setUser(false) }}><CreditCard size={14} />Facturación</button>
           <button className="dd-item" onClick={() => { toggle(); setUser(false) }}>{theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}Cambiar tema</button>
           <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
@@ -135,6 +137,8 @@ export default function App() {
         <Route path="/mass-dispatches" element={<Mass />} />
         <Route path="/facebook/campaigns" element={<Facebook />} />
         <Route path="/billing" element={<Billing />} />
+        <Route path="/billing/:sub" element={<Billing />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/tutoriales" element={<Tutorials />} />
         <Route path="*" element={<Navigate to="/welcome" />} />

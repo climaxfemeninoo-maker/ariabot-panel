@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Users, DollarSign, ShoppingBag, Trophy, CircleCheck, ShoppingCart, Gem, Megaphone, RotateCcw, BookmarkPlus, RefreshCw, Settings, Filter, Download, Plus, CreditCard, X, UserCheck, Clock, MessageSquareOff, Minus, Trash2, Award } from 'lucide-react'
 import { useStore, Modal, useToast, uid, downloadCSV, Confirm } from '../ui'
+import { AssinarModal } from './Billing'
 import { Seg, Kpi, Section, EmptyBox, PeriodSelect, MultiSelect, CurrencySelect, IconGroup, LineChart, BarChart, Heatmap, InfoTip, fmtMoney, ddmm } from './dash/parts'
 
 const pad = n => String(n).padStart(2, '0')
@@ -89,7 +90,7 @@ export default function Dashboard() {
       ? <Ventas P={P} fs={fs} cur={cur} contacts={contacts} inP={inP} onNew={() => setModal('sale')} onDel={setDel} />
       : <Atencion P={P} chats={chats} contacts={contacts} inP={inP} />}
 
-    <Assinar open={modal === 'assinar'} onClose={() => setModal(null)} />
+    <AssinarModal open={modal === 'assinar'} onClose={() => setModal(null)} />
     <NewSale open={modal === 'sale'} onClose={() => setModal(null)} conns={connNames} cur={cur} onSave={s => { setSales(l => [s, ...l]); toast('Venta registrada') }} />
     <Modal open={modal === 'huella'} onClose={() => setModal(null)} title="Huella del Depredador" sub="Tus logros dentro de Leona" icon={<Award size={18} />}>
       {[['Primer lead', contacts.length, 1], ['Primera venta', sales.length, 1], ['100 leads', contacts.length, 100], ['PEN 10.000 facturados', sales.reduce((a, s) => a + +s.value || 0, 0), 10000]].map(([t, v, g]) =>
@@ -243,26 +244,6 @@ function Atencion({ P, chats, contacts, inP }) {
 }
 
 /* ======================= MODALES ======================= */
-function Assinar({ open, onClose }) {
-  const [n, setN] = useState(1); const [ct, setCt] = useState('ext'); const toast = useToast()
-  useEffect(() => { if (!open) return; const k = e => e.key === 'Escape' && onClose(); addEventListener('keydown', k); return () => removeEventListener('keydown', k) }, [open])
-  if (!open) return null
-  const brl = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
-  return <div className="overlay" onMouseDown={e => e.target === e.currentTarget && onClose()}>
-    <div className="modal db-m">
-      <div className="mh"><div><h2>Assinar agora</h2><p>Escolha quantas instâncias deseja contratar. A cobrança mensal é recorrente por instância.</p></div>
-        <button className="x" onClick={onClose}><X size={18} /></button></div>
-      <div className="mb">
-        <div className="db-inst"><div><div className="t">Instâncias adicionais</div><div className="s">{brl(127)} por instância · {brl(127 * n)}/mês</div></div>
-          <div className="db-step"><button onClick={() => setN(Math.max(1, n - 1))}><Minus size={13} strokeWidth={2.6} /></button><b>{n}</b><button onClick={() => setN(n + 1)}><Plus size={13} strokeWidth={2.6} /></button></div></div>
-        <div className="lbl">PAÍS DE COBRANÇA</div>
-        <div className="db-ct"><button className={ct === 'br' ? 'on' : ''} onClick={() => setCt('br')}><small>BR</small>Brasil</button><button className={ct === 'ext' ? 'on' : ''} onClick={() => setCt('ext')}><span style={{ fontSize: 13 }}>🌎</span>Exterior</button></div>
-        <div className="note">{ct === 'br' ? 'Pagamento em reais (R$) via Pix, boleto ou cartão.' : 'Valores em reais (R$). No checkout internacional a Paddle cobra na moeda do seu país.'}</div>
-      </div>
-      <div className="mf"><button className="c" onClick={onClose}>Cancelar</button><button className="ok" onClick={() => { onClose(); toast(`Redirigiendo al pago de ${n} instancia${n > 1 ? 's' : ''}…`, 'info') }}>Ir para o pagamento</button></div>
-    </div></div>
-}
-
 function NewSale({ open, onClose, conns, cur, onSave }) {
   const toast = useToast()
   const [f, setF] = useState({ client: '', product: '', value: '', instance: '' })
