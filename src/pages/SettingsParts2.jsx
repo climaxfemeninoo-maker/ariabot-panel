@@ -140,13 +140,13 @@ const MetaMark = ({ s }) => <svg width={s * .62} height={s * .62} viewBox="0 0 3
 const ElevenMark = ({ s }) => <span style={{ display: 'flex', gap: s * .1 }}><i style={{ width: s * .1, height: s * .45, background: '#fff', borderRadius: 2 }} /><i style={{ width: s * .1, height: s * .45, background: '#fff', borderRadius: 2 }} /></span>
 // id, nombre, categoría, descripción, fondo, img, destacado, tipo de formulario
 const PROV = [
-  ['metacapi', 'Meta CAPI Cloud', 'seguimiento', 'Envía eventos de compra a Meta y mide tus anuncios Click to WhatsApp.', '#0866ff', null, true, 'capi'],
+  ['metacapi', 'Meta CAPI Cloud', 'seguimiento', 'Envía eventos de compra a Meta y mide tus anuncios Click to WhatsApp.', '#005ae3', '/int/metacapi.png', false, 'capi'],
   ['utmify', 'UTMify', 'seguimiento', 'Seguimiento de campañas y atribución avanzada de ventas', '#0f1320', '/int/utmify.png', false, 'utmify'],
   ['xpag', 'XPag', 'pagos', 'Operación en tres vías — PIX (BRL), API LATAM y API Cripto (USDT) — con conciliación automática', '#000000', '/int/xpag.png', false, 'pay'],
   ['openai', 'OpenAI GPT', 'ia', 'IA generativa para chatbots y flujos cognitivos', '#000000', '/int/openai.png', false, 'ai'],
   ['claude', 'Claude', 'ia', 'Modelos de Anthropic para respuestas precisas, análisis y agentes de atención', '#d97757', '/int/claude.png', false, 'ai'],
   ['gemini', 'Google Gemini', 'ia', 'Modelos multimodales rápidos y eficientes de Google', '#ffffff', '/int/gemini.png', false, 'ai'],
-  ['eleven', 'ElevenLabs', 'ia', 'Síntesis de voz con IA para audio en flujos', '#000000', null, false, 'ai'],
+  ['eleven', 'ElevenLabs', 'ia', 'Síntesis de voz con IA para audio en flujos', '#000000', '/int/eleven.png', false, 'ai'],
 ]
 const AI_INFO = { openai: ['OpenAI', 'Genera en platform.openai.com → API keys.', 'sk-…'], claude: ['Claude (Anthropic)', 'Genera en console.anthropic.com → API Keys.', 'sk-ant-…'], gemini: ['Gemini', 'Genera en Google AI Studio → Get API key.', 'AIza…'], eleven: ['ElevenLabs', 'Genera en elevenlabs.io → Profile → API keys.', 'sk_…'] }
 const CAPI_EV = [['Purchase', 'Purchase - Compra completada'], ['Lead', 'Lead - Contacto calificado'], ['InitiateCheckout', 'InitiateCheckout - Inicio de pago'], ['AddToCart', 'AddToCart - Añadido al carrito'], ['CompleteRegistration', 'CompleteRegistration - Registro completo']]

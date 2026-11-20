@@ -136,10 +136,10 @@ function Ventas({ P, fs, cur, contacts, inP, onNew, onDel }) {
     <div className="db-kpis">
       <Kpi icon={Users} color="#3b82f6" value={leads} label="Leads nuevos" tip="Contactos que entraron en el período." />
       <Kpi icon={DollarSign} color="#2dd4bf" value={money(total)} valueColor="#2dd4bf" label="Facturación" tip="Suma del valor de las ventas del período." />
-      <Kpi icon={ShoppingBag} color="#1a73f0" value={fs.length} label="Ventas" tip="Cantidad de ventas registradas." />
+      <Kpi icon={ShoppingBag} color="#a855f7" value={fs.length} label="Ventas" tip="Cantidad de ventas registradas." />
       <Kpi icon={Trophy} color="#f59e0b" value={(ad ? total / ad : 0).toFixed(2)} valueColor="#fbbf24" label="ROAS" tip="Facturación ÷ gasto en anuncios." />
       <Kpi icon={CircleCheck} color="#22c55e" value={conv.toFixed(2) + '%'} label="Tasa de conversión" tip="Ventas ÷ leads nuevos." />
-      <Kpi icon={ShoppingCart} color="#1a73f0" value={money(fs.length ? total / fs.length : 0)} label="Ticket promedio" tip="Facturación ÷ ventas." />
+      <Kpi icon={ShoppingCart} color="#a855f7" value={money(fs.length ? total / fs.length : 0)} label="Ticket promedio" tip="Facturación ÷ ventas." />
       <Kpi icon={Gem} color="#22c55e" value={money(total - ad)} valueColor="#22c55e" label="Beneficio" tip="Facturación − gasto en anuncios." />
       <Kpi icon={MegaphoneIcon} color="#ef4444" value={money(ad)} valueColor="#ef4444" label="Gasto Meta (Ad)" tip="Gasto en Meta Ads del período." extra={<span className="fbtn"><Filter size={13} /></span>} />
     </div>
