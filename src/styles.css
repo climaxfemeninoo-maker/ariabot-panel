@@ -1833,3 +1833,19 @@ html.dark .lm input[class]:not([type=checkbox]):not([type=radio]):not([type=rang
 html.dark .lm .fe-vin input,html.dark .lm .fe-ed textarea,html.dark .lm .pf-in input,html.dark .lm .st-in input,html.dark .lm .lp-srch input{background:transparent!important}
 .ch-chip.on,html:not(.dark) .ch-chip.on{background:#005ae3;border-color:#005ae3;color:#fff}
 html:not(.dark) .ch-chip.on.r{background:#ef4444;border-color:#ef4444}html:not(.dark) .ch-chip.on.a{background:#f59e0b;border-color:#f59e0b}
+/* opción activa del menú: forma actual + colores de referencia */
+html.dark .nav a.active{background:linear-gradient(118deg,#0159e0 0%,#0456d5 35%,#0753c7 65%,#0b4eb7 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 12px 2px rgba(1,89,224,.45)!important;border-color:rgba(255,255,255,.12)}
+html:not(.dark) .nav a.active{background:linear-gradient(118deg,#035ce3 0%,#1d6be5 35%,#2d77e8 65%,#4687ea 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 14px 3px rgba(0,90,227,.22)!important;border-color:rgba(255,255,255,.25)}
+/* ===== Modo claro con los tonos de Leona (colores de marca en azul) ===== */
+:root{--bg:#ffffff;--side:#ffffff;--card:#f8fafc;--card2:#f8fafc;--deep:#ffffff;--border:#e2e8f0;--border2:#e2e8f0;--text:#0f172a;--muted:#64748b;--soft:#475569;--muted2:#94a3b8;
+  --input:#f8fafc;--in2:#f8fafc;--hover:#f1f5f9;--btn2:#f1f5f9;--btn2h:#e2e8f0;--btn3:#f1f5f9;--chip:#f1f5f9;--menu:#ffffff;--slate:#f1f5f9;--slate2:#e2e8f0;--grid:#e2e8f0;--psoft:rgba(0,90,227,.1)}
+html:not(.dark) body,html:not(.dark) .app,html:not(.dark) .main{background:#ffffff}
+html:not(.dark) .side{background:#ffffff;border-right-color:#e5e7eb}
+html:not(.dark) input[class]:not([type=checkbox]):not([type=radio]):not([type=range]),html:not(.dark) textarea[class],html:not(.dark) select,html:not(.dark) .l-in,html:not(.dark) .l-selb,html:not(.dark) .lp-srch,html:not(.dark) .pf-in,html:not(.dark) .st-in,html:not(.dark) .fe-vin,html:not(.dark) .fe-ed{background-color:#f8fafc;border-color:#e2e8f0;color:#0f172a}
+html:not(.dark) .lp-srch input,html:not(.dark) .pf-in input,html:not(.dark) .st-in input,html:not(.dark) .fe-vin input,html:not(.dark) .fe-vin textarea,html:not(.dark) .fe-ed textarea{background:transparent}
+html:not(.dark) input:focus,html:not(.dark) textarea:focus,html:not(.dark) .l-in:focus,html:not(.dark) .lp-srch:focus-within,html:not(.dark) .fe-vin:focus-within{border-color:#005ae3!important;box-shadow:0 0 0 1px rgba(0,90,227,.25)}
+html:not(.dark) .lm,html:not(.dark) .modal,html:not(.dark) .fbx-m{background:#ffffff;border-color:#e2e8f0}
+html:not(.dark) .lm .l-in,html:not(.dark) .lm .fe-vin,html:not(.dark) .lm .fe-ed,html:not(.dark) .lm .l-selb{background-color:#f8fafc!important;border-color:#e2e8f0!important}
+html:not(.dark) .lb2.g,html:not(.dark) .lp-btn:not(.p),html:not(.dark) .wh-btn{background:#f1f5f9;border-color:#e2e8f0;color:#0f172a}
+html:not(.dark) .lb2.g:hover,html:not(.dark) .lp-btn:not(.p):hover{background:#e2e8f0}
+html:not(.dark) .db-tbl th,html:not(.dark) .ct-tbl th,html:not(.dark) .wh-th,html:not(.dark) .fbx-t th{background:#ffffff;color:#64748b}
