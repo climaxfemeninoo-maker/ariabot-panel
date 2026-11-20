@@ -132,8 +132,8 @@ export default function MobileDash({ P, period, setPeriod, range, setRange, selC
   const money = v => `${(+v || 0).toLocaleString('es-PE', { maximumFractionDigits: 2 })} ${cur}`
   const total = fs.reduce((a, s) => a + (+s.value || 0), 0); const leads = contacts.filter(c => c.created && inP(c.created)).length
   const conv = leads ? fs.length / leads * 100 : 0
-  const K = [['Leads nuevos', leads, '#2563eb', UserPlus], ['Ingresos', money(total), '#059669', Banknote], ['Ticket medio', money(fs.length ? total / fs.length : 0), '#004fc7', TrendingUp], ['Ventas', fs.length, '#4686e5', ShoppingBag],
-    ['Inversión Meta', money(ad), '#dc2626', CampaignIcon], ['Beneficio', money(total - ad), '#059669', Wallet], ['ROAS', (ad ? total / ad : 0).toFixed(2), '#ea580c', Zap], ['Tasa de conv.', conv.toFixed(2) + '%', '#60a5fa', Percent, '#4d94ff']]
+  const K = [['Leads nuevos', leads, '#2563eb', UserPlus], ['Ingresos', money(total), '#059669', Banknote], ['Ticket medio', money(fs.length ? total / fs.length : 0), '#9333ea', TrendingUp], ['Ventas', fs.length, '#4f46e5', ShoppingBag],
+    ['Inversión Meta', money(ad), '#dc2626', CampaignIcon], ['Beneficio', money(total - ad), '#059669', Wallet], ['ROAS', (ad ? total / ad : 0).toFixed(2), '#ea580c', Zap], ['Tasa de conv.', conv.toFixed(2) + '%', '#d946ef', Percent, '#a855f7']]
   const byDay = P.buckets.map(d => [P.hourly ? pad(d.getHours()) : `${d.getDate()}/${d.getMonth() + 1}`, 0, 0]); fs.forEach(s => { const i = P.idx(new Date(s.date)); if (byDay[i]) { byDay[i][1]++; byDay[i][2] += +s.value || 0 } })
   const hours = Array.from({ length: 24 }, (_, h) => [pad(h), fs.filter(s => new Date(s.date).getHours() === h).length]).filter(([, v], i, a) => a.some(x => x[1]) ? true : false)
   const grp = (k, val) => Object.entries(fs.reduce((a, s) => { const key = s[k] || '—'; a[key] = (a[key] || 0) + (val ? +s.value || 0 : 1); return a }, {}))

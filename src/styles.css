@@ -1900,3 +1900,9 @@ html:not(.dark) .ini-chips span{color:#be123c}
 .ini-test .r{margin-top:9px;font-size:12.8px;font-weight:600;padding:7px 10px;border-radius:7px}
 .ini-test .r.ok{background:rgba(34,197,94,.12);color:#22c55e}.ini-test .r.no{background:rgba(239,68,68,.12);color:#f87171}
 .ini-ft{display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);margin-top:20px;padding:15px 0 18px}
+/* móvil: fondo #121212 */
+@media(max-width:760px){
+  html.dark,html.dark body,html.dark #root,html.dark .app,html.dark .main,html.dark .md,html.dark .mv,html.dark .tr,html.dark .page,html.dark .mv.fbm{background:#121212!important;background-image:none!important}
+  html.dark .md-top{background:linear-gradient(#121212 75%,rgba(18,18,18,0))!important}
+  html.dark .rt-load{background:#121212!important}
+}
