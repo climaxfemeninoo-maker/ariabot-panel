@@ -1686,3 +1686,13 @@ html:not(.dark) .fe-edge{stroke:#9ca3af}
 @media(max-width:760px){.rt-load{left:0;background:#0d0a13}}
 @keyframes stPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
 .av-on::after,.on-dot{animation:stPulse 2s linear infinite}
+/* ===== Paleta oscura de Leona (fondo y tarjetas) ===== */
+html.dark{--bg:#151b29;--side:#131927;--deep:#161d2b;--card:#1c2534;--card2:#212a3a;--border:#273042;--border2:#313b4e;--in2:#222b3b;--input:#182030;--hover:#232c3c;
+  --btn2:#242d3e;--btn2h:#2d3749;--btn3:#212a3a;--chip:#2a3446;--tgoff:#334155;--menu:#212a3a;--slate:#131927;--grid:#2a3344}
+@media(min-width:761px){
+  html.dark .main{background:radial-gradient(ellipse 70% 45% at 55% 38%,rgba(109,40,217,.13),transparent 70%),radial-gradient(ellipse 60% 40% at 50% 85%,rgba(109,40,217,.08),transparent 70%),#151b29;background-attachment:fixed}
+  html.dark body,html.dark .app{background:#151b29}
+  html.dark .fe-node{background:#1c2534}
+  html.dark .fe-cv{background-color:#171d2b}
+  html.dark .rt-load{background:#151b29}
+}
