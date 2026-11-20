@@ -1849,3 +1849,12 @@ html:not(.dark) .lm .l-in,html:not(.dark) .lm .fe-vin,html:not(.dark) .lm .fe-ed
 html:not(.dark) .lb2.g,html:not(.dark) .lp-btn:not(.p),html:not(.dark) .wh-btn{background:#f1f5f9;border-color:#e2e8f0;color:#0f172a}
 html:not(.dark) .lb2.g:hover,html:not(.dark) .lp-btn:not(.p):hover{background:#e2e8f0}
 html:not(.dark) .db-tbl th,html:not(.dark) .ct-tbl th,html:not(.dark) .wh-th,html:not(.dark) .fbx-t th{background:#ffffff;color:#64748b}
+/* barras de desplazamiento grises y desvanecidas */
+*{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.35) transparent}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent!important}
+::-webkit-scrollbar-thumb{background:rgba(148,163,184,.28)!important;border-radius:8px;border:2px solid transparent;background-clip:padding-box!important}
+::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.5)!important;background-clip:padding-box!important}
+::-webkit-scrollbar-corner{background:transparent}
+html:not(.dark) *{scrollbar-color:rgba(100,116,139,.3) transparent}
+html:not(.dark) ::-webkit-scrollbar-thumb{background:rgba(100,116,139,.25)!important;background-clip:padding-box!important}
