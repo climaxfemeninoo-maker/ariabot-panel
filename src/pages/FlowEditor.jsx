@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search, ZoomIn, ZoomOut, Maximize2, RotateCcw, MessageSquare, FileText, Tag, CreditCard, List, Save, MessageCircle, Bell, GitBranch, Share2, Target, Clock, Building2, Globe, Bot, Kanban, SlidersHorizontal, DollarSign, Wallet, PhoneCall, Sparkles, Copy, Trash2, X, Send, Image, Video, Mic, User, File, Sticker, GripVertical, Bold, Italic, Strikethrough, Smile, Code, WandSparkles, Upload, Link2, Repeat, CirclePlay, Workflow, TriangleAlert, Plus, Square, KeyRound, ChevronDown } from 'lucide-react'
+import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search, ZoomIn, ZoomOut, Maximize2, RotateCcw, MessageSquare, FileText, Tag, CreditCard, List, Save, MessageCircle, Bell, GitBranch, Share2, Target, Clock, Building2, Globe, Bot, Kanban, SlidersHorizontal, DollarSign, Wallet, PhoneCall, Sparkles, Copy, Trash2, X, Send, Image, Video, Mic, User, File, Sticker, GripVertical, Bold, Italic, Strikethrough, Smile, Code, WandSparkles, Upload, Link2, Repeat, CirclePlay, Workflow, TriangleAlert, Plus, Square, KeyRound, ChevronDown, Check, History, Paperclip, MoreHorizontal } from 'lucide-react'
 import { useStore, useToast, uid, nowStr, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
+import { PickBtn } from './flowPickers'
 import { NODE_DEF, ESPERAR_OUTS, GenericNodeModal, CarouselModal, carOuts } from './flowNodes'
 
 export const FB = {
@@ -34,6 +35,7 @@ export const FB = {
   kie: ['Integración Kie.ai', '#d946ef', Sparkles, 'Bloque nativo para generación de audio, imagen y video (Veo)'],
 }
 const B = t => FB[t] || FB.mensaje
+const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#f59e0b', 'Agente de IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
   if (n.type === 'template') { const t = n.tpl || {}; return [{ k: 'reply', l: 'Resposta livre', c: 'or', pc: '#d97706' }, { k: 'timeout', l: 'Timeout sem clique', s: `${t.timeout || 60} ${({ m: 'minutes', h: 'hours', d: 'days' })[t.unit || 'm']}`, c: 'gr', pc: '#6b7280' }, { k: 'fail', l: 'Falha de entrega', c: 'rd', pc: '#dc2626' }] }
@@ -56,7 +58,7 @@ function Editor({ value, onChange, ph, magic, rows }) {
   const wrap = (a, b = a) => { const el = ta.current, s = el.selectionStart, e = el.selectionEnd; onChange(value.slice(0, s) + a + value.slice(s, e) + b + value.slice(e)); requestAnimationFrame(() => { el.focus(); el.selectionStart = s + a.length; el.selectionEnd = e + a.length }) }
   return <div className="fe-ed"><textarea ref={ta} value={value} onChange={e => onChange(e.target.value)} placeholder={ph} style={rows ? { minHeight: rows } : null} />
     <div className="tb"><button onClick={() => wrap('*')}><Bold size={16} /></button><button onClick={() => wrap('_')}><Italic size={16} /></button><button onClick={() => wrap('~')}><Strikethrough size={16} /></button>
-      <button onClick={() => wrap('😊', '')}><Smile size={16} /></button><button onClick={() => wrap('{', '}')}><Code size={16} /></button>
+      <PickBtn kind="emoji" title="Emojis" onPick={x => wrap(x, '')}><Smile size={16} /></PickBtn><PickBtn kind="var" title="Variable" onPick={x => wrap(x, '')}><Code size={16} /></PickBtn>
       {magic && <><span style={{ width: 1, height: 18, background: 'var(--border2)', margin: '0 3px' }} /><button onClick={magic}><WandSparkles size={16} color="#a78bfa" /></button></>}</div></div>
 }
 const Range = ({ label, v, max, set, unit = 's' }) => <><div style={{ display: 'flex', fontSize: 13.3, color: 'var(--soft)', marginTop: 15 }}><span>{label}</span><b style={{ margin: '0 auto', color: 'var(--text)' }}>{v} {unit}</b><span>{max} {unit}</span></div>
@@ -182,7 +184,7 @@ function Simulator({ flow, onClose, onStep }) {
       if (cur.type === 'carrusel') { const o = []; (cf.cards || []).forEach(k => k.buttons.forEach(b => b.type === 'reply' && o.push(b))); say(fill(cf.intro || 'Elige una opción abajo') + '\n\n' + (cf.cards || []).map((k, i) => `🖼 ${i + 1}. ${fill(k.text)} [${k.buttons.map(b => b.title).join(' | ')}]`).join('\n')); setState({ id: cur.id, kind: 'car', o }); return }
       if (cur.type === 'conexion') { const f = (JSON.parse(localStorage.getItem('aria_flows') || '[]')).find(x => x.id === cf.flow); say('▸ Redirigido a ' + (f ? f.name : 'otro flujo'), 'sys'); break }
       if (cur.type === 'agente') { say((cf.act || 'give') === 'take' ? '▸ Conversación devuelta al flujo' : '▸ Chat entregado al agente de IA', 'sys'); if ((cf.act || 'give') === 'give') break }
-      const portOf = { integracion: 'success', ia: 'success', kie: 'success', pago: 'payment_approved', ariapay: 'payment_approved', condicional: 'true' }
+      const portOf = { integracion: 'success', ia: 'success', kie: 'success', ariapay: 'payment_approved', condicional: 'true' }
       if (cur.type === 'notificacion') say(`▸ Notificación a ${cf.phone ? cf.phone.cc + ' ' + cf.phone.n : '—'}: ${fill(cf.msg || '')}`, 'sys')
       if (['pago', 'ariapay'].includes(cur.type)) say(`💳 Cobro ${cf.method || 'PIX'} · ${cf.cur || 'BRL'} ${cf.noAmount ? '(sin monto)' : cf.value || '100,00'}`)
       if (cur.type === 'distribuidor') { const os = cf.outs || []; const pk = os.length ? os[Math.floor(Math.random() * os.length)] : null; say('▸ Distribuidor → ' + (pk ? pk.name : 'sin salidas'), 'sys'); cur = pk ? next(cur.id, 'o' + pk.id) : null; continue }
@@ -222,7 +224,8 @@ export default function FlowEditor() {
   useLayoutEffect(() => { if (!world.current) return; const wr = world.current.getBoundingClientRect(); const k = view.k; const m = {}
     world.current.querySelectorAll('[data-port]').forEach(el => { const r = el.getBoundingClientRect(); m[el.dataset.port] = { x: (r.left + r.width / 2 - wr.left) / k, y: (r.top + r.height / 2 - wr.top) / k } })
     if (JSON.stringify(m) !== JSON.stringify(ports)) setPorts(m) })
-  const setFlow = useCallback(fn => setFlows(fs => fs.map(f => f.id === id ? { ...fn(f), updated: nowStr() } : f)), [id, setFlows])
+  const [savedAt, setSavedAt] = useState(() => new Date())
+  const setFlow = useCallback(fn => { setFlows(fs => fs.map(f => f.id === id ? { ...fn(f), updated: nowStr() } : f)); setSavedAt(new Date()) }, [id, setFlows])
   const toWorld = (cx, cy) => { const r = box.current.getBoundingClientRect(); return { x: (cx - r.left - view.x) / view.k, y: (cy - r.top - view.y) / view.k } }
   const fit = () => { if (!flow?.nodes.length || !box.current) return; const r = box.current.getBoundingClientRect(); const xs = flow.nodes.map(n => n.x), ys = flow.nodes.map(n => n.y)
     const minX = Math.min(...xs) - 60, minY = Math.min(...ys) - 60, w = Math.max(...xs) + NW + 60 - minX, h = Math.max(...ys) + NH + 60 - minY, k = Math.min(1.8, r.width / w, (r.height - 60) / h); setView({ k, x: -minX * k + (r.width - w * k) / 2, y: -minY * k + (r.height - h * k) / 2 + 10 }) }
@@ -256,10 +259,12 @@ export default function FlowEditor() {
   const xs = flow.nodes.map(n => n.x), ys = flow.nodes.map(n => n.y); const mmX = Math.min(...xs, 0) - 200, mmY = Math.min(...ys, 0) - 150, mmW = Math.max(...xs.map(x => x + NW), 600) + 200 - mmX, mmH = Math.max(...ys.map(y => y + NH), 400) + 150 - mmY
   return <div className="fe">
     <div className="fe-head"><button style={{ color: 'var(--text)', display: 'grid', marginRight: 8 }} onClick={() => nav('/flows')}><ArrowLeft size={17} /></button>
-      {rename ? <input className="l-in" autoFocus style={{ width: 260, height: 34, fontWeight: 700 }} defaultValue={flow.name} onBlur={e => { setFlow(f => ({ ...f, name: e.target.value.trim() || f.name })); setRename(false) }} onKeyDown={e => e.key === 'Enter' && e.target.blur()} />
-        : <><h2>{flow.name}</h2><button style={{ color: 'var(--muted)', display: 'grid', marginLeft: 8 }} onClick={() => setRename(true)}><Pencil size={15} /></button></>}
+      {rename !== false ? <div className="fe-ren"><input className="l-in" autoFocus value={rename} onChange={e => setRename(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && rename.trim()) { setFlow(f => ({ ...f, name: rename.trim() })); setRename(false); toast('Nombre actualizado') } if (e.key === 'Escape') setRename(false) }} />
+          <button className="ok" title="Guardar" disabled={!rename.trim()} onClick={() => { setFlow(f => ({ ...f, name: rename.trim() })); setRename(false); toast('Nombre actualizado') }}><Check size={16} /></button><button className="no" title="Cancelar" onClick={() => setRename(false)}><X size={16} /></button></div>
+        : <><h2>{flow.name}</h2><button style={{ color: 'var(--muted)', display: 'grid', marginLeft: 8 }} onClick={() => setRename(flow.name)}><Pencil size={15} /></button></>}
       <span style={{ marginLeft: 'auto' }} />
-      <button className="fe-hb ai" onClick={() => setModal('ai')}><i><Sparkles size={13} /></i>LeonaAI</button>
+      <span className="fe-saved"><Clock size={14} />Guardado a las <b>{savedAt.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</b></span>
+      <button className={'fe-hb ai' + (modal === 'ai' ? ' on' : '')} onClick={() => setModal(modal === 'ai' ? null : 'ai')}><i><img src="/leona-mark.png" alt="" /></i>LeonaAI</button>
       <button className="fe-hb" onClick={() => addNode('ariapay')}>LeonaPay</button>
       <button className="fe-hb" onClick={() => { setFlow(f => ({ ...f, status: st === 'activo' ? 'pausado' : 'activo' })); toast(st === 'activo' ? 'Flujo pausado' : 'Flujo activado') }}>{st === 'activo' ? <><Pause size={14} />Pausar</> : <><Play size={14} />Activar</>}</button>
       <button className="fe-hb" onClick={() => setModal('tr')}><Languages size={14} />Traducir</button>
@@ -270,7 +275,7 @@ export default function FlowEditor() {
         onMouseDown={e => { if (e.target === box.current || e.target.tagName === 'svg') { act.current = { t: 'pan', sx: e.clientX, sy: e.clientY, vx: view.x, vy: view.y }; box.current.classList.add('panning'); setSel(null); if (panel === 'tools') setPanel(null) } }}>
         <div ref={world} style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`, transformOrigin: '0 0' }}>
           <svg style={{ position: 'absolute', overflow: 'visible', left: 0, top: 0, width: 1, height: 1 }}>
-            {flow.edges.map(e => { const a = nodeMap[e.from], b = nodeMap[e.to]; if (!a || !b) return null; const pp = ports[e.from + '|' + (e.port || 'main')]; if (!pp) return null; const d = path(pp, { x: b.x - 8, y: b.y + 34 })
+            {flow.edges.map(e => { const a = nodeMap[e.from], b = nodeMap[e.to]; if (!a || !b) return null; const pp = ports[e.from + '|' + (e.port || 'main')]; if (!pp) return null; const d = path(pp, ports[b.id + '|in'] || { x: b.x - 8, y: b.y + 34 })
               return <g key={e.id} style={{ cursor: 'pointer' }} onClick={() => { setFlow(f => ({ ...f, edges: f.edges.filter(x => x.id !== e.id) })); toast('Conexión eliminada', 'info') }}>
                 <path d={d} stroke="transparent" strokeWidth="16" fill="none" /><path className={'fe-edge' + (st === 'activo' || run === e.from ? ' anim' : '')} style={{ stroke: e.port === 'fail' ? '#dc2626' : e.port === 'timeout' ? '#6b7280' : e.port === 'reply' ? '#d97706' : undefined }} d={d} /></g> })}
             {link && <path className="fe-edge anim" d={path({ x: link.sx, y: link.sy }, { x: link.x, y: link.y })} />}
@@ -278,31 +283,51 @@ export default function FlowEditor() {
           {flow.nodes.map(n => { const [, c, I, dd, g] = B(n.type); const outs = nodeOuts(n); const tpl = n.type === 'template'
             const startLink = (e, k) => { e.stopPropagation(); const pp = ports[n.id + '|' + k] || { x: n.x + NW, y: n.y + OUTY }; setLink({ from: n.id, port: k, sx: pp.x, sy: pp.y, x: pp.x, y: pp.y }); act.current = { t: 'link' } }
             const desc = n.desc || (['inicio', 'mensaje', 'menu', 'template'].includes(n.type) ? '' : n.type === 'carrusel' ? '📝 Elige una opción abajo' : dd)
-            return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }}
-            onMouseDown={e => { e.stopPropagation(); setSel(n.id) }} onDoubleClick={() => setEdit(n)}
-            onMouseUp={() => { if (link && link.from !== n.id && n.type !== 'inicio') { setFlow(f => ({ ...f, edges: [...f.edges.filter(x => !(x.from === link.from && (x.port || 'main') === (link.port || 'main'))), { id: uid(), from: link.from, port: link.port, to: n.id }] })); toast('Bloques conectados') } }}>
-            <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: g ? `linear-gradient(90deg,${g[0]},${g[1]})` : `linear-gradient(90deg,${c},${c}cc)` }} onMouseDown={e => { e.stopPropagation(); setSel(n.id); act.current = { t: 'node', id: n.id, sx: e.clientX, sy: e.clientY, nx: n.x, ny: n.y } }}>
-              {!tpl && <span className="ic"><I size={20} /></span>}<b>{n.title}</b>
-              <span className="acts"><button title="Editar" onMouseDown={e => e.stopPropagation()} onClick={() => setEdit(n)}><Pencil size={15} /></button>
-                {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={15} /></button>
-                  <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={15} /></button></>}</span></div>
-            <div className="fe-ns"><div><span>ENTRADAS</span><b>{n.stats[0]}</b></div><div><span>AVANCES</span><b>{n.stats[1]}</b></div><div><span>TASA</span><b>{n.stats[2]}%</b></div></div>
+            const P = (k, pc, st) => <span className="fe-port out" data-port={n.id + '|' + k} style={{ background: pc, ...st }} onMouseDown={e => startLink(e, k)} />
+            const nodeEv = { onMouseDown: e => { e.stopPropagation(); setSel(n.id) }, onDoubleClick: () => setEdit(n),
+              onMouseUp: () => { if (link && link.from !== n.id && n.type !== 'inicio') { setFlow(f => ({ ...f, edges: [...f.edges.filter(x => !(x.from === link.from && (x.port || 'main') === (link.port || 'main'))), { id: uid(), from: link.from, port: link.port, to: n.id }] })); toast('Bloques conectados') } } }
+            const drag = e => { e.stopPropagation(); setSel(n.id); act.current = { t: 'node', id: n.id, sx: e.clientX, sy: e.clientY, nx: n.x, ny: n.y } }
+            const acts = <span className="acts"><button title="Editar" onMouseDown={e => e.stopPropagation()} onClick={() => setEdit(n)}><Pencil size={15} /></button>
+              {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={15} /></button>
+                <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={15} /></button></>}</span>
+            const stats = <div className="fe-ns"><div><span>ENTRADAS</span><b>{n.stats[0]}</b></div><div><span>AVANCES</span><b>{n.stats[1]}</b></div><div><span>TASA</span><b>{n.stats[2]}%</b></div></div>
+            if (ROUND[n.type]) { const [cc, lbl] = ROUND[n.type]; const cf = n.cfg || {}
+              return <div key={n.id} className={'fe-rn' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': cc }} {...nodeEv}>
+                <div className={'circ ' + n.type} onMouseDown={drag}>{n.type === 'agente' ? <img src="/leona-mark.png" alt="" /> : <I size={30} strokeWidth={2.2} />}<small>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</small>
+                  <span className="fe-port in" data-port={n.id + '|in'} />{outs && outs.length === 0 ? null : P('main', undefined, { top: '50%', marginTop: -8.5, right: -10 })}{acts}</div>{stats}</div> }
+            const rows = outs || []; const pp = rows.filter(o => o.k === 'success' || o.k === 'failure'); const lr = rows.filter(o => !pp.includes(o))
+            let body
+            if (n.type === 'esperar') { const [m, to] = rows
+              body = <><div className="fe-row or" style={{ marginTop: 8 }}>{desc || 'Esperar la respuesta del cliente.'}{P(m.k, '#6b7280')}</div>
+                {to && <><div className="fe-or">si no responde</div><div className="fe-row or2">{to.s}{P(to.k, '#6b7280')}</div></>}</> }
+            else if (n.type === 'carrusel') { const cf = n.cfg || {}; const cards = cf.cards || [{ text: '', buttons: [{ title: 'Opción A', type: 'reply' }] }]
+              body = <><div className="fe-row bl" style={{ marginTop: 8 }}>📝 {cf.intro || 'Elige una opción abajo'}<small>Tarjetas: {cards.length} · {cf.exp ? cf.exp + ' ' + ({ seconds: 's', minutes: 'min', hours: 'h', days: 'd' })[cf.unit || 'days'] : '2 d'} · Botones REPLY: {cards.reduce((a, k) => a + (k.buttons || []).filter(b => (b.type || 'reply') === 'reply').length, 0)}</small></div>
+                {cards.map((k, i) => <div key={i} className="fe-card"><div className="th">{k.img ? <img src={k.img} alt="" /> : i + 1}</div><span>{k.text || 'Sin texto en la tarjeta'}</span></div>)}
+                {lr.map(o => <div key={o.k} className={'fe-row ' + (o.k.startsWith('b') ? 'bl' : o.c)}>{o.k.startsWith('b') ? 'Respuesta al botón' : o.l}{o.k.startsWith('b') && <small>{o.s}</small>}{P(o.k, o.pc)}</div>)}</> }
+            else if (n.type === 'ariapay') body = <><div className="fe-pill">{desc}</div>{lr.map(o => <div key={o.k} className="fe-lr">{o.l}{P(o.k, o.pc)}</div>)}</>
+            else if (outs && !pp.length) body = <>{desc && !['menu', 'template'].includes(n.type) && <div className="fe-nd" style={{ fontSize: 13, paddingTop: 6 }}>{desc}</div>}
+              <div style={{ paddingTop: 4, minHeight: outs.length ? 0 : 34 }}>{outs.map(o => <div key={o.k} className={'fe-row ' + o.c}>{o.l}{o.s && <small>{o.s}</small>}{P(o.k, o.pc)}</div>)}</div></>
+            else if (outs) body = <><div className="fe-nd" style={{ fontSize: 13, paddingTop: 6, minHeight: 34 }}>{desc}</div>
+              {lr.map(o => <div key={o.k} className={'fe-row ' + o.c}>{o.l}{P(o.k, o.pc)}</div>)}
+              <div className="fe-pp">{pp.map(o => P(o.k, o.pc, { position: 'relative', right: 'auto' }))}</div></>
+            else body = <><div className="fe-nd" style={{ fontSize: 13, minHeight: n.type === 'mensaje' ? 48 : 30, paddingTop: 6 }}>{desc}</div>{P('main', undefined, { bottom: 22 })}</>
+            return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }} {...nodeEv}>
+            <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: g ? `linear-gradient(90deg,${g[0]},${g[1]})` : `linear-gradient(90deg,${c},${c}cc)` }} onMouseDown={drag}>
+              {!tpl && <span className="ic">{n.type === 'ariapay' ? <img src="/leona-mark.png" alt="" style={{ width: 26, height: 26 }} /> : <I size={20} />}</span>}<b>{n.title}</b>{acts}</div>
+            {stats}
             {tpl && <div className="fe-box"><b>{n.tpl?.name || 'Template não selecionado'}</b><span>Template Meta HSM · Quick Reply</span></div>}
-            {outs && desc && !['menu', 'template'].includes(n.type) && <div className="fe-nd" style={{ fontSize: 13, paddingTop: 6 }}>{desc}</div>}
-            {outs ? <div style={{ paddingTop: 4, minHeight: outs.length ? 0 : 34 }}>{outs.map(o => <div key={o.k} className={'fe-row ' + o.c}>{o.l}{o.s && <small>{o.s}</small>}<span className="fe-port out" data-port={n.id + '|' + o.k} style={{ background: o.pc }} onMouseDown={e => startLink(e, o.k)} /></div>)}</div>
-              : <><div className="fe-nd" style={{ fontSize: 13, minHeight: n.type === 'mensaje' ? 48 : 30, paddingTop: 6 }}>{desc}</div>
-                <span className="fe-port out" data-port={n.id + '|main'} style={{ bottom: 22 }} onMouseDown={e => startLink(e, 'main')} /></>}
-            {n.type !== 'inicio' && <span className="fe-port in" />}
+            {body}
+            {n.type !== 'inicio' && <span className="fe-port in" data-port={n.id + '|in'} />}
           </div> })}
         </div>
       </div>
       <div className="fe-tools"><button className={'fe-tb' + (panel === 'tools' ? ' p' : '')} onClick={() => setPanel(panel === 'tools' ? null : 'tools')}><LayoutGrid size={16} />Herramientas</button>
         <button className={'fe-tb' + (panel === 'sim' ? ' p' : '')} onClick={() => setPanel(panel === 'sim' ? null : 'sim')}><Play size={14} fill="currentColor" />Simular</button></div>
       {panel === 'tools' && <div className="fe-pal"><div className="s"><div><Search size={16} color="#8f8a9e" /><input autoFocus value={pq} onChange={e => setPq(e.target.value)} placeholder="Buscar bloques..." /></div></div>
-        <div className="l">{Object.entries(FB).filter(([k, b]) => k !== 'inicio' && b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}><I size={19} color={c} />{l}</button>)}</div></div>}
+        <div className="l">{Object.entries(FB).filter(([k, b]) => k !== 'inicio' && b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{k === 'agente' ? <img className="av ag" src="/leona-mark.png" alt="" /> : k === 'ariapay' ? <img className="av" src="/leona-mark.png" alt="" /> : <I size={19} color={c} />}{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button onClick={fit}><Maximize2 size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
-      <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: '#15121f', display: 'block' }}>
+      <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#15121f)', display: 'block' }}>
         {flow.nodes.map(n => <rect key={n.id} x={n.x} y={n.y} width={NW} height={NH} fill={sel === n.id ? '#8b5cf6' : n.type === 'inicio' ? '#10b981' : B(n.type)[1]} />)}
         {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(139,92,246,.06)" stroke="#8b5cf6" strokeWidth={mmW / 140} />}
       </svg></div>
@@ -319,11 +344,44 @@ export default function FlowEditor() {
         if (NODE_DEF[edit.type]) return <GenericNodeModal node={edit} def={NODE_DEF[edit.type]} color={c} icon={<I size={20} />} flowId={flow.id} onClose={() => setEdit(null)} onSave={save} />
         return <NodeModal node={edit} onClose={() => setEdit(null)} onSave={save} /> })())}
     {modal === 'tr' && <TranslateModal flow={flow} onClose={() => setModal(null)} />}
-    {modal === 'ai' && <AiModal onClose={() => setModal(null)} onGen={types => { const base = flow.nodes.length ? Math.max(...flow.nodes.map(n => n.y)) + 220 : 100; const ns = types.map((t, i) => newNode(t, 80 + i * 330, base + (i % 2) * 60)); const last = flow.nodes.length ? flow.nodes[flow.nodes.length - 1] : null
+    {modal === 'ai' && <AiPanel flow={flow} onClose={() => setModal(null)} onGen={types => { const base = flow.nodes.length ? Math.max(...flow.nodes.map(n => n.y)) + 220 : 100; const ns = types.map((t, i) => newNode(t, 80 + i * 330, base + (i % 2) * 60)); const last = flow.nodes.length ? flow.nodes[flow.nodes.length - 1] : null
       setFlow(f => ({ ...f, nodes: [...f.nodes, ...ns], edges: [...f.edges, ...(last ? [{ id: uid(), from: last.id, to: ns[0].id }] : []), ...ns.slice(1).map((n, i) => ({ id: uid(), from: ns[i].id, to: n.id }))] })); setModal(null); setReady(false); toast('Flujo generado con LeonaAI') }} />}
   </div>
 }
 
+const AI_SUG = ['Armar bienvenida con menú de opciones', 'Agregar cobro PIX después de elegir el plan', 'Reorganizar el canvas y conectar los caminos que faltan', 'Crea una imagen de portada para el mensaje de bienvenida']
+function AiPanel({ flow, onClose, onGen }) {
+  const nav = useNavigate(); const toast = useToast()
+  const [tokR] = useStore('tokens', {}); const bal = +(tokR && tokR.balance) || 0
+  const [threads, setThreads] = useStore('ai_threads_' + flow.id, [])
+  const [cur, setCur] = useState(null); const [txt, setTxt] = useState(''); const [hist, setHist] = useState(false); const [busy, setBusy] = useState(false); const [rec, setRec] = useState(false)
+  const th = threads.find(t => t.id === cur); const msgs = th ? th.msgs : []
+  const end = useRef(); useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth' }) }, [msgs.length, busy])
+  const plan = s => { s = s.toLowerCase(); const types = ['mensaje']; if (/bienven|men[uú]|opcion/.test(s)) types.push('menu'); if (/pregunt|respond|espera/.test(s)) types.push('esperar'); if (/agente|duda|\bia\b/.test(s)) types.push('agente'); if (/etiquet/.test(s)) types.push('etiquetas'); if (/kanban|crm/.test(s)) types.push('kanban'); if (/pix/.test(s)) types.push('pix'); else if (/pag|cobr|link/.test(s)) types.push('pago'); if (/venta|compr/.test(s)) types.push('venta'); if (types.length === 1) types.push('esperar', 'agente'); return types }
+  const send = q => { q = (q ?? txt).trim(); if (!q || bal <= 0 || busy) return; setTxt('')
+    let id = cur; const um = { r: 'u', t: q }
+    if (!th) { id = uid(); setThreads(ts => [{ id, title: q.slice(0, 48), at: Date.now(), msgs: [um] }, ...ts]); setCur(id) } else setThreads(ts => ts.map(t => t.id === id ? { ...t, msgs: [...t.msgs, um] } : t))
+    setBusy(true); setTimeout(() => { const types = plan(q); if (!/reorganiz|imagen|portada/.test(q.toLowerCase())) onGen(types)
+      const a = /reorganiz/.test(q.toLowerCase()) ? 'Reorganicé el canvas: alineé los bloques por columnas y revisé las conexiones que faltaban.' : /imagen|portada/.test(q.toLowerCase()) ? 'Generar imágenes requiere la integración de imagen activa. Configúrala en Integraciones y lo intento de nuevo.' : `Listo. Agregué ${types.length} bloques al canvas: ${types.map(t => FB[t][0]).join(' → ')}. Revisa cada bloque y ajusta los textos.`
+      setThreads(ts => ts.map(t => t.id === id ? { ...t, msgs: [...t.msgs, { r: 'a', t: a }] } : t)); setBusy(false) }, 1400) }
+  return <div className="ai-pn">
+    <div className="ai-h"><span className="av"><img src="/leona-mark.png" alt="" /></span><div style={{ minWidth: 0, flex: 1 }}><b>{th ? th.title : 'Nuevo hilo en este flujo'}</b><small>{bal > 0 ? `${bal.toLocaleString('es')} tokens Leona disponibles` : 'Pausa por tokens Leona'}</small></div>
+      <span className={'tk' + (bal > 0 ? ' ok' : '')} title="Saldo de tokens Leona">{bal > 999 ? Math.floor(bal / 1000) + 'k' : bal}</span>
+      <button title="Historial" onClick={() => setHist(!hist)}><History size={18} /></button><button title="Nuevo hilo" onClick={() => { setCur(null); setHist(false) }}><Plus size={19} /></button><button title="Cerrar" onClick={onClose}><X size={19} /></button></div>
+    {hist && <div className="ai-hist"><div className="t">Hilos de este flujo</div>{threads.length ? threads.map(t => <button key={t.id} className={t.id === cur ? 'on' : ''} onClick={() => { setCur(t.id); setHist(false) }}><MessageCircle size={15} /><span>{t.title}</span><small>{new Date(t.at).toLocaleDateString('es-PE')}</small></button>) : <div className="e">Aún no hay hilos.</div>}</div>}
+    <div className="ai-b">
+      {!th && <><h3>¿Qué quieres construir en este flujo?</h3><p>Cuéntanos el resultado que buscas. Lo armamos en el canvas en tiempo real.</p>
+        {AI_SUG.map(x => <button key={x} className="ai-s" onClick={() => bal > 0 ? send(x) : setTxt(x)}>{x}</button>)}</>}
+      {msgs.map((m, i) => <div key={i} className={'ai-m ' + m.r}>{m.r === 'a' && <span className="av"><img src="/leona-mark.png" alt="" /></span>}<div>{m.t}</div></div>)}
+      {busy && <div className="ai-m a"><span className="av"><img src="/leona-mark.png" alt="" /></span><div className="dots"><i /><i /><i /></div></div>}
+      {bal <= 0 && <div className="ai-pause"><b>Pausa por tokens Leona</b><p>Paré aquí para no dejar el trabajo a medias sin saldo. Agrega tokens Leona y seguimos desde este punto.</p><p>Saldo actual: {bal}</p>
+        <div className="r"><button className="a" onClick={() => nav('/billing')}>Agregar tokens Leona</button><button disabled>Continuar desde donde paramos</button><button className="n" onClick={() => { setCur(null); setTxt('') }}>Empezar otro tema</button></div></div>}
+      <div ref={end} /></div>
+    <div className="ai-f"><div className="box"><textarea value={txt} disabled={bal <= 0} onChange={e => setTxt(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }} placeholder={bal > 0 ? 'Describe lo que quieres construir…' : 'Agrega tokens Leona para continuar este hilo'} />
+      <div className="r"><button title="Adjuntar" disabled={bal <= 0} onClick={() => toast('Adjunta imágenes o PDF para dar contexto', 'info')}><Paperclip size={17} /></button><button title="Dictar" disabled={bal <= 0} className={rec ? 'rec' : ''} onClick={() => { setRec(!rec); if (rec) setTxt(t => t + (t ? ' ' : '') + 'Armar bienvenida con menú de opciones') }}><Mic size={17} /></button>
+        <span style={{ marginLeft: 'auto' }} /><button title="Más"><MoreHorizontal size={17} /></button><button className="snd" disabled={bal <= 0 || !txt.trim() || busy} onClick={() => send()}><Send size={16} /></button></div></div></div>
+  </div>
+}
 function AiModal({ onClose, onGen }) {
   const [t, setT] = useState('')
   const gen = () => { const s = t.toLowerCase(); const types = ['mensaje']; if (/pregunt|respond|espera/.test(s)) types.push('esperar'); if (/men[uú]|opcion/.test(s)) types.push('menu'); if (/agente|duda|ia/.test(s)) types.push('agente'); if (/etiquet/.test(s)) types.push('etiquetas'); if (/kanban|crm/.test(s)) types.push('kanban'); if (/pag|cobr|link/.test(s)) types.push('pago'); if (/venta|compr/.test(s)) types.push('venta'); if (types.length === 1) types.push('esperar', 'agente'); onGen(types) }
@@ -380,7 +438,7 @@ function TagsModal({ node, onClose, onSave }) {
 
 function VIn({ v, set, ph, area, max }) {
   const El = area ? 'textarea' : 'input'
-  return <div className="fe-vin"><El value={v} maxLength={max} onChange={e => set(e.target.value)} placeholder={ph} /><button title="Insertar variable" onClick={() => set(v + '{full_name}')}><Code size={16} /></button></div>
+  return <div className="fe-vin"><El value={v} maxLength={max} onChange={e => set(e.target.value)} placeholder={ph} /><PickBtn kind="var" title="Insertar variable" onPick={x => set(v + x)}><Code size={16} /></PickBtn></div>
 }
 function PixModal({ node, onClose, onSave }) {
   const [p, setP] = useState({ type: 'random', key: '', name: '', amount: '', text: '', img: '', ...(node.pix || {}) }); const u = (k, v) => setP({ ...p, [k]: v })
