@@ -120,6 +120,16 @@ function MobileNav({ onAll }) {
   </nav>{menu && <MobileMenu onClose={() => setMenu(false)} onAll={onAll} />}</>
 }
 
+const sect = p => '/' + (p.split('/')[1] || '')
+const LOAD_TXT = { chats: 'Cargando conversaciones…', crms: 'Cargando tableros…', customers: 'Cargando contactos…', flows: 'Cargando flujos…', agentes: 'Cargando agentes…', connections: 'Cargando conexiones…', settings: 'Cargando…', 'mass-dispatches': 'Cargando envíos…', facebook: 'Cargando campañas…', billing: 'Cargando facturación…', welcome: 'Cargando dashboard…' }
+function RouteLoader({ path }) {
+  const s = sect(path); const [show, setShow] = useState(false); const first = useRef(true)
+  useEffect(() => { if (first.current) { first.current = false; return } setShow(true); const t = setTimeout(() => setShow(false), 380); return () => clearTimeout(t) }, [s])
+  if (!show) return null
+  const m = typeof document !== 'undefined' && document.querySelector('.main'); const left = m ? m.getBoundingClientRect().left : 0
+  return <div className="rt-load" style={{ left }}><div className="rt-sp" /><span>{LOAD_TXT[s.slice(1)] || 'Cargando…'}</span></div>
+}
+
 export default function App() {
   const [col, setCol] = useStore('sidecol', false)
   const [mopen, setMopen] = useState(false)
@@ -137,6 +147,8 @@ export default function App() {
     <Sidebar col={col && !(typeof window !== 'undefined' && window.innerWidth <= 760)} setCol={setCol} mopen={mopen} setMopen={setMopen} />
     {mopen && <div onClick={() => setMopen(false)} style={{ position: 'fixed', inset: 0, zIndex: 85, background: 'rgba(0,0,0,.55)' }} />}
     <main className="main" style={full && !mobile ? { overflow: 'hidden' } : null}>
+      <RouteLoader path={loc.pathname} />
+      <div key={sect(loc.pathname)} className="rt-in" style={full ? { height: '100%' } : null}>
       <Routes>
         <Route path="/" element={<Navigate to="/welcome" />} />
         <Route path="/welcome" element={<Dashboard />} />
@@ -160,6 +172,7 @@ export default function App() {
         <Route path="/tutoriales" element={<Tutorials />} />
         <Route path="*" element={<Navigate to="/welcome" />} />
       </Routes>
+      </div>
     </main>
     <MobileNav onAll={() => setMopen(true)} />
   </div>

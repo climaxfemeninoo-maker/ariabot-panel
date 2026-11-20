@@ -1663,3 +1663,26 @@ html:not(.dark) .fe-mm{background:#e5e7eb;border-color:#d1d5db;box-shadow:0 8px 
 .pv-l code{font-family:ui-monospace,monospace;font-size:12px;color:var(--text)}
 .kie-adv{display:flex;align-items:center;gap:7px;margin:16px 0 8px;font-size:13px;font-weight:600;color:var(--soft)}
 html:not(.dark){--mmbg:#cfd3da}
+.dr{position:relative;height:26px;margin:9px 11px 0;touch-action:none;cursor:pointer}
+.dr .dr-tr{position:absolute;left:-11px;right:-11px;top:9px;height:8px;border-radius:8px;background:#374151}
+html:not(.dark) .dr .dr-tr{background:#e5e7eb}
+.dr .dr-fl{position:absolute;top:9px;height:8px;background:#22d3ee;border-radius:8px}
+.dr .dr-th{position:absolute;top:2px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:#22d3ee;border:3px solid #0e7490;box-shadow:0 2px 6px rgba(0,0,0,.35);cursor:grab;transition:transform .12s}
+.dr .dr-th:hover,.dr .dr-th:focus-visible{transform:scale(1.12);outline:none;box-shadow:0 0 0 5px rgba(34,211,238,.25)}
+html:not(.dark) .dr .dr-th{border-color:#fff}
+.fe-rng::-webkit-slider-thumb{border:3px solid #0e7490;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+/* conexiones como Leona: discontinuas grises */
+.fe-edge{stroke:#7c7a8c;stroke-width:3;stroke-dasharray:9 7;stroke-linecap:round}
+.fe-edge.anim{animation:dash 1.1s linear infinite}
+html:not(.dark) .fe-edge{stroke:#9ca3af}
+/* ===== Animaciones de entrada (como Leona) ===== */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes spinR{to{transform:rotate(360deg)}}
+.rt-in{animation:fadeIn .3s ease-out both}
+.rt-in .card,.rt-in .st-card,.rt-in .lp-card,.rt-in .db-card,.rt-in .kpi,.rt-in .fl-panel,.rt-in .ct-tbl,.rt-in .wh-card,.rt-in .fbx-panel,.rt-in .bl-card{animation:fadeIn .3s ease-out both}
+.rt-load{position:fixed;inset:0;left:var(--sidew,240px);z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);animation:fadeIn .15s both;pointer-events:none}
+.rt-load .rt-sp{width:32px;height:32px;border-radius:50%;border:2px solid #8b5cf6;border-top-color:transparent;animation:spinR 1s linear infinite}
+.rt-load span{font-size:13.5px;color:var(--muted)}
+@media(max-width:760px){.rt-load{left:0;background:#0d0a13}}
+@keyframes stPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
+.av-on::after,.on-dot{animation:stPulse 2s linear infinite}

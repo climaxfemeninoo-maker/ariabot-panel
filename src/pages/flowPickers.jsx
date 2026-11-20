@@ -1,4 +1,5 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useLayoutEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Search, ChevronDown } from 'lucide-react'
 import { useStore, useOutside } from '../ui'
 
@@ -15,36 +16,40 @@ export const SYS_VARS = [['full_name', 'Nombre completo'], ['first_name', 'Prime
   ['comprovante.recebedor_similaridade', 'Comprobante: similaridad del beneficiario (%)'], ['comprovante.valido', 'Comprobante: validación general (clave y nombre)']]
 const ADS_VARS = [['ctwa_clid', 'CTWA Click ID'], ['source_url', 'Source URL'], ['source_id', 'Source ID'], ['media_url', 'Media URL'], ['thumbnail_url', 'Thumbnail URL']]
 
-export function VarPicker({ onPick, onClose, right = true, up }) {
+export function VarPicker({ onPick, onClose, right = true, up, pos }) {
   const [q, setQ] = useState(''); const ref = useRef(); useOutside(ref, onClose)
   const [gv] = useStore('set_vars', []); const [cf] = useStore('custom_fields', [])
   const k = q.toLowerCase(); const f = list => list.filter(([a, b]) => (a + ' ' + (b || '')).toLowerCase().includes(k))
   const secs = [['Variables del sistema', f(SYS_VARS)], ['Anuncios (lead)', f(ADS_VARS)], ['Variables globales', f((Array.isArray(gv) ? gv : []).map(v => [v.key, v.desc || '']))], [`Campos personalizados (${Array.isArray(cf) ? cf.length : 0})`, f((Array.isArray(cf) ? cf : []).map(c => [c.name, c.desc || '']))]]
-  return <div ref={ref} className={'vp' + (up ? ' up' : '')} style={right ? { right: 0 } : { left: 0 }} onMouseDown={e => e.stopPropagation()}>
+  return <div ref={ref} className={'vp' + (up ? ' up' : '')} style={pos || (right ? { right: 0 } : { left: 0 })} onMouseDown={e => e.stopPropagation()}>
     <div className="vp-s"><Search size={15} /><input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar variable..." /></div>
     <div className="vp-l">{secs.map(([t, l]) => <div key={t}><div className="vp-t">{t}</div>{l.length ? l.map(([a, b]) => <button key={t + a} onClick={() => { onPick('{' + a + '}'); onClose() }}><code>{'{' + a + '}'}</code>{b && <span>{b}</span>}</button>) : <div className="vp-e">{q ? 'Sin coincidencias' : t.startsWith('Variables globales') ? 'Aún no hay variables globales. Créalas en Configuración › Variables globales.' : 'Sin elementos'}</div>}</div>)}</div>
   </div>
 }
 
 const EMO = '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 😶 😐 😑 😬 🙄 😯 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 👋 🤚 ✋ 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ 👍 👎 ✊ 👊 👏 🙌 👐 🤲 🙏 💪 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 💔 💕 💞 💓 💗 💖 💘 💝 ✨ ⭐ 🌟 🔥 💯 ✅ ❌ ⚠️ 📌 📍 📎 📝 📞 📱 💬 💰 💵 💳 🎁 🎉 🎊 🛒 📦 🚚 ⏰ 📅 🔔 👉 🆕 🆓 🔝'.split(' ')
-export function EmojiPicker({ onPick, onClose }) {
+export function EmojiPicker({ onPick, onClose, pos }) {
   const ref = useRef(); useOutside(ref, onClose)
-  return <div ref={ref} className="ep" onMouseDown={e => e.stopPropagation()}>{EMO.map((e, i) => <button key={i} onClick={() => onPick(e)}>{e}</button>)}</div>
+  return <div ref={ref} className="ep" style={pos} onMouseDown={e => e.stopPropagation()}>{EMO.map((e, i) => <button key={i} onClick={() => onPick(e)}>{e}</button>)}</div>
 }
 
 export const CURRENCIES = [['BRL', 'real brasileño'], ['USD', 'dólar estadounidense'], ['MXN', 'peso mexicano'], ['ARS', 'peso argentino'], ['COP', 'peso colombiano'], ['AED', 'dírham de los Emiratos Árabes Unidos'], ['AUD', 'dólar australiano'], ['BOB', 'boliviano'], ['CAD', 'dólar canadiense'], ['CHF', 'franco suizo'], ['CLP', 'peso chileno'], ['CNY', 'yuan chino'], ['CRC', 'colón costarricense'], ['CZK', 'corona checa'], ['DKK', 'corona danesa'], ['DOP', 'peso dominicano'], ['EUR', 'euro'], ['GBP', 'libra esterlina'], ['GTQ', 'quetzal guatemalteco'], ['HKD', 'dólar hongkonés'], ['HNL', 'lempira hondureño'], ['ILS', 'nuevo séquel israelí'], ['INR', 'rupia india'], ['JPY', 'yen japonés'], ['KRW', 'won surcoreano'], ['NIO', 'córdoba nicaragüense'], ['NOK', 'corona noruega'], ['NZD', 'dólar neozelandés'], ['PAB', 'balboa panameño'], ['PEN', 'sol peruano'], ['PHP', 'peso filipino'], ['PLN', 'esloti polaco'], ['PYG', 'guaraní paraguayo'], ['RUB', 'rublo ruso'], ['SEK', 'corona sueca'], ['SGD', 'dólar singapurense'], ['THB', 'bat tailandés'], ['TRY', 'lira turca'], ['TWD', 'nuevo dólar taiwanés'], ['UYU', 'peso uruguayo'], ['VES', 'bolívar venezolano'], ['ZAR', 'rand sudafricano']]
-export function CurrencyPicker({ onPick, onClose }) {
+export function CurrencyPicker({ onPick, onClose, pos }) {
   const [q, setQ] = useState(''); const ref = useRef(); useOutside(ref, onClose)
   const l = CURRENCIES.filter(([a, b]) => (a + ' ' + b).toLowerCase().includes(q.toLowerCase()))
-  return <div ref={ref} className="vp" style={{ right: 0 }} onMouseDown={e => e.stopPropagation()}><div className="vp-s"><Search size={15} /><input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar moneda..." /></div>
+  return <div ref={ref} className="vp" style={pos || { right: 0 }} onMouseDown={e => e.stopPropagation()}><div className="vp-s"><Search size={15} /><input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar moneda..." /></div>
     <div className="vp-l">{!q && <><div className="vp-t">Más usadas</div>{CURRENCIES.slice(0, 5).map(([a, b]) => <button key={'m' + a} onClick={() => { onPick(a); onClose() }}><code>{a}</code><span>{b}</span></button>)}</>}
       <div className="vp-t">Todas las monedas ({CURRENCIES.length})</div>{l.map(([a, b]) => <button key={a} onClick={() => { onPick(a); onClose() }}><code>{a}</code><span>{b}</span></button>)}</div></div>
 }
 export const curName = c => CURRENCIES.find(x => x[0] === c)?.[1]
 
 /* botón + popover listo para insertar */
-export function PickBtn({ kind = 'var', onPick, children, title, className, up }) {
-  const [o, setO] = useState(false)
-  return <span style={{ position: 'relative', display: 'inline-flex' }}><button type="button" className={className + (o ? ' on' : '')} title={title} onClick={() => setO(!o)}>{children}</button>
-    {o && (kind === 'var' ? <VarPicker up={up} onPick={onPick} onClose={() => setO(false)} /> : kind === 'emoji' ? <EmojiPicker onPick={e => onPick(e)} onClose={() => setO(false)} /> : <CurrencyPicker onPick={onPick} onClose={() => setO(false)} />)}</span>
+export function PickBtn({ kind = 'var', onPick, children, title, className = '' }) {
+  const [o, setO] = useState(null); const bref = useRef()
+  const toggle = () => { if (o) return setO(null); const r = bref.current.getBoundingClientRect(); const W = kind === 'emoji' ? 292 : 320, H = kind === 'emoji' ? 230 : 350
+    const left = Math.max(8, Math.min(r.right - W, innerWidth - W - 8)); const below = r.bottom + 6 + H < innerHeight
+    setO({ position: 'fixed', left, width: W, top: below ? r.bottom + 6 : Math.max(8, r.top - 6 - H), bottom: 'auto', right: 'auto', zIndex: 1000 }) }
+  const close = () => setO(null)
+  return <span style={{ position: 'relative', display: 'inline-flex' }}><button ref={bref} type="button" className={className + (o ? ' on' : '')} title={title} onMouseDown={e => e.stopPropagation()} onClick={toggle}>{children}</button>
+    {o && createPortal(kind === 'var' ? <VarPicker pos={o} onPick={onPick} onClose={close} /> : kind === 'emoji' ? <EmojiPicker pos={o} onPick={e => onPick(e)} onClose={close} /> : <CurrencyPicker pos={o} onPick={onPick} onClose={close} />, document.body)}</span>
 }

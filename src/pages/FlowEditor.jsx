@@ -63,6 +63,16 @@ function Editor({ value, onChange, ph, magic, rows }) {
 }
 const Range = ({ label, v, max, set, unit = 's' }) => <><div style={{ display: 'flex', fontSize: 13.3, color: 'var(--soft)', marginTop: 15 }}><span>{label}</span><b style={{ margin: '0 auto', color: 'var(--text)' }}>{v} {unit}</b><span>{max} {unit}</span></div>
   <input type="range" className="fe-rng" min="0" max={max} value={v} onChange={e => set(+e.target.value)} style={{ marginTop: 9, background: `linear-gradient(90deg,#22d3ee ${v / max * 100}%,#374151 0)` }} /></>
+function DualRange({ min, max, limit, onChange }) {
+  const ref = useRef(); const pct = v => v / limit * 100
+  const drag = which => e => { e.preventDefault(); const el = ref.current; const mv = ev => { const r = el.getBoundingClientRect(); const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left; let v = Math.round(Math.max(0, Math.min(1, x / r.width)) * limit)
+      if (which === 'min') onChange(Math.min(v, max), max); else onChange(min, Math.max(v, min)) }
+    const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up) }; addEventListener('pointermove', mv); addEventListener('pointerup', up) }
+  const key = which => e => { const d = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : 0; if (!d) return; e.preventDefault(); if (which === 'min') onChange(Math.max(0, Math.min(min + d, max)), max); else onChange(min, Math.min(limit, Math.max(max + d, min))) }
+  return <div className="dr" ref={ref} onPointerDown={e => { if (e.target !== e.currentTarget && !e.target.classList.contains('dr-tr')) return; const r = ref.current.getBoundingClientRect(); const v = Math.round((e.clientX - r.left) / r.width * limit); Math.abs(v - min) < Math.abs(v - max) ? onChange(Math.min(v, max), max) : onChange(min, Math.max(v, min)) }}>
+    <div className="dr-tr" /><div className="dr-fl" style={{ left: pct(min) + '%', width: pct(max - min) + '%' }} />
+    <button className="dr-th" style={{ left: pct(min) + '%' }} onPointerDown={drag('min')} onKeyDown={key('min')} aria-label="Mínimo" /><button className="dr-th" style={{ left: pct(max) + '%' }} onPointerDown={drag('max')} onKeyDown={key('max')} aria-label="Máximo" /></div>
+}
 function DelTag({ a, set, tags }) {
   return <><div className="fe-sep" /><div style={{ display: 'flex', alignItems: 'center' }}><b style={{ fontSize: 13.3, color: a.del ? 'var(--text)' : 'var(--soft)', fontWeight: a.del ? 700 : 500 }}>Eliminar mensaje al aplicar etiqueta</b><span style={{ marginLeft: 'auto' }}><Toggle on={a.del} onChange={v => set({ del: v })} /></span></div>
     <div className="fe-small" style={{ marginTop: 4 }}>Cuando se agregue la etiqueta seleccionada al chat, este mensaje se eliminará en WhatsApp.<br />Nota: para tiempos muy largos, la eliminación puede no funcionar.</div>
@@ -116,8 +126,7 @@ function MessageModal({ node, onClose, onSave }) {
         {['image', 'video', 'audio', 'file', 'sticker'].includes(a.type) && <Media a={a} set={p => set(i, p)} kind={a.type} tags={tagNames} />}
         {a.type === 'delay' && <><div className="fe-lb" style={{ color: 'var(--text)' }}>Retraso entre mensajes</div>
           <div style={{ display: 'flex', fontSize: 13.3, color: 'var(--soft)' }}><span>0 s</span><b style={{ margin: '0 auto', color: 'var(--text)' }}>{a.min} - {a.max} s</b><span>120 s</span></div>
-          <div className="fe-dual" style={{ marginTop: 9 }}><div style={{ position: 'absolute', top: 7, left: 0, right: 0, height: 7, borderRadius: 7, background: `linear-gradient(90deg,#374151 ${a.min / 1.2}%,#22d3ee ${a.min / 1.2}% ${a.max / 1.2}%,#374151 ${a.max / 1.2}%)` }} />
-            <input type="range" className="fe-rng" min="0" max="120" value={a.min} onChange={e => set(i, { min: Math.min(+e.target.value, a.max) })} /><input type="range" className="fe-rng" min="0" max="120" value={a.max} onChange={e => set(i, { max: Math.max(+e.target.value, a.min) })} /></div>
+          <DualRange min={a.min} max={a.max} limit={120} onChange={(mn, mx) => set(i, { min: mn, max: mx })} />
           <div className="fe-small" style={{ marginTop: 9 }}>El retraso se elige al azar entre el mínimo y el máximo configurados</div></>}
         {a.type === 'contact' && <><div className="fe-help" style={{ marginTop: 0, marginBottom: 14 }}>Puedes usar variables como {'{instance_number}'}, {'{instance_name}'}, {'{full_name}'}, {'{phone_number}'} y campos del contacto. Las mismas que en el texto del mensaje. Se resuelven al enviar el flujo.</div>
           <div className="fe-lb">Nombre del contacto *</div><input className="fe-gin" value={a.cname} onChange={e => set(i, { cname: e.target.value })} placeholder="Ej.: Juan Pérez" />
@@ -249,8 +258,8 @@ export default function FlowEditor() {
     const src = flow.nodes.find(n => n.id === sel) || [...flow.nodes].sort((a, b) => b.x - a.x)[0]
     let x = src ? src.x + NW + 80 : 0, y = src ? src.y : 0
     while (flow.nodes.some(n => Math.abs(n.x - x) < NW && Math.abs(n.y - y) < NH)) y += NH + 40
-    const n = newNode(type, x, y); const link = src && !nodeOuts(src) && !flow.edges.some(e => e.from === src.id)
-    setFlow(f => ({ ...f, nodes: [...f.nodes, n], edges: link ? [...f.edges, { id: uid(), from: src.id, to: n.id }] : f.edges })); setSel(n.id); setPanel(null)
+    const n = newNode(type, x, y)
+    setFlow(f => ({ ...f, nodes: [...f.nodes, n] })); setSel(n.id); setPanel(null)
     const r = box.current.getBoundingClientRect(); setView(v => ({ ...v, x: r.width / 2 - (x + NW / 2) * v.k, y: r.height / 2 - (y + NH / 2) * v.k })); toast(B(type)[0] + ' agregado') }
   function removeNode(nid) { const nn = flow.nodes.find(n => n.id === nid); if (!nn || nn.type === 'inicio') return; setDel(nn) }
   function doRemove(nid) { setFlow(f => ({ ...f, nodes: f.nodes.filter(n => n.id !== nid), edges: f.edges.filter(e => e.from !== nid && e.to !== nid) })); setSel(null); setDel(null) }
