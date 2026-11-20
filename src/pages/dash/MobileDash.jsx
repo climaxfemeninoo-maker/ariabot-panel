@@ -28,7 +28,7 @@ function Bars({ data, fmt = v => v }) {
 function VBars({ data }) {
   const max = Math.max(1, ...data.map(d => d[1]))
   return <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', gap: 4, marginTop: 14, minHeight: 190 }}>{data.map(([k, v], i) => <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, height: '100%', justifyContent: 'flex-end' }}>
-    {v > 0 && <span style={{ fontSize: 9, color: '#cbd5e1' }}>{v % 1 ? v.toFixed(0) : v}</span>}<div style={{ width: '100%', height: v / max * 150 + 2, background: 'linear-gradient(#a78bfa,#6d28d9)', borderRadius: '3px 3px 0 0' }} /><span style={{ fontSize: 8.5, color: '#8f8a9e' }}>{k}</span></div>)}</div>
+    {v > 0 && <span style={{ fontSize: 9, color: '#cbd5e1' }}>{v % 1 ? v.toFixed(0) : v}</span>}<div style={{ width: '100%', height: v / max * 150 + 2, background: 'linear-gradient(#4d94ff,#0047b3)', borderRadius: '3px 3px 0 0' }} /><span style={{ fontSize: 8.5, color: '#8f8a9e' }}>{k}</span></div>)}</div>
 }
 const Card = ({ t, s, children, style }) => <div className="md-c" style={style}><div className="md-ct"><i /><div><b>{t}</b>{s && <span>{s}</span>}</div></div>{children}</div>
 
@@ -40,12 +40,12 @@ export function Sheet({ onClose, children, alt, z = 200 }) {
 function Pick({ title, all, items, value, onApply, onBack }) {
   const [v, setV] = useState(value); const [q, setQ] = useState('')
   const list = items.filter(i => i.toLowerCase().includes(q.toLowerCase()))
-  const Box = ({ on }) => <span style={{ width: 18, height: 18, borderRadius: 3, border: on ? 'none' : '1.5px solid #6b6675', background: on ? '#9b6cf8' : 'none', display: 'grid', placeItems: 'center' }}>{on && <Check size={14} strokeWidth={3} />}</span>
+  const Box = ({ on }) => <span style={{ width: 18, height: 18, borderRadius: 3, border: on ? 'none' : '1.5px solid #6b6675', background: on ? '#005ae3' : 'none', display: 'grid', placeItems: 'center' }}>{on && <Check size={14} strokeWidth={3} />}</span>
   return <Sheet onClose={onBack} alt z={210}>
     <div style={{ minHeight: '78vh', display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', height: 44 }}><button onClick={onBack} style={{ color: '#fff', display: 'grid', padding: 4 }}><ArrowLeft size={20} /></button><b style={{ flex: 1, textAlign: 'center', fontSize: 15, fontWeight: 500, marginRight: 28 }}>{title}</b></div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 44, borderRadius: 10, background: '#1c1922', padding: '0 13px', marginTop: 12 }}><Search size={18} color="#a19cb0" /><input autoFocus={false} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar..." style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: '#fff', fontSize: 15 }} /></div>
-      <div style={{ display: 'flex', gap: 22, marginTop: 17, fontSize: 13.5, color: '#b88cff', paddingLeft: 11 }}><button style={{ color: 'inherit' }} onClick={() => setV([...items])}>Marcar todas</button><button style={{ color: 'inherit' }} onClick={() => setV([])}>Limpiar</button></div>
+      <div style={{ display: 'flex', gap: 22, marginTop: 17, fontSize: 13.5, color: '#60a5fa', paddingLeft: 11 }}><button style={{ color: 'inherit' }} onClick={() => setV([...items])}>Marcar todas</button><button style={{ color: 'inherit' }} onClick={() => setV([])}>Limpiar</button></div>
       <button onClick={() => setV([])} style={{ display: 'flex', alignItems: 'center', gap: 23, marginTop: 20, paddingLeft: 26, fontSize: 15, color: '#fff' }}><Box on={!v.length} />{all}</button>
       {list.length === 0 ? <div style={{ textAlign: 'center', fontSize: 14, color: '#a19cb0', marginTop: 32 }}>Ningún resultado para la búsqueda.</div>
         : list.map(i => <button key={i} onClick={() => setV(v.includes(i) ? v.filter(x => x !== i) : [...v, i])} style={{ display: 'flex', alignItems: 'center', gap: 23, marginTop: 18, paddingLeft: 26, fontSize: 15, color: '#fff' }}><Box on={v.includes(i)} />{i}</button>)}
@@ -79,10 +79,10 @@ function CalendarPicker({ range, onClose, onUse }) {
       <div style={{ width: 300, background: '#1d1a23', borderRadius: 18, padding: '20px 21px 16px', color: '#fff' }}>
         <div style={{ fontSize: 13 }}>Período personalizado...</div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: 12 }}><span style={{ fontSize: 26, fontWeight: 500 }}>{toIso(ea) ? short(toIso(ea)) : '—'} – {toIso(eb) ? short(toIso(eb)) : '—'}</span><Calendar size={20} style={{ marginLeft: 'auto' }} /></div>
-        <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>{[['Fecha de inicio', ea, setEa], ['Fecha de finalización', eb, setEb]].map(([l, v, set]) => <label key={l} style={{ flex: 1, position: 'relative', border: '1.5px solid ' + (toIso(v) || !v ? '#a77bf9' : '#ef4444'), borderRadius: 9, padding: '15px 11px 9px' }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>{[['Fecha de inicio', ea, setEa], ['Fecha de finalización', eb, setEb]].map(([l, v, set]) => <label key={l} style={{ flex: 1, position: 'relative', border: '1.5px solid ' + (toIso(v) || !v ? '#4d94ff' : '#ef4444'), borderRadius: 9, padding: '15px 11px 9px' }}>
           <span style={{ position: 'absolute', top: -8, left: 9, background: '#1d1a23', padding: '0 3px', fontSize: 10.5, color: '#c7c2d4', whiteSpace: 'nowrap', maxWidth: 'calc(100% - 14px)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{l}</span>
           <input value={v} onChange={e => set(e.target.value.replace(/[^\d/]/g, ''))} inputMode="numeric" placeholder="dd/mm/aaaa" style={{ width: '100%', background: 'none', border: 'none', outline: 'none', color: '#fff', fontSize: 14 }} /></label>)}</div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 26, marginTop: 22, fontSize: 13.5, color: '#b88cff' }}><button style={{ color: 'inherit' }} onClick={() => setEdit(false)}>Cancelar</button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 26, marginTop: 22, fontSize: 13.5, color: '#60a5fa' }}><button style={{ color: 'inherit' }} onClick={() => setEdit(false)}>Cancelar</button>
           <button style={{ color: 'inherit', fontWeight: 600 }} onClick={() => { const x = toIso(ea), y = toIso(eb); if (!x || !y || x > y || y > t0 || x < min) return; setA(x); setB(y); setEdit(false) }}>ACEPTAR</button></div>
       </div></div>}
   </div>
@@ -119,7 +119,7 @@ function ShareSheet({ metrics, onClose }) {
       return <span key={l} className={'md-chip' + (st && on ? ' st' : '') + (!on ? ' off' : '')} onClick={() => !on && setInc([...inc, l])}>
         <Star size={12} fill={st && on ? '#facc15' : 'none'} color={st && on ? '#facc15' : 'currentColor'} onClick={e => { e.stopPropagation(); if (!on) setInc([...inc, l]); setStar(s => s.includes(l) ? s.filter(x => x !== l) : s.length >= 3 ? (toast('Máximo 3 destacados', 'info'), s) : [...s, l]) }} />
         <span>{l}</span>{on && <X size={13} color="#f87171" style={{ flexShrink: 0 }} onClick={e => { e.stopPropagation(); setInc(inc.filter(x => x !== l)); setStar(s => s.filter(x => x !== l)) }} />}</span> })}</div>
-    <button className="md-btn" style={{ marginTop: 13, height: 46, background: 'linear-gradient(90deg,#a855f7,#e879f9)' }} onClick={share}>Compartir</button>
+    <button className="md-btn" style={{ marginTop: 13, height: 46, background: 'linear-gradient(90deg,#1a73f0,#60a5fa)' }} onClick={share}>Compartir</button>
   </Sheet>
 }
 
@@ -132,8 +132,8 @@ export default function MobileDash({ P, period, setPeriod, range, setRange, selC
   const money = v => `${(+v || 0).toLocaleString('es-PE', { maximumFractionDigits: 2 })} ${cur}`
   const total = fs.reduce((a, s) => a + (+s.value || 0), 0); const leads = contacts.filter(c => c.created && inP(c.created)).length
   const conv = leads ? fs.length / leads * 100 : 0
-  const K = [['Leads nuevos', leads, '#2563eb', UserPlus], ['Ingresos', money(total), '#059669', Banknote], ['Ticket medio', money(fs.length ? total / fs.length : 0), '#7c3aed', TrendingUp], ['Ventas', fs.length, '#4f46e5', ShoppingBag],
-    ['Inversión Meta', money(ad), '#dc2626', CampaignIcon], ['Beneficio', money(total - ad), '#059669', Wallet], ['ROAS', (ad ? total / ad : 0).toFixed(2), '#ea580c', Zap], ['Tasa de conv.', conv.toFixed(2) + '%', '#e879f9', Percent, '#a78bfa']]
+  const K = [['Leads nuevos', leads, '#2563eb', UserPlus], ['Ingresos', money(total), '#059669', Banknote], ['Ticket medio', money(fs.length ? total / fs.length : 0), '#004fc7', TrendingUp], ['Ventas', fs.length, '#4f46e5', ShoppingBag],
+    ['Inversión Meta', money(ad), '#dc2626', CampaignIcon], ['Beneficio', money(total - ad), '#059669', Wallet], ['ROAS', (ad ? total / ad : 0).toFixed(2), '#ea580c', Zap], ['Tasa de conv.', conv.toFixed(2) + '%', '#60a5fa', Percent, '#4d94ff']]
   const byDay = P.buckets.map(d => [P.hourly ? pad(d.getHours()) : `${d.getDate()}/${d.getMonth() + 1}`, 0, 0]); fs.forEach(s => { const i = P.idx(new Date(s.date)); if (byDay[i]) { byDay[i][1]++; byDay[i][2] += +s.value || 0 } })
   const hours = Array.from({ length: 24 }, (_, h) => [pad(h), fs.filter(s => new Date(s.date).getHours() === h).length]).filter(([, v], i, a) => a.some(x => x[1]) ? true : false)
   const grp = (k, val) => Object.entries(fs.reduce((a, s) => { const key = s[k] || '—'; a[key] = (a[key] || 0) + (val ? +s.value || 0 : 1); return a }, {}))
@@ -158,14 +158,14 @@ export default function MobileDash({ P, period, setPeriod, range, setRange, selC
       <Card t="Ventas por estado" s="Cantidad de ventas">{fs.some(s => s.state) ? <Bars data={grp('state')} /> : <Empty ic={Flag} t="Sin ventas por estado" d="Cuando el estado esté disponible en los datos, verás la distribución aquí." />}</Card>
       <Card t="Performance de productos" s="Participación en el total"><div className="md-sg"><button className={m1 === 'valor' ? 'on' : ''} onClick={() => setM1('valor')}>Valor</button><button className={m1 === 'cant' ? 'on' : ''} onClick={() => setM1('cant')}>Cant.</button></div>
         {fs.some(s => s.product) ? <Bars data={grp('product', m1 === 'valor')} fmt={m1 === 'valor' ? money : v => v} /> : <Empty ic={Archive} t="Sin ventas por producto" d="Ninguna venta por producto en el período." />}</Card>
-      <div className="md-hist"><div style={{ display: 'flex', alignItems: 'center', height: 50, borderBottom: '1px solid #3d2f66' }}><ReceiptText size={19} color="#a78bfa" /><b style={{ fontSize: 14.5, fontWeight: 500, marginLeft: 10 }}>Historial de ventas</b>
-        <button disabled={!fs.length} onClick={() => downloadCSV('ventas.csv', [['Cliente', 'Producto', 'Valor', 'Moneda', 'Fecha'], ...fs.map(s => [s.client, s.product, s.value, s.currency, s.date])])} style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: fs.length ? '#c4b5fd' : '#8f8a9e' }}><Download size={15} color="#a78bfa" />Exportar CSV</button></div>
+      <div className="md-hist"><div style={{ display: 'flex', alignItems: 'center', height: 50, borderBottom: '1px solid #3d2f66' }}><ReceiptText size={19} color="#4d94ff" /><b style={{ fontSize: 14.5, fontWeight: 500, marginLeft: 10 }}>Historial de ventas</b>
+        <button disabled={!fs.length} onClick={() => downloadCSV('ventas.csv', [['Cliente', 'Producto', 'Valor', 'Moneda', 'Fecha'], ...fs.map(s => [s.client, s.product, s.value, s.currency, s.date])])} style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: fs.length ? '#93c5fd' : '#8f8a9e' }}><Download size={15} color="#4d94ff" />Exportar CSV</button></div>
         {fs.length ? fs.slice(0, 30).map(s => <div key={s.id} className="md-row"><div><div>{s.client}</div><div style={{ fontSize: 10.5, color: '#a19cb0' }}>{s.product || '—'} · {new Date(s.date).toLocaleDateString('es-PE')}</div></div><b style={{ marginLeft: 'auto', fontWeight: 600, color: '#34d399' }}>{money(s.value)}</b></div>)
           : <div style={{ textAlign: 'center', fontSize: 12.5, color: '#a19cb0', marginTop: 22 }}>Sin ventas en este período.</div>}</div>
     </> : <>
       <Card t="Análisis de leads" s="Nuevos, en curso y cerrados por conexión">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', background: '#1c1922', border: '1px solid #2a2533', borderRadius: 10, marginTop: 11, padding: '6px 0 4px' }}>
-          {[['Leads nuevos', leads, '#3b82f6'], ['En curso', fc.filter(c => c.status === 'atencion').length, '#10b981'], ['Cerrados', fc.filter(c => c.status === 'resueltos').length, '#8b5cf6']].map(([l, v, c], i) => <div key={l} style={{ textAlign: 'center', borderLeft: i ? '1px solid #2a2533' : 'none' }}><div style={{ fontSize: 11, color: '#b4afc2' }}>{l}</div><div style={{ fontSize: 19, color: c, marginTop: 2 }}>{v}</div></div>)}</div>
+          {[['Leads nuevos', leads, '#3b82f6'], ['En curso', fc.filter(c => c.status === 'atencion').length, '#10b981'], ['Cerrados', fc.filter(c => c.status === 'resueltos').length, '#005ae3']].map(([l, v, c], i) => <div key={l} style={{ textAlign: 'center', borderLeft: i ? '1px solid #2a2533' : 'none' }}><div style={{ fontSize: 11, color: '#b4afc2' }}>{l}</div><div style={{ fontSize: 19, color: c, marginTop: 2 }}>{v}</div></div>)}</div>
         {fc.length ? <Bars data={Object.entries(fc.reduce((a, c) => { const k = c.conn || 'Sin conexión'; a[k] = (a[k] || 0) + 1; return a }, {}))} /> : <Empty ic={Users} t="Sin leads en el período" d="Cuando entren nuevos leads, verás la distribución por conexión aquí." />}</Card>
       <Card t="Análisis de conversiones"><div className="md-sg"><button className={m2 === 'etapa' ? 'on' : ''} onClick={() => setM2('etapa')}>Por etapa</button><button className={m2 === 'conexion' ? 'on' : ''} onClick={() => setM2('conexion')}>Por conexión</button></div>
         {m2 === 'etapa' && stages.length ? <Bars data={stages.map(s => [s[0], s[1]])} /> : <Empty ic={Columns3} t="Sin conversiones en el período" d="Sin conversiones en este período" />}</Card>
@@ -178,7 +178,7 @@ export default function MobileDash({ P, period, setPeriod, range, setRange, selC
       <div style={{ fontSize: 22, fontWeight: 500, marginTop: 4 }}>Filtros</div>
       <div style={{ fontSize: 13, color: '#c7c2d4', margin: '8px 0 4px 4px' }}>Período</div>
       {[['today', 'Hoy'], ['yesterday', 'Ayer'], ['7', '7 días'], ['30', '30 días'], ['month', 'Mes']].map(([k, l]) => <button key={k} className={'md-radio' + (period === k ? ' on' : '')} onClick={() => setPeriod(k)}><i>{period === k && <Check size={12} strokeWidth={3.5} />}</i>{l}</button>)}
-      <button onClick={() => setCal(true)} style={{ display: 'flex', alignItems: 'center', gap: 20, width: '100%', textAlign: 'left', padding: '10px 8px', color: '#fff' }}><CalendarDays size={20} color={period === 'custom' ? '#a77bf9' : '#5d5868'} /><div><div style={{ fontSize: 15, color: period === 'custom' ? '#c4b5fd' : '#fff' }}>{period === 'custom' ? `${short(range[0])} – ${short(range[1])}` : 'Período personalizado...'}</div><div style={{ fontSize: 11, color: '#c7c2d4', marginTop: 2 }}>Solo hasta 2 meses atrás.</div></div><ChevronRight size={18} color="#5d5868" style={{ marginLeft: 'auto' }} /></button>
+      <button onClick={() => setCal(true)} style={{ display: 'flex', alignItems: 'center', gap: 20, width: '100%', textAlign: 'left', padding: '10px 8px', color: '#fff' }}><CalendarDays size={20} color={period === 'custom' ? '#4d94ff' : '#5d5868'} /><div><div style={{ fontSize: 15, color: period === 'custom' ? '#93c5fd' : '#fff' }}>{period === 'custom' ? `${short(range[0])} – ${short(range[1])}` : 'Período personalizado...'}</div><div style={{ fontSize: 11, color: '#c7c2d4', marginTop: 2 }}>Solo hasta 2 meses atrás.</div></div><ChevronRight size={18} color="#5d5868" style={{ marginLeft: 'auto' }} /></button>
       <div style={{ height: 1, background: '#4a4552', margin: '14px 0 13px' }} />
       {[['conn', 'Conexiones', 'Todas las conexiones', 'Toca para elegir una o más conexiones.', selConn, Network], ['prod', 'Productos', 'Todos los productos', 'Toca para elegir uno o más productos.', selProd, Archive]].map(([k, l, all, h, v, Ic]) => <button key={k} className="md-fc" onClick={() => setSub(k)}><span className="ic"><Ic size={19} /></span><div style={{ minWidth: 0 }}><small>{l}</small><b>{v.length ? (v.length === 1 ? v[0] : `${v.length} seleccionados`) : all}</b><span>{h}</span></div><ChevronDown size={18} color="#c7c2d4" style={{ marginLeft: 'auto' }} /></button>)}
       <div style={{ height: 1, background: '#4a4552', margin: '16px 0 14px' }} />

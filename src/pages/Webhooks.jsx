@@ -36,9 +36,9 @@ function List() {
       <div className="r"><button className="wh-btn" onClick={() => nav('/settings/inbound-webhooks/new')}><Plus size={15} />Nuevo webhook</button></div></div>
     <div style={{ display: 'flex', alignItems: 'center', marginTop: 20 }}>
       <div className="lp-srch" style={{ width: 360 }}><Search size={15} /><input style={{ height: 34 }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar webhook por nombre..." /></div>
-      <div className="wh-cons" style={{ marginLeft: 'auto' }}><HardDrive size={15} color="#8b5cf6" />
+      <div className="wh-cons" style={{ marginLeft: 'auto' }}><HardDrive size={15} color="#005ae3" />
         <div><div><b>Consumo: {used.toLocaleString('es-PE')}</b> <span>/ {LIMIT.toLocaleString('es-PE')}</span></div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><div className="wh-bar"><div style={{ width: Math.min(100, used / LIMIT * 100) + '%', height: '100%', background: '#8b5cf6' }} /></div><span className="wh-pc">{(used / LIMIT * 100).toFixed(1)}%</span></div></div></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><div className="wh-bar"><div style={{ width: Math.min(100, used / LIMIT * 100) + '%', height: '100%', background: '#005ae3' }} /></div><span className="wh-pc">{(used / LIMIT * 100).toFixed(1)}%</span></div></div></div>
     </div>
     {hooks.length === 0 ? <div className="wh-empty"><Webhook size={42} strokeWidth={1.9} className="big" /><h3>No hay webhooks registrados</h3><p>Cree el primer webhook para comenzar.</p>
       <button className="wh-btn" style={{ marginTop: 18 }} onClick={() => nav('/settings/inbound-webhooks/new')}><Plus size={15} />Crear webhook</button></div>
@@ -196,7 +196,7 @@ function Detail({ id }) {
         </div>
 
         <div className="wh-sub" style={{ marginTop: 16, display: 'flex', gap: 14 }}>
-          <span className="wh-ib" style={{ background: 'rgba(139,92,246,.15)' }}><Tag size={15} color="#8b5cf6" /></span>
+          <span className="wh-ib" style={{ background: 'rgba(0,90,227,.15)' }}><Tag size={15} color="#005ae3" /></span>
           <div style={{ flex: 1 }}>
             <div className="wh-h3">Etiquetas en el contacto</div>
             <div className="wh-d">Misma idea que el nodo de etiquetas en el flujo: busque, seleccione o cree. No es una lista separada por comas.</div>
@@ -268,7 +268,7 @@ function Detail({ id }) {
                     </div>
                     {r.type === 'field' && r.op !== 'exists' && <input className="wh-in soft" style={{ marginTop: 10 }} value={r.val || ''} onChange={e => set({ val: e.target.value })} placeholder="Valor" />}
                   </div> })}
-              <button style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#8b5cf6', fontSize: 13.3, fontWeight: 600, marginTop: 20 }} onClick={() => upT({ rules: [...d.trigger.rules, { type: 'tag', tag: '', op: 'has' }] })}><Plus size={15} />Agregar regla</button>
+              <button style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#005ae3', fontSize: 13.3, fontWeight: 600, marginTop: 20 }} onClick={() => upT({ rules: [...d.trigger.rules, { type: 'tag', tag: '', op: 'has' }] })}><Plus size={15} />Agregar regla</button>
             </>}
           </div>
         </div>

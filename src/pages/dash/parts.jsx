@@ -151,7 +151,7 @@ export function LineChart({ labels, values, color = '#2dd4bf', name, fmt = v => 
   </div>
 }
 
-export function BarChart({ labels, values, color = '#8b5cf6', name = 'Vendas', fmt = v => v, height = 232 }) {
+export function BarChart({ labels, values, color = '#005ae3', name = 'Vendas', fmt = v => v, height = 232 }) {
   const [ref, w] = useWidth(); const [hov, setHov] = useState(null)
   const L = 30, R = 4, T = 8, B = 26; const h = height
   const max = niceMax(Math.max(0, ...values)); const ticks = ticksOf(max)

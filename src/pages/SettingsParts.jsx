@@ -4,7 +4,7 @@ import { useStore, useToast, uid, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 
 const ME = { id: 'me', name: 'Pablo Monja Suclupe', email: 'k4el.ux@gmail.com', role: 'owner', dep: '' }
-const ROLES = { owner: ['Propietario', '#f59e0b', Crown], admin: ['Administrador', '#a78bfa', ShieldCheck], member: ['Miembro', '#60a5fa', Shield] }
+const ROLES = { owner: ['Propietario', '#f59e0b', Crown], admin: ['Administrador', '#4d94ff', ShieldCheck], member: ['Miembro', '#60a5fa', Shield] }
 const Info = ({ children, ic: Ic = Mail }) => <div className="pf-hint" style={{ height: 'auto', padding: '11px 14px', alignItems: 'flex-start', lineHeight: 1.5, marginTop: 9 }}><Ic size={15} style={{ marginTop: 2, flexShrink: 0 }} />{children}</div>
 const EmailIn = ({ v, set }) => <div className="pf-in"><Mail size={15} /><input type="email" autoFocus style={{ background: 'var(--in2)', fontWeight: 500 }} value={v} onChange={e => set(e.target.value)} placeholder="usuario@ejemplo.com" /></div>
 const okMail = v => /^\S+@\S+\.\S+$/.test(v.trim())
@@ -24,7 +24,7 @@ export function NewAccountModal({ open, onClose }) {
     <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 6 }}>El slug se genera a partir del nombre. Use solo minúsculas, números y guiones.</div>
     <label style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.3, marginTop: 17, cursor: 'pointer' }}><input type="checkbox" checked={f.active} onChange={e => setF({ ...f, active: e.target.checked })} style={{ width: 15, height: 15, accentColor: '#3b82f6' }} />Cuenta activa</label>
     <div style={{ borderTop: '1px solid var(--border2)', marginTop: 21, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11 }}>
-      <button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8' }} disabled={!f.name.trim()} onClick={save}>Crear cuenta</button></div>
+      <button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" style={{ background: '#005ae3' }} disabled={!f.name.trim()} onClick={save}>Crear cuenta</button></div>
   </LModal>
 }
 
@@ -110,7 +110,7 @@ export function Invites() {
   const toast = useToast(); const [list, setList] = useStore('platform_invites', [])
   const [q, setQ] = useState(''); const [st, setSt] = useState('all'); const [open, setOpen] = useState(false); const [e, setE] = useState('')
   const cnt = k => list.filter(x => x.status === k).length
-  const C = [['Total', list.length, '#8b5cf6', Users], ['Pendientes', cnt('pendiente'), '#f59e0b', Clock], ['Aceptadas', cnt('aceptada'), '#22c55e', CircleCheck], ['Rechazadas', cnt('rechazada'), '#ef4444', CircleX], ['Vencidas', cnt('vencida'), '#94a3b8', CircleAlert]]
+  const C = [['Total', list.length, '#005ae3', Users], ['Pendientes', cnt('pendiente'), '#f59e0b', Clock], ['Aceptadas', cnt('aceptada'), '#22c55e', CircleCheck], ['Rechazadas', cnt('rechazada'), '#ef4444', CircleX], ['Vencidas', cnt('vencida'), '#94a3b8', CircleAlert]]
   const rows = list.filter(x => (st === 'all' || x.status === st) && (x.email + ' Pablo Monja Suclupe').toLowerCase().includes(q.toLowerCase()))
   const SC = { pendiente: '#f59e0b', aceptada: '#22c55e', rechazada: '#ef4444', vencida: '#94a3b8' }
   return <div className="st-card" style={{ marginTop: 0, padding: '23px 23px 23px' }}>
@@ -129,7 +129,7 @@ export function Invites() {
       <Info>Si el correo está registrado en el sistema, se enviará la invitación.</Info>
       <div style={{ borderTop: '1px solid var(--border2)', marginTop: 19, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11 }}>
         <button className="lb2 g" onClick={() => setOpen(false)}>Cancelar</button>
-        <button className="lb2 p" style={{ background: '#9b6cf8' }} disabled={!okMail(e)} onClick={() => { setList(l => [{ id: uid(), email: e.trim(), status: 'pendiente', date: new Date().toLocaleDateString('es-PE') }, ...l]); toast('Invitación enviada'); setE(''); setOpen(false) }}>Enviar invitación</button></div>
+        <button className="lb2 p" style={{ background: '#005ae3' }} disabled={!okMail(e)} onClick={() => { setList(l => [{ id: uid(), email: e.trim(), status: 'pendiente', date: new Date().toLocaleDateString('es-PE') }, ...l]); toast('Invitación enviada'); setE(''); setOpen(false) }}>Enviar invitación</button></div>
     </LModal>
   </div>
 }
@@ -192,7 +192,7 @@ function QRModal({ init, onClose, onSave }) {
       : acts.map((a, i) => { const [l, Ic, mx, , cap] = TYPES[a.type]; return <div key={a.id} className="qr-blk">
         <div className="qr-bh"><Ic size={17} className="t" />{l}<span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}><button disabled={!i} onClick={() => mv(i, -1)}><ChevronUp size={16} /></button><button disabled={i === acts.length - 1} onClick={() => mv(i, 1)}><ChevronDown size={16} /></button><button onClick={() => setActs(x => x.filter((_, j) => j !== i))}><Trash2 size={16} color="#ef4444" /></button></span></div>
         {a.type === 'text' ? <><div style={{ fontSize: 11.5, color: '#94a3b8', marginBottom: 10 }}>Use el botón de variables en la barra inferior (igual que en flujos), ej.: {'{full_name}'}, {'{g_su_variable}'}</div><Editor value={a.text} onChange={v => set(i, { text: v })} /></>
-          : <><div className="qr-drop" onClick={() => pick(i, a.type)}><Upload size={24} color="#a78bfa" />{a.file ? <><b>{a.file.name}</b><span>{(a.file.size / 1024).toFixed(0)} KB · clic para cambiar</span></> : <><b>Elegir archivo</b><span>Máximo {lim(mx)}</span></>}</div>
+          : <><div className="qr-drop" onClick={() => pick(i, a.type)}><Upload size={24} color="#4d94ff" />{a.file ? <><b>{a.file.name}</b><span>{(a.file.size / 1024).toFixed(0)} KB · clic para cambiar</span></> : <><b>Elegir archivo</b><span>Máximo {lim(mx)}</span></>}</div>
             {cap && <><label className="tm-lb" style={{ marginTop: 15 }}>Leyenda (opcional)</label><Editor value={a.text} onChange={v => set(i, { text: v })} /></>}</>}
       </div> })}
     <div style={{ borderTop: '1px solid var(--border2)', marginTop: 20, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11, position: 'sticky', bottom: 0, background: 'var(--deep)' }}>
@@ -214,7 +214,7 @@ export function QuickReplies() {
     <div style={{ marginTop: 16 }}>{rows.length === 0 ? <div className="sa-empty" style={{ height: 218 }}><MessageCircle size={38} strokeWidth={1.9} className="big" /><h3 style={{ fontSize: 13.3 }}>{list.length ? 'Ninguna respuesta coincide' : 'No hay respuestas rápidas'}</h3><p>Cree su primera respuesta rápida para usar en WhatsApp</p>
       {!list.length && <button className="lp-btn p" style={{ marginTop: 15 }} onClick={() => setMod({})}><Plus size={16} />Crear primera respuesta</button>}</div>
       : <div style={{ border: '1px solid var(--border)', borderRadius: 5 }}>{rows.map(r => <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 15px', borderBottom: '1px solid var(--border)' }}>
-        <b style={{ fontSize: 13.3, color: '#a78bfa', minWidth: 120 }}>#{r.short}</b>
+        <b style={{ fontSize: 13.3, color: '#4d94ff', minWidth: 120 }}>#{r.short}</b>
         <span style={{ display: 'flex', gap: 5, color: '#94a3b8' }}>{r.actions.map(a => { const I = TYPES[a.type][1]; return <I key={a.id} size={15} /> })}</span>
         <span style={{ fontSize: 12.5, color: 'var(--soft)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{r.actions.find(a => a.text)?.text || r.actions.find(a => a.file)?.file.name}</span>
         <button className="ch-ib" onClick={() => setMod(r)}><Pencil size={14} /></button><button className="ch-ib" onClick={() => { setList(l => l.filter(x => x.id !== r.id)); toast('Respuesta eliminada') }}><Trash2 size={14} color="#ef4444" /></button></div>)}</div>}</div>

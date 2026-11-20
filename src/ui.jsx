@@ -43,7 +43,7 @@ export function ToastProvider({ children }) {
   const close = id => setList(l => l.filter(t => t.id !== id))
   return <ToastCtx.Provider value={push}>{children}
     <div className="toasts">{list.map(t => <div key={t.id} role="status" className={'toast ' + t.type}>
-      {t.type === 'ok' ? <CircleCheck size={21} color="#16a34a" strokeWidth={1.9} /> : t.type === 'err' ? <CircleX size={21} color="#dc2626" strokeWidth={1.9} /> : <Info size={21} color="#7c3aed" strokeWidth={1.9} />}<span className="tx">{t.msg}</span><button className="x" aria-label="Cerrar" onClick={() => close(t.id)}><X size={16} /></button></div>)}</div>
+      {t.type === 'ok' ? <CircleCheck size={21} color="#16a34a" strokeWidth={1.9} /> : t.type === 'err' ? <CircleX size={21} color="#dc2626" strokeWidth={1.9} /> : <Info size={21} color="#004fc7" strokeWidth={1.9} />}<span className="tx">{t.msg}</span><button className="x" aria-label="Cerrar" onClick={() => close(t.id)}><X size={16} /></button></div>)}</div>
   </ToastCtx.Provider>
 }
 
@@ -111,12 +111,12 @@ export function PageHead({ icon, title, sub, children }) {
 /* ---------- brand ---------- */
 export function Logo({ h = 26, light }) {
   return <svg height={h} viewBox="0 0 150 34" style={{ display: 'block' }}>
-    <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#c084fc" /><stop offset="1" stopColor="#7c3aed" /></linearGradient></defs>
+    <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#60a5fa" /><stop offset="1" stopColor="#004fc7" /></linearGradient></defs>
     <rect x="1" y="3" width="28" height="28" rx="8" fill="url(#lg1)" />
     <rect x="7" y="11" width="16" height="12" rx="4" fill="#fff" />
-    <circle cx="12" cy="17" r="1.8" fill="#7c3aed" /><circle cx="18" cy="17" r="1.8" fill="#7c3aed" />
+    <circle cx="12" cy="17" r="1.8" fill="#004fc7" /><circle cx="18" cy="17" r="1.8" fill="#004fc7" />
     <rect x="13.6" y="6" width="2.8" height="5" rx="1.4" fill="#fff" />
-    <text x="36" y="25" fontFamily="Inter,sans-serif" fontWeight="800" fontSize="20" letterSpacing="-.5" fill={light ? '#fff' : 'currentColor'}>Aria<tspan fill="#a855f7">Bot</tspan></text>
+    <text x="36" y="25" fontFamily="Inter,sans-serif" fontWeight="800" fontSize="20" letterSpacing="-.5" fill={light ? '#fff' : 'currentColor'}>Aria<tspan fill="#1a73f0">Bot</tspan></text>
   </svg>
 }
 export const BotMark = ({ size = 22 }) => <Bot size={size} />

@@ -57,12 +57,12 @@ export default function Connections() {
         <input className="l-in ct-in" autoFocus value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Ej.: WhatsApp ventas" />
         <label className="l-lbl" style={{ marginTop: 18 }}>Tipo</label>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>{[['qr', 'QR Code', 'Escanee con su celular', QrCode], ['api', 'API Oficial', 'WhatsApp Cloud API de Meta', ShieldCheck]].map(([k, t, d, Ic]) =>
-          <button key={k} onClick={() => setForm({ ...form, type: k })} style={{ textAlign: 'left', padding: 14, borderRadius: 8, border: '1px solid ' + (form.type === k ? 'var(--p)' : 'var(--border)'), background: form.type === k ? 'rgba(139,92,246,.1)' : 'var(--card)' }}>
-            <Ic size={20} color="#8b5cf6" /><div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{t}</div><div style={{ fontSize: 12, color: '#94a3b8', marginTop: 3 }}>{d}</div></button>)}</div>
+          <button key={k} onClick={() => setForm({ ...form, type: k })} style={{ textAlign: 'left', padding: 14, borderRadius: 8, border: '1px solid ' + (form.type === k ? 'var(--p)' : 'var(--border)'), background: form.type === k ? 'rgba(0,90,227,.1)' : 'var(--card)' }}>
+            <Ic size={20} color="#005ae3" /><div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{t}</div><div style={{ fontSize: 12, color: '#94a3b8', marginTop: 3 }}>{d}</div></button>)}</div>
       </>}
       {step === 1 && <div style={{ textAlign: 'center' }}><div key={seed} style={{ display: 'inline-block', animation: 'pop .3s' }}><FakeQR seed={seed} /></div>
         <ol style={{ textAlign: 'left', margin: '14px auto 0', maxWidth: 300, lineHeight: 1.8, fontSize: 12.5, color: '#94a3b8' }}><li>Abra WhatsApp en su celular</li><li>Toque Menú › Dispositivos vinculados</li><li>Apunte su celular a esta pantalla</li></ol>
-        <div style={{ display: 'flex', gap: 7, justifyContent: 'center', alignItems: 'center', marginTop: 10, fontSize: 12.5 }}><Loader2 size={14} className="spin" color="#8b5cf6" />Esperando lectura…</div></div>}
+        <div style={{ display: 'flex', gap: 7, justifyContent: 'center', alignItems: 'center', marginTop: 10, fontSize: 12.5 }}><Loader2 size={14} className="spin" color="#005ae3" />Esperando lectura…</div></div>}
       {step === 2 && <div style={{ textAlign: 'center', padding: '14px 0' }}><CircleCheck size={54} color="#22c55e" /><div style={{ fontSize: 16, fontWeight: 700, marginTop: 10 }}>¡Conectado!</div><div style={{ fontSize: 13, color: '#94a3b8', marginTop: 5 }}>Su número quedó vinculado correctamente.</div></div>}
     </LModal>
     <LModal open={!!del} onClose={() => setDel(null)} title="Eliminar conexión" icon={<TriangleAlert size={21} color="#ef4444" />} width={482} bodyStyle={{ padding: '22px 24px 0' }}>

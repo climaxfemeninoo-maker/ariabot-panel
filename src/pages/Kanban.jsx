@@ -57,7 +57,7 @@ function Boards() {
           <div className={'fn' + (b.cols.length ? '' : ' none')}>{b.cols.map((c, i) => <i key={c.id} style={{ flex: 1, background: c.color || AUTO[i % 7] }} />)}</div>
           <div className="fl">{b.cols.length ? b.cols.map((c, i) => <span key={c.id} style={{ color: c.color || AUTO[i % 7] }}>{c.name}</span>) : <span>Sin columnas todavía</span>}</div>
           <div className="nm"><b>{b.name}</b><span className="kb-badge">{b.cols.length} columnas</span></div>
-          <div className="mt"><span><b style={{ color: 'var(--text)' }}>{s.cards}</b> <span style={{ color: 'var(--text)' }}>cards</span></span><span style={{ color: '#22c55e', fontWeight: 600 }}>{cur} {s.value.toLocaleString('es-PE')}</span><span style={{ color: '#8b5cf6' }}><b>{s.conv}</b> <span style={{ color: 'var(--text)' }}>conv.</span></span><span style={{ color: '#ef4444', fontWeight: 600 }}>{s.rate}%</span></div>
+          <div className="mt"><span><b style={{ color: 'var(--text)' }}>{s.cards}</b> <span style={{ color: 'var(--text)' }}>cards</span></span><span style={{ color: '#22c55e', fontWeight: 600 }}>{cur} {s.value.toLocaleString('es-PE')}</span><span style={{ color: '#005ae3' }}><b>{s.conv}</b> <span style={{ color: 'var(--text)' }}>conv.</span></span><span style={{ color: '#ef4444', fontWeight: 600 }}>{s.rate}%</span></div>
           <div className="pg"><i style={{ width: s.rate + '%' }} /></div>
           <div className="up">Actualizado {ago(b.updated || b.created)}</div>
           <button className="del" title="Eliminar Kanban" onClick={e => { e.stopPropagation(); setDel(b) }}><Trash2 size={14} /></button>
@@ -80,7 +80,7 @@ function NewBoard({ open, onClose, onCreate }) {
   const [name, setName] = useState('')
   const go = () => { if (name.trim()) { onCreate(name); setName('') } }
   return <LModal open={open} onClose={onClose} title="Nuevo Kanban" desc="Asigne un nombre al tablero. Las columnas predeterminadas ya vienen listas para empezar." icon={<KIcon size={19} />}
-    footer={<><button className="lb2 g" onClick={onClose} style={{ minWidth: 99 }}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8', minWidth: 82 }} disabled={!name.trim()} onClick={go}>Crear</button></>}>
+    footer={<><button className="lb2 g" onClick={onClose} style={{ minWidth: 99 }}>Cancelar</button><button className="lb2 p" style={{ background: '#005ae3', minWidth: 82 }} disabled={!name.trim()} onClick={go}>Crear</button></>}>
     <label className="l-lbl">Nombre del Kanban</label>
     <input className="l-in soft" autoFocus value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && go()} placeholder="Escriba el nombre del Kanban..." style={{ fontWeight: name ? 700 : 400 }} />
     <label className="l-lbl" style={{ marginTop: 20 }}>Vista previa</label>
@@ -211,7 +211,7 @@ function NewColumn({ idx, onClose, onCreate }) {
   const [f, setF] = useState({ name: '', color: 'auto', conv: false })
   const color = f.color === 'auto' ? AUTO[idx % 7] : COLS.find(c => c[0] === f.color)[2]
   return <LModal open onClose={onClose} title="Nueva columna" desc="Crea una nueva etapa para organizar las tarjetas de tu Kanban." width={479} bodyStyle={{ padding: '23px 24px 23px', overflow: 'visible' }}
-    footer={<><button className="lb2 g" style={{ minWidth: 87 }} onClick={onClose}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8', minWidth: 129 }} disabled={!f.name.trim()} onClick={() => onCreate(f)}>Crear columna</button></>}>
+    footer={<><button className="lb2 g" style={{ minWidth: 87 }} onClick={onClose}>Cancelar</button><button className="lb2 p" style={{ background: '#005ae3', minWidth: 129 }} disabled={!f.name.trim()} onClick={() => onCreate(f)}>Crear columna</button></>}>
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 15 }}>
       <div><label className="l-lbl">Nombre de la columna</label><input className="l-in soft" autoFocus value={f.name} onChange={e => setF({ ...f, name: e.target.value })} onKeyDown={e => e.key === 'Enter' && f.name.trim() && onCreate(f)} placeholder="Ej.: Por hacer, En progreso, Hecho" style={{ fontWeight: f.name ? 600 : 400 }} /></div>
       <div><label className="l-lbl">Color de la columna</label>
@@ -236,13 +236,13 @@ function Stats({ board, s, cur }) {
   for (let i = 0; i < N - 1; i++) { const x0 = i * sw + sw * .1, x1 = (i + 1) * sw; d += ` L${x0},${H - h[i]} C${(x0 + x1) / 2},${H - h[i]} ${(x0 + x1) / 2},${H - h[i + 1]} ${x1},${H - h[i + 1]}` }
   d += ` L${W},${H - h[N - 1]} L${W},${H} Z`
   return <div className="kb-stat">
-    <h3><ChartColumn size={16} color="#8b5cf6" />Estadísticas de conversión</h3>
+    <h3><ChartColumn size={16} color="#005ae3" />Estadísticas de conversión</h3>
     <div className="sd">Sigue el recorrido de tus leads en cada etapa del embudo.</div>
     <div className="kb-fun">
       <div className="st">{stages.map(st => <div key={st.name}><h5 style={{ borderLeftColor: st.color === '#e11d48' ? '#e11d48' : st.color }}>{st.name}</h5><b>{st.n}</b><small>LEADS</small></div>)}</div>
       <div style={{ position: 'relative', marginTop: 22 }}>
         <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: '100%', height: 115, display: 'block' }}>
-          <defs><linearGradient id="kbg" x1="0" x2="1"><stop offset="0" stopColor="#6d3fc4" /><stop offset=".45" stopColor="#3f4fb8" /><stop offset="1" stopColor="#0f9a78" /></linearGradient></defs>
+          <defs><linearGradient id="kbg" x1="0" x2="1"><stop offset="0" stopColor="#0b4eb7" /><stop offset=".45" stopColor="#3f4fb8" /><stop offset="1" stopColor="#0f9a78" /></linearGradient></defs>
           <path d={d} fill="url(#kbg)" />
         </svg>
         {stages.map((st, i) => <span key={i} style={{ position: 'absolute', left: `calc(${(i + .5) / N * 100}% - 18px)`, bottom: 9, background: '#be123c', color: '#fff', fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>{i === 0 ? (total ? 100 : 100) : total ? Math.round(st.n / total * 100) : 0}%</span>)}
@@ -251,7 +251,7 @@ function Stats({ board, s, cur }) {
     <div className="kb-kp">
       <div><div><span>TOTAL DE LEADS</span><b>{total}</b></div><i><Users size={18} /></i></div>
       <div><div><span>TASA DE CONVERSIÓN GENERAL</span><b style={{ color: '#22c55e' }}>{s.rate}%</b></div><i><TrendingUp size={18} color="#22c55e" /></i></div>
-      <div><div><span>TOTAL DE COMPRAS</span><b>{s.conv}</b></div><i><ShoppingCart size={18} color="#a855f7" /></i></div>
+      <div><div><span>TOTAL DE COMPRAS</span><b>{s.conv}</b></div><i><ShoppingCart size={18} color="#1a73f0" /></i></div>
       <div><div><span>FACTURACIÓN TOTAL</span><b style={{ color: '#22c55e' }}>{cur} {s.fact.toLocaleString('es-PE')}</b></div><i><DollarSign size={18} color="#22c55e" /></i></div>
     </div>
   </div>

@@ -45,10 +45,10 @@ export default function Mass() {
     {list.length === 0 ? <div className="ms-empty"><SendIcon size={48} strokeWidth={1.9} className="big" /><h3>Aún no hay envíos masivos</h3><p>Cree el primer envío masivo para disparar un flujo a muchos contactos a la vez.</p>
       <button className="ms-dim" style={{ marginTop: 23 }} onClick={open}><Plus size={15} />Nuevo envío masivo</button></div>
       : <div className="lp-card" style={{ marginTop: 19, flex: 'none' }}>{list.map(m => <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '13px 16px', borderBottom: '1px solid var(--border)' }}>
-        <span className="wh-ib" style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(139,92,246,.15)', color: '#8b5cf6' }}><SendIcon size={16} /></span>
+        <span className="wh-ib" style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(0,90,227,.15)', color: '#005ae3' }}><SendIcon size={16} /></span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}><b style={{ fontSize: 13.5 }}>{m.name}</b>
-            <span className="fl-bd" style={m.status === 'done' ? { color: '#22c55e', background: 'rgba(34,197,94,.1)', borderColor: 'rgba(34,197,94,.35)' } : m.status === 'paused' ? { color: '#f59e0b', background: 'rgba(245,158,11,.1)', borderColor: 'rgba(245,158,11,.4)' } : { color: '#a78bfa', background: 'rgba(139,92,246,.1)', borderColor: 'rgba(139,92,246,.4)' }}><i />{m.status === 'done' ? 'COMPLETADO' : m.status === 'paused' ? 'PAUSADO' : 'EN CURSO'}</span></div>
+            <span className="fl-bd" style={m.status === 'done' ? { color: '#22c55e', background: 'rgba(34,197,94,.1)', borderColor: 'rgba(34,197,94,.35)' } : m.status === 'paused' ? { color: '#f59e0b', background: 'rgba(245,158,11,.1)', borderColor: 'rgba(245,158,11,.4)' } : { color: '#4d94ff', background: 'rgba(0,90,227,.1)', borderColor: 'rgba(0,90,227,.4)' }}><i />{m.status === 'done' ? 'COMPLETADO' : m.status === 'paused' ? 'PAUSADO' : 'EN CURSO'}</span></div>
           <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 3 }}>{flows.find(f => f.id === m.flow)?.name || 'Flujo eliminado'} · {m.created}</div>
           <div className="bl-bar" style={{ height: 5, marginTop: 8 }}><div style={{ width: m.sent / m.total * 100 + '%', height: '100%', background: 'var(--p)', transition: 'width .4s' }} /></div></div>
         <b style={{ fontSize: 12.5, width: 80, textAlign: 'right' }}>{m.sent}/{m.total}</b>

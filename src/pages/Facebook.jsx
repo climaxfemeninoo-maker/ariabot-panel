@@ -263,10 +263,10 @@ function Diag({ data, onClose }) {
   const start = () => { setStep(1); setTimeout(() => { const ads = (data?.ads || []).filter(a => a.status === 'ACTIVE'); setRes(ads.map((a, i) => ({ name: a.name, ok: i % 3 !== 1 }))); setStep(2) }, 1800) }
   return <Mod title="Diagnóstico" w={410} onClose={onClose}>
     {step === 0 && <><p className="fbx-dp">Analice sus campañas activas e identifique qué anuncios no tienen la configuración correcta de parámetros UTM.</p>
-      <div className="fbx-dr"><i style={{ background: 'rgba(139,92,246,.16)', color: '#a78bfa' }}><Zap size={16} /></i><div><b>Rápido</b><span>Análisis en segundos</span></div></div>
+      <div className="fbx-dr"><i style={{ background: 'rgba(0,90,227,.16)', color: '#4d94ff' }}><Zap size={16} /></i><div><b>Rápido</b><span>Análisis en segundos</span></div></div>
       <div className="fbx-dr"><i style={{ background: 'rgba(34,197,94,.14)', color: '#4ade80' }}><Lock size={16} /></i><div><b>Seguro</b><span>No afecta campañas</span></div></div>
       <div style={{ textAlign: 'center', padding: '18px 0 6px' }}><button className="fbx-btn" style={{ width: 132 }} onClick={start}>Iniciar</button></div></>}
-    {step === 1 && <div style={{ textAlign: 'center', padding: '30px 0' }}><Loader2 size={30} className="spin" color="#8b5cf6" /><p className="fbx-dp" style={{ textAlign: 'center', marginTop: 14 }}>Analizando anuncios activos…</p></div>}
+    {step === 1 && <div style={{ textAlign: 'center', padding: '30px 0' }}><Loader2 size={30} className="spin" color="#005ae3" /><p className="fbx-dp" style={{ textAlign: 'center', marginTop: 14 }}>Analizando anuncios activos…</p></div>}
     {step === 2 && <>{!res.length ? <p className="fbx-dp" style={{ textAlign: 'center', padding: '18px 0' }}>No se encontraron anuncios activos para analizar.</p>
       : <><p className="fbx-dp">{res.filter(r => !r.ok).length ? `${res.filter(r => !r.ok).length} de ${res.length} anuncios sin parámetros UTM correctos.` : 'Todos los anuncios tienen los parámetros UTM correctos.'}</p>
         <div style={{ maxHeight: 260, overflowY: 'auto' }}>{res.map((r, i) => <div key={i} className="fbx-dr" style={{ marginBottom: 8 }}><i style={{ background: r.ok ? 'rgba(34,197,94,.14)' : 'rgba(239,68,68,.14)', color: r.ok ? '#4ade80' : '#f87171' }}>{r.ok ? <CircleCheck size={16} /> : <X size={16} />}</i><div><b style={{ fontSize: 13.5 }}>{r.name}</b><span>{r.ok ? 'UTM correctos' : 'Faltan utm_source / utm_campaign'}</span></div></div>)}</div></>}

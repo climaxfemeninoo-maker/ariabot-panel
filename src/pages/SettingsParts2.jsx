@@ -7,10 +7,10 @@ import { LModal, LSelect, Toggle } from './leona'
 const Card = ({ children, style }) => <div className="st-card" style={{ marginTop: 0, padding: '23px 23px 26px', overflow: 'visible', ...style }}>{children}</div>
 const Srch = ({ v, set, ph, label = 'Buscar' }) => <div>{label && <label className="tm-lb">{label}</label>}<div className="lp-srch"><Search size={15} /><input value={v} onChange={e => set(e.target.value)} placeholder={ph} style={{ fontWeight: 500 }} /></div></div>
 const EmptyIn = ({ ic: Ic, t, d, btn, onClick }) => <div className="sa-empty" style={{ height: 258, marginTop: 17 }}><Ic size={44} strokeWidth={1.9} className="big" /><h3 style={{ fontSize: 16.3 }}>{t}</h3><p>{d}</p>{btn && <button className="lp-btn p" style={{ marginTop: 18 }} onClick={onClick}><Plus size={16} />{btn}</button>}</div>
-const Foot = ({ onCancel, onOk, ok, label, disabled }) => <div style={{ borderTop: '1px solid var(--border2)', marginTop: 20, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11 }}><button className="lb2 g" onClick={onCancel}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8' }} disabled={disabled} onClick={onOk}>{label}</button></div>
+const Foot = ({ onCancel, onOk, ok, label, disabled }) => <div style={{ borderTop: '1px solid var(--border2)', marginTop: 20, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 11 }}><button className="lb2 g" onClick={onCancel}>Cancelar</button><button className="lb2 p" style={{ background: '#005ae3' }} disabled={disabled} onClick={onOk}>{label}</button></div>
 const Lb = ({ children, req, mt = 0 }) => <label className="tm-lb" style={{ marginTop: mt }}>{children}{req && <span style={{ color: '#ef4444' }}> *</span>}</label>
 const IN = { background: 'var(--in2)', height: 37 }
-const Badge = ({ c = '#a78bfa', children }) => <span className="tm-badge" style={{ color: c, background: c + '22', borderColor: c + '55', fontSize: 13.3, height: 24, borderRadius: 12, fontWeight: 500 }}>{children}</span>
+const Badge = ({ c = '#4d94ff', children }) => <span className="tm-badge" style={{ color: c, background: c + '22', borderColor: c + '55', fontSize: 13.3, height: 24, borderRadius: 12, fontWeight: 500 }}>{children}</span>
 function Tbl({ cols, rows, grid }) {
   return <div style={{ border: '1px solid var(--border)', borderRadius: 5, marginTop: 17, overflow: 'hidden' }}>
     <div style={{ display: 'grid', gridTemplateColumns: grid, alignItems: 'center', height: 33, background: 'var(--deep)', padding: '0 17px', fontSize: 11.5, fontWeight: 600, letterSpacing: '.05em', color: '#94a3b8' }}>{cols.map((c, i) => <span key={i} style={i === cols.length - 1 ? { textAlign: 'right' } : null}>{c}</span>)}</div>
@@ -19,8 +19,8 @@ function Tbl({ cols, rows, grid }) {
 }
 const Act = ({ onEdit, onDel }) => <>{onEdit && <button className="ch-ib" style={{ width: 28, height: 28 }} onClick={onEdit}><Pencil size={14} /></button>}{onDel && <button className="ch-ib" style={{ width: 28, height: 28 }} onClick={onDel}><Trash2 size={14} color="#ef4444" /></button>}</>
 const CircleHelpIc = () => <CircleHelpI size={15} />
-const BookIc = () => <BookOpen size={17} color="#a78bfa" />
-const ShieldIc = () => <ShieldAlert size={17} color="#a78bfa" />
+const BookIc = () => <BookOpen size={17} color="#4d94ff" />
+const ShieldIc = () => <ShieldAlert size={17} color="#4d94ff" />
 const mono = { fontFamily: 'ui-monospace,Menlo,Consolas,monospace', fontWeight: 700, fontSize: 12.5 }
 
 /* ---------------- Templates de WhatsApp ---------------- */
@@ -32,7 +32,7 @@ export function Templates() {
   return <Card style={{ padding: '22px 22px 23px' }}>
     <div style={{ display: 'flex', gap: 8 }}>
       <button className="lp-btn" disabled={!api.length} onClick={() => toast('Templates sincronizados con Meta')}><RefreshCw size={15} />Sincronizar</button>
-      <button className="lp-btn p" disabled={!api.length} style={!api.length ? { background: '#5b3a9e', color: '#a99bc4' } : null} onClick={() => setM({ name: '', cat: 'MARKETING', lang: 'es', body: '' })}><Plus size={16} />Crear</button></div>
+      <button className="lp-btn p" disabled={!api.length} style={!api.length ? { background: '#1e3a8a', color: '#a99bc4' } : null} onClick={() => setM({ name: '', cat: 'MARKETING', lang: 'es', body: '' })}><Plus size={16} />Crear</button></div>
     <div style={{ display: 'flex', gap: 14, marginTop: 17 }}>
       <div style={{ width: 209 }}><Lb>WABA</Lb><LSelect className="l-in ct-in" disabled={!api.length} value={waba} onChange={setWaba} placeholder="Sin conexión Meta Cloud" options={api.map(c => ({ value: c.id, label: c.name }))} /></div>
       <div style={{ width: 209 }}><Lb>Estado</Lb><LSelect className="l-in ct-in" disabled={!api.length} value={st} onChange={setSt} options={[['all', 'Todos'], ['APROBADO', 'Aprobados'], ['PENDIENTE', 'Pendientes'], ['RECHAZADO', 'Rechazados']].map(([value, label]) => ({ value, label }))} /></div></div>
@@ -79,14 +79,14 @@ export function CustomFields() {
   const [fields, setFields] = useStore('custom_fields', CF_DEF); const [sysd, setSysd] = useStore('sys_field_desc', {}); const [m, setM] = useState(null)
   const custom = fields.filter(f => (f.name + f.desc).toLowerCase().includes(q.toLowerCase()))
   const sys = SYS.map(([name, desc, type]) => ({ name, desc: sysd[name] ?? desc, type })).filter(f => (f.name + f.desc).toLowerCase().includes(q.toLowerCase()))
-  const TC = { Texto: '#a78bfa', Variable: '#60a5fa', Número: '#34d399', Fecha: '#f59e0b' }
+  const TC = { Texto: '#4d94ff', Variable: '#60a5fa', Número: '#34d399', Fecha: '#f59e0b' }
   return <>
     <div className="st-tabs">{[['custom', 'Personalizados'], ['sys', 'Sistema (BOT)']].map(([k, l]) => <button key={k} className={'st-tab' + (tab === k ? ' on' : '')} onClick={() => { setTab(k); setQ('') }}>{l}</button>)}</div>
     <div style={{ display: 'flex', gap: 13, marginTop: 17 }}><div style={{ flex: 1 }}><Srch label={null} v={q} set={setQ} ph={tab === 'custom' ? 'Buscar campos personalizados...' : 'Buscar campos del sistema...'} /></div>
       {tab === 'custom' && <button className="lp-btn p" onClick={() => setM({ name: '', desc: '', type: 'Texto', isNew: true })}><Plus size={16} />Nuevo campo</button>}</div>
     <div className="st-card" style={{ marginTop: 16 }}><h3>{tab === 'custom' ? 'Campos personalizados activos' : 'Campos del sistema (BOT)'}</h3><div className="sd">{tab === 'custom' ? 'Defina campos adicionales para registrar detalles personalizados en sus leads' : 'Campos globales predefinidos por el sistema. No se pueden eliminar.'}</div>
       <Tbl grid={tab === 'custom' ? '1fr 1.47fr .7fr 110px' : '.7fr 1.85fr .55fr 110px'} cols={['NOMBRE', 'DESCRIPCIÓN', 'TIPO', 'ACCIONES']}
-        rows={(tab === 'custom' ? custom.map(f => [f.name, f.desc, f.type === 'text' ? 'Texto' : f.type, f]) : sys.map(f => [f.name, f.desc, f.type, f])).map(([n, d, t, f]) => [<span style={mono}>{n}</span>, d, <Badge c={TC[t] || '#a78bfa'}>{t}</Badge>,
+        rows={(tab === 'custom' ? custom.map(f => [f.name, f.desc, f.type === 'text' ? 'Texto' : f.type, f]) : sys.map(f => [f.name, f.desc, f.type, f])).map(([n, d, t, f]) => [<span style={mono}>{n}</span>, d, <Badge c={TC[t] || '#4d94ff'}>{t}</Badge>,
           <Act onEdit={() => setM({ ...f, type: t, isSys: tab === 'sys' })} onDel={tab === 'custom' && !f.sys ? () => { setFields(x => x.filter(y => y.id !== f.id)); toast('Campo eliminado') } : null} />])} />
       {(tab === 'custom' ? custom : sys).length === 0 && <div style={{ padding: 18, textAlign: 'center', fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Sin resultados.</div>}
     </div>
@@ -103,7 +103,7 @@ export function CustomFields() {
 }
 
 /* ---------------- Etiquetas ---------------- */
-const TCOL = [['#3b82f6', 'Azul'], ['#ef4444', 'Rojo'], ['#10b981', 'Verde'], ['#f59e0b', 'Ámbar'], ['#8b5cf6', 'Morado'], ['#f97316', 'Naranja'], ['#06b6d4', 'Cian'], ['#84cc16', 'Lima'], ['#ec4899', 'Rosa'], ['#6b7280', 'Gris'], ['#ffff00', 'Amarillo'], ['#ff00ff', 'Magenta'], ['#000000', 'Negro'], ['#ffffff', 'Blanco']]
+const TCOL = [['#3b82f6', 'Azul'], ['#ef4444', 'Rojo'], ['#10b981', 'Verde'], ['#f59e0b', 'Ámbar'], ['#005ae3', 'Morado'], ['#f97316', 'Naranja'], ['#06b6d4', 'Cian'], ['#84cc16', 'Lima'], ['#ec4899', 'Rosa'], ['#6b7280', 'Gris'], ['#ffff00', 'Amarillo'], ['#ff00ff', 'Magenta'], ['#000000', 'Negro'], ['#ffffff', 'Blanco']]
 const lum = h => { const n = parseInt(h.slice(1), 16); return (((n >> 16) & 255) * .299 + ((n >> 8) & 255) * .587 + (n & 255) * .114) / 255 }
 export function Tags() {
   const toast = useToast(); const [tags, setTags] = useStore('tags', []); const [contacts] = useStore('contacts', []); const [q, setQ] = useState(''); const [m, setM] = useState(null); const [del, setDel] = useState(null)
@@ -137,7 +137,7 @@ export function Tags() {
 
 /* ---------------- Integraciones ---------------- */
 const PROV = [
-  ['leonapay', 'Leona Pay', 'pagos', 'Cobra en Brasil, México y Latinoamérica.', '#7c3aed', Sparkles, true],
+  ['leonapay', 'Leona Pay', 'pagos', 'Cobra en Brasil, México y Latinoamérica.', '#004fc7', Sparkles, true],
   ['notasy', 'Notasy NF-e', 'facturas', 'Emisión automatizada de facturas electrónicas de ventas', '#6d5dfc', Receipt],
   ['lowtrack', 'LowTrack', 'seguimiento', 'Seguimiento de ventas y envío automático al Facebook CAPI', '#2563eb', ChartLine],
   ['utmify', 'UTMify', 'seguimiento', 'Seguimiento de campañas y atribución avanzada de ventas', '#111111', ChartLine],
@@ -150,7 +150,7 @@ const PROV = [
   ['zenith', 'Zenith Global', 'pagos', 'Métodos locales y operación multi-país y multi-moneda: LATAM, Europa, Asia y más', '#111111', Globe],
 ]
 const CAT = { whatsapp: 'WHATSAPP', facturas: 'FACTURAS', seguimiento: 'SEGUIMIENTO', pagos: 'PAGOS', ia: 'INTELIGENCIA ARTIFICIAL' }
-const Logo = ({ p, s = 37 }) => { const Ic = p[5]; return <span style={{ width: s, height: s, borderRadius: 7, background: p[4], display: 'grid', placeItems: 'center', color: p[4] === '#ffffff' ? '#7c3aed' : '#fff', flexShrink: 0, border: '1px solid rgba(255,255,255,.08)' }}><Ic size={s * .5} /></span> }
+const Logo = ({ p, s = 37 }) => { const Ic = p[5]; return <span style={{ width: s, height: s, borderRadius: 7, background: p[4], display: 'grid', placeItems: 'center', color: p[4] === '#ffffff' ? '#004fc7' : '#fff', flexShrink: 0, border: '1px solid rgba(255,255,255,.08)' }}><Ic size={s * .5} /></span> }
 export function Integrations() {
   const toast = useToast(); const [act, setAct] = useStore('integrations', []); const [tab, setTab] = useState('all'); const [q, setQ] = useState(''); const [m, setM] = useState(null); const [del, setDel] = useState(null)
   const P = id => PROV.find(p => p[0] === id)
@@ -158,15 +158,15 @@ export function Integrations() {
   const cnt = k => act.filter(a => k === 'all' || P(a.prov)[2] === k).length
   const actives = act.filter(a => inTab(P(a.prov)))
   const avail = PROV.filter(p => !p[6] && inTab(p))
-  const Cardi = ({ p, feat }) => <div style={{ position: 'relative', background: 'var(--card)', border: feat ? '2px solid #8b5cf6' : '1px solid var(--border)', borderRadius: 7, padding: '20px 20px 18px', display: 'flex', flexDirection: 'column', minHeight: 222 }}>
-    {feat && <span style={{ position: 'absolute', top: -10, right: 12, background: '#8b5cf6', color: '#fff', fontSize: 10.5, fontWeight: 700, letterSpacing: '.04em', padding: '3px 8px', borderRadius: 4 }}>NOVEDAD</span>}
+  const Cardi = ({ p, feat }) => <div style={{ position: 'relative', background: 'var(--card)', border: feat ? '2px solid #005ae3' : '1px solid var(--border)', borderRadius: 7, padding: '20px 20px 18px', display: 'flex', flexDirection: 'column', minHeight: 222 }}>
+    {feat && <span style={{ position: 'absolute', top: -10, right: 12, background: '#005ae3', color: '#fff', fontSize: 10.5, fontWeight: 700, letterSpacing: '.04em', padding: '3px 8px', borderRadius: 4 }}>NOVEDAD</span>}
     <div style={{ display: 'flex', alignItems: 'flex-start' }}><Logo p={p} /><span className="bl-tag" style={{ marginLeft: 'auto', fontSize: 10.5, letterSpacing: '.05em', fontWeight: 600, background: 'transparent', border: '1px solid var(--border)' }}>{CAT[p[2]]}</span></div>
     <div style={{ fontSize: 15.5, fontWeight: 700, marginTop: 15 }}>{p[1]}</div>
     <div style={{ fontSize: 13.3, lineHeight: 1.6, color: 'var(--soft)', marginTop: 8, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p[3]}</div>
     <div style={{ borderTop: '1px solid var(--border)', marginTop: 'auto', paddingTop: 15, display: 'flex', justifyContent: 'flex-end' }}><button className="lb2 g sm" style={{ height: 31, minWidth: 0, fontSize: 12.5 }} onClick={() => setM({ prov: p[0], label: '', key: '' })}>Configurar</button></div></div>
   const H = ({ t, n, r }) => <div style={{ display: 'flex', alignItems: 'center', margin: '27px 0 12px' }}><span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.18em', color: 'var(--soft)' }}>{t}{n != null && <b style={{ color: 'var(--text)', marginLeft: 6, letterSpacing: '.05em' }}>{n}</b>}</span><span style={{ marginLeft: 'auto', fontSize: 11.5, color: 'var(--soft)' }}>{r}</span></div>
   return <div>
-    <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border)' }}>{[['all', 'Todas'], ['whatsapp', 'WhatsApp'], ['facturas', 'Facturas'], ['seguimiento', 'Seguimiento'], ['pagos', 'Pagos'], ['ia', 'Inteligencia artificial']].map(([k, l]) => <button key={k} onClick={() => setTab(k)} style={{ height: 41, padding: '0 14px', fontSize: 13.3, fontWeight: 600, color: tab === k ? '#a78bfa' : 'var(--text)', borderBottom: '2px solid ' + (tab === k ? '#8b5cf6' : 'transparent'), marginBottom: -1, display: 'flex', alignItems: 'center', gap: 11 }}>{l}{cnt(k) > 0 && <small style={{ fontSize: 10.5, fontWeight: 700 }}>{cnt(k)}</small>}</button>)}</div>
+    <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border)' }}>{[['all', 'Todas'], ['whatsapp', 'WhatsApp'], ['facturas', 'Facturas'], ['seguimiento', 'Seguimiento'], ['pagos', 'Pagos'], ['ia', 'Inteligencia artificial']].map(([k, l]) => <button key={k} onClick={() => setTab(k)} style={{ height: 41, padding: '0 14px', fontSize: 13.3, fontWeight: 600, color: tab === k ? '#4d94ff' : 'var(--text)', borderBottom: '2px solid ' + (tab === k ? '#005ae3' : 'transparent'), marginBottom: -1, display: 'flex', alignItems: 'center', gap: 11 }}>{l}{cnt(k) > 0 && <small style={{ fontSize: 10.5, fontWeight: 700 }}>{cnt(k)}</small>}</button>)}</div>
     <div className="lp-srch" style={{ marginTop: 11 }}><Search size={15} /><input style={{ height: 30, fontWeight: 500 }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar integración..." /></div>
     <div style={{ borderTop: '1px solid var(--border)', marginTop: 15 }} />
     {inTab(PROV[0]) && <><H t="DESTACADOS" r="La integración nativa de Leona" /><div style={{ width: 'calc(25% - 11px)', minWidth: 260 }}><Cardi p={PROV[0]} feat /></div></>}
@@ -199,7 +199,7 @@ export function Tracking({ onBack }) {
   const Sec = ({ t, btn, onAdd, children }) => <div className="st-card" style={{ marginTop: 24, padding: '22px 22px 22px' }}><div style={{ display: 'flex', alignItems: 'center' }}><span style={{ fontSize: 15, fontWeight: 700 }}>{t}</span><button className="wh-btn" style={{ marginLeft: 'auto' }} onClick={onAdd}><Plus size={15} />{btn}</button></div>{children}</div>
   const Emp = ({ ic: Ic, t, d, btn, onAdd }) => <div style={{ border: '1px dashed var(--border)', borderRadius: 5, height: 256, marginTop: 17, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}><Ic size={44} strokeWidth={1.9} color="#94a3b8" /><div style={{ fontSize: 16, fontWeight: 700, marginTop: 17 }}>{t}</div><div style={{ fontSize: 13.3, color: '#94a3b8', marginTop: 9, maxWidth: 370, lineHeight: 1.45 }}>{d}</div>{btn && <button className="wh-btn" style={{ marginTop: 17 }} onClick={onAdd}><Plus size={15} />{btn}</button>}</div>
   const code = 'código'
-  const preview = msg => { const i = Math.min(5, msg.length); return <>{msg.slice(0, i)}<span style={{ background: 'var(--btn2h)', color: '#a78bfa', borderRadius: 4, padding: '1px 6px', margin: '0 4px' }}>{code}</span>{msg.slice(i)}</> }
+  const preview = msg => { const i = Math.min(5, msg.length); return <>{msg.slice(0, i)}<span style={{ background: 'var(--btn2h)', color: '#4d94ff', borderRadius: 4, padding: '1px 6px', margin: '0 4px' }}>{code}</span>{msg.slice(i)}</> }
   const sum = lm ? Object.values(lm.inst).reduce((a, b) => a + (+b || 0), 0) : 0
   const lOk = lm && lm.name.trim() && lm.msg.trim().length >= 6 && sum === 100
   const base = location.origin + '/r/'
@@ -215,7 +215,7 @@ export function Tracking({ onBack }) {
     </Sec>
     <Sec t="Enlaces" btn="Nuevo enlace" onAdd={() => setLm({ name: '', plat: 'TikTok', fmt: 'direct', pix: '', inst: {}, fall: 'any', ev: true, msg: 'Hola, me gustaría recibir la información' })}>
       {links.length === 0 ? <Emp ic={Link2} t="Todavía no hay enlaces" d="Cree el enlace que usará el anuncio y elija la instancia de WhatsApp que recibirá a los contactos." />
-        : <Tbl grid="1fr 110px 2fr 80px" cols={['NOMBRE', 'PLATAFORMA', 'ENLACE', 'ACCIONES']} rows={links.map(l => [<b>{l.name}</b>, l.plat, <span style={{ ...mono, fontWeight: 400, color: '#a78bfa' }}>{base + l.slug}</span>, <><button className="ch-ib" style={{ width: 28, height: 28 }} onClick={() => { navigator.clipboard?.writeText(base + l.slug); toast('Enlace copiado') }}><Copy size={14} /></button><Act onEdit={() => setLm({ ...l })} onDel={() => setLinks(x => x.filter(y => y.id !== l.id))} /></>])} />}
+        : <Tbl grid="1fr 110px 2fr 80px" cols={['NOMBRE', 'PLATAFORMA', 'ENLACE', 'ACCIONES']} rows={links.map(l => [<b>{l.name}</b>, l.plat, <span style={{ ...mono, fontWeight: 400, color: '#4d94ff' }}>{base + l.slug}</span>, <><button className="ch-ib" style={{ width: 28, height: 28 }} onClick={() => { navigator.clipboard?.writeText(base + l.slug); toast('Enlace copiado') }}><Copy size={14} /></button><Act onEdit={() => setLm({ ...l })} onDel={() => setLinks(x => x.filter(y => y.id !== l.id))} /></>])} />}
     </Sec>
     {pm && <LModal open onClose={() => setPm(null)} title={pm.id ? 'Editar píxel' : 'Nuevo píxel'} icon={<Radar size={19} />} bodyStyle={{ overflow: 'visible' }}
       footer={<><button className="lb2 g" onClick={() => setPm(null)}>Cancelar</button><button className="lb2 p" disabled={!pm.name.trim() || !pm.pid.trim()} onClick={() => { setPix(x => pm.id ? x.map(y => y.id === pm.id ? pm : y) : [...x, { ...pm, id: uid() }]); setPm(null); toast('Píxel guardado') }}>Guardar píxel</button></>}>
@@ -231,7 +231,7 @@ export function Tracking({ onBack }) {
       <Lb mt={16}>Píxeles</Lb><LSelect className="l-in ct-in" value={lm.pix} onChange={v => setLm({ ...lm, pix: v })} placeholder="Seleccione" options={pix.filter(p => p.plat === lm.plat).map(p => ({ value: p.id, label: p.name }))} />
       <Lb mt={16}>Instancias</Lb>
       {conns.length === 0 ? <div style={{ fontSize: 13.3, color: 'var(--soft)' }}>Ninguna instancia con número en esta cuenta.</div>
-        : conns.map(c => <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7 }}><input type="checkbox" checked={c.id in lm.inst} onChange={e => { const i = { ...lm.inst }; if (e.target.checked) i[c.id] = 100 - sum > 0 ? 100 - sum : 0; else delete i[c.id]; setLm({ ...lm, inst: i }) }} style={{ accentColor: '#8b5cf6' }} /><span style={{ fontSize: 13, flex: 1 }}>{c.name} <span style={{ color: '#94a3b8' }}>{c.phone}</span></span>
+        : conns.map(c => <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7 }}><input type="checkbox" checked={c.id in lm.inst} onChange={e => { const i = { ...lm.inst }; if (e.target.checked) i[c.id] = 100 - sum > 0 ? 100 - sum : 0; else delete i[c.id]; setLm({ ...lm, inst: i }) }} style={{ accentColor: '#005ae3' }} /><span style={{ fontSize: 13, flex: 1 }}>{c.name} <span style={{ color: '#94a3b8' }}>{c.phone}</span></span>
           {c.id in lm.inst && <><input className="l-in" style={{ ...IN, width: 70, height: 30 }} type="number" min="0" max="100" value={lm.inst[c.id]} onChange={e => setLm({ ...lm, inst: { ...lm.inst, [c.id]: e.target.value } })} />%</>}</div>)}
       {sum !== 100 && <div style={{ fontSize: 11.5, color: '#ef4444', marginTop: 4 }}>Suma: {sum}. La suma de los porcentajes marcados tiene que ser 100.</div>}
       <Lb mt={16}>Si ninguna instancia está conectada</Lb><LSelect className="l-in ct-in" bold value={lm.fall} onChange={v => setLm({ ...lm, fall: v })} options={[{ value: 'any', label: 'Sortear aunque esté desconectada' }, { value: 'none', label: 'Mostrar error al visitante' }]} />
@@ -310,14 +310,14 @@ export function Mcp() {
         <div className="lp-srch" style={{ marginLeft: 'auto', width: 224 }}><Search size={14} /><input style={{ height: 33, fontSize: 11.6 }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar credencial..." /></div></div>
       {creds.length > 0 && <Tbl grid="1.3fr .9fr .8fr 1.1fr 1fr 80px" cols={['NOMBRE', 'TIPO', 'ESTADO', 'ÚLTIMO USO', 'EXPIRA', 'ACCIONES']} rows={rows.map(c => [
         <div style={{ padding: '9px 0' }}><b style={{ fontSize: 13.5 }}>{c.name}</b>{c.prefix && <div style={{ ...mono, fontWeight: 400, fontSize: 10.5, color: 'var(--soft)', marginTop: 3 }}>{c.prefix.slice(0, 12)}...</div>}</div>,
-        <Badge c={c.type === 'static' ? '#60a5fa' : '#a78bfa'}>{c.type === 'static' ? 'Estático' : 'OAuth'}</Badge>,
+        <Badge c={c.type === 'static' ? '#60a5fa' : '#4d94ff'}>{c.type === 'static' ? 'Estático' : 'OAuth'}</Badge>,
         <span style={{ fontSize: 14, color: c.status === 'active' ? 'var(--text)' : '#f59e0b' }}>{c.status === 'active' ? 'Activa' : 'Pendiente'}</span>,
         <span style={{ fontSize: 14 }}>{c.used || 'Nunca usado'}</span>, <span style={{ fontSize: 14 }}>{c.exp}</span>,
         <button className="ch-ib" style={{ width: 28, height: 28, marginRight: 30 }} title="Revocar" onClick={() => setDel(c)}><Trash2 size={15} color="#ef4444" /></button>])} />}
       {creds.length > 0 && rows.length === 0 && <div style={{ padding: 18, textAlign: 'center', fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Ninguna credencial coincide.</div>}
     </div>
     {m?.step === 'info' && <LModal open onClose={() => setM(null)} title="¿Qué es Leona MCP?" width={479} bodyStyle={{ padding: '26px 24px 0' }}>
-      <div style={{ display: 'flex', gap: 14, background: 'var(--in2)', border: '1px solid #4c3a8a', borderRadius: 7, padding: '17px 17px' }}><Sparkles size={20} color="#a78bfa" style={{ flexShrink: 0 }} /><div><b style={{ fontSize: 14.3 }}>Conectando inteligencia a sus datos</b><div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--soft)', marginTop: 4 }}>El Model Context Protocol (MCP) permite que agentes de IA interactúen con las herramientas y recursos de su cuenta Leona de forma segura.</div></div></div>
+      <div style={{ display: 'flex', gap: 14, background: 'var(--in2)', border: '1px solid #1e3a8a', borderRadius: 7, padding: '17px 17px' }}><Sparkles size={20} color="#4d94ff" style={{ flexShrink: 0 }} /><div><b style={{ fontSize: 14.3 }}>Conectando inteligencia a sus datos</b><div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--soft)', marginTop: 4 }}>El Model Context Protocol (MCP) permite que agentes de IA interactúen con las herramientas y recursos de su cuenta Leona de forma segura.</div></div></div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14.3, fontWeight: 700, marginTop: 22 }}><BookIc />¿Para qué sirve?</div>
       <p style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--soft)', marginTop: 12 }}>Con una credencial válida, clientes como Cursor y Claude pueden listar contactos, conexiones, flujos y ejecutar acciones permitidas por su cuenta.</p>
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14.3, fontWeight: 700, marginTop: 20 }}><ShieldIc />Buenas prácticas</div>
@@ -326,9 +326,9 @@ export function Mcp() {
     </LModal>}
     {m?.step === 1 && <LModal open onClose={() => setM(null)} title="Nueva credencial" width={430} bodyStyle={{ padding: '21px 22px 22px' }}>
       <div style={{ fontSize: 13.3, color: 'var(--soft)', marginBottom: 14 }}>Elija el tipo de autenticación.</div>
-      {[['static', 'Token estático', 'Cursor, n8n y similares.'], ['oauth', 'OAuth', 'Claude.ai y Claude Desktop.']].map(([k, t, d]) => <button key={k} onClick={() => setM({ ...m, type: k })} style={{ display: 'block', width: '100%', textAlign: 'left', border: '1px solid ' + (m.type === k ? '#6d4fd0' : 'var(--border)'), boxShadow: m.type === k ? '0 0 0 1px #6d4fd0' : 'none', background: m.type === k ? 'var(--in2)' : 'var(--deep)', borderRadius: 7, padding: '13px 13px', marginBottom: 8 }}><b style={{ fontSize: 13.3 }}>{t}</b><div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 5 }}>{d}</div></button>)}
+      {[['static', 'Token estático', 'Cursor, n8n y similares.'], ['oauth', 'OAuth', 'Claude.ai y Claude Desktop.']].map(([k, t, d]) => <button key={k} onClick={() => setM({ ...m, type: k })} style={{ display: 'block', width: '100%', textAlign: 'left', border: '1px solid ' + (m.type === k ? '#0b4eb7' : 'var(--border)'), boxShadow: m.type === k ? '0 0 0 1px #0b4eb7' : 'none', background: m.type === k ? 'var(--in2)' : 'var(--deep)', borderRadius: 7, padding: '13px 13px', marginBottom: 8 }}><b style={{ fontSize: 13.3 }}>{t}</b><div style={{ fontSize: 11.6, color: '#94a3b8', marginTop: 5 }}>{d}</div></button>)}
       <Lb mt={9}>Nombre</Lb><input className="l-in" style={IN} autoFocus value={m.name} onChange={e => setM({ ...m, name: e.target.value })} onKeyDown={e => e.key === 'Enter' && m.name.trim() && create()} placeholder="Ej.: Claude, Cursor" />
-      <div style={{ display: 'flex', gap: 11, marginTop: 20 }}><button className="lb2 g" onClick={() => setM(null)}>Cancelar</button><button className="lb2 p" style={{ background: '#9b6cf8', minWidth: 72 }} disabled={!m.name.trim()} onClick={create}>Crear</button></div>
+      <div style={{ display: 'flex', gap: 11, marginTop: 20 }}><button className="lb2 g" onClick={() => setM(null)}>Cancelar</button><button className="lb2 p" style={{ background: '#005ae3', minWidth: 72 }} disabled={!m.name.trim()} onClick={create}>Crear</button></div>
     </LModal>}
     {m?.step === 2 && <LModal open onClose={() => setM(null)} title="Nueva credencial" width={430} bodyStyle={{ padding: '22px 22px 20px' }}>
       {m.tok && <div className="wh-note" style={{ height: 'auto', padding: '13px 15px', marginTop: 0, fontSize: 13.3, fontWeight: 400 }}>Copie el token ahora. No se mostrará de nuevo.</div>}

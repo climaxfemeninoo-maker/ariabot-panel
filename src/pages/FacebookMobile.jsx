@@ -80,6 +80,6 @@ export default function FacebookMobile() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 18 }}><button className="fbm-b2" onClick={() => { const b = { ...f, status: 'any', period: 'today' }; setDraft(b); setF(b); setSheet(null) }}>Limpiar</button><button className="fbm-b2 p" onClick={() => { setF(draft); setSheet(null) }}>Aplicar</button></div></div></Sheet>}
     {edit && <div className="mv-dlg" onClick={e => e.target === e.currentTarget && setEdit(null)}><div><div style={{ fontSize: 20, fontWeight: 500 }}>Diario</div>
       <div className="fbm-money"><span>$</span><input autoFocus inputMode="decimal" value={edit.v} onChange={e => setEdit({ ...edit, v: e.target.value })} onKeyDown={e => e.key === 'Enter' && saveBudget()} /></div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 24 }}><button className="fbm-b2" style={{ border: '1px solid #8b5cf6', color: '#c4b5fd', background: 'transparent', width: 104 }} onClick={() => setEdit(null)}>Cancelar</button><button className="fbm-b2 p" style={{ width: 104 }} onClick={saveBudget}>Guardar</button></div></div></div>}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 24 }}><button className="fbm-b2" style={{ border: '1px solid #005ae3', color: '#93c5fd', background: 'transparent', width: 104 }} onClick={() => setEdit(null)}>Cancelar</button><button className="fbm-b2 p" style={{ width: 104 }} onClick={saveBudget}>Guardar</button></div></div></div>}
   </div>
 }

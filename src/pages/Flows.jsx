@@ -10,7 +10,7 @@ export const BLOCKS = {
   template: ['Template WhatsApp', '#0ea5e9', FileText, 'Envía una plantilla aprobada por Meta'],
   etiquetas: ['Etiquetas', '#6366f1', Tags, 'Añadir etiquetas al cliente'],
   pix: ['Botón de pago', '#10b981', QrCode, 'Botón de pago rápido con QR'],
-  menu: ['Menú', '#9333ea', List, 'Opciones para que el cliente elija'],
+  menu: ['Menú', '#005ae3', List, 'Opciones para que el cliente elija'],
   carrusel: ['Carrusel', '#0891b2', GalleryHorizontal, 'Tarjetas deslizables con botones'],
   esperar: ['Esperar respuesta', '#ea580c', Hourglass, 'Pausa hasta que el cliente responda'],
   controlador: ['Controlador de chat', '#64748b', MessageCircle, 'Abre o cierra la atención'],
@@ -20,14 +20,14 @@ export const BLOCKS = {
   conexion: ['Conexión de flujo', '#e11d48', Link2, 'Redirige a otro flujo'],
   pixel: ['Pixel', '#ca8a04', Activity, 'Dispara eventos en herramientas de anuncios (Facebook Ads, etc.)'],
   intervalo: ['Intervalo inteligente', '#0891b2', Timer, 'Espera de 01 minuto'],
-  departamento: ['Departamento', '#7c3aed', Building, 'Transfiere a un departamento'],
+  departamento: ['Departamento', '#004fc7', Building, 'Transfiere a un departamento'],
   integracion: ['Integración', '#475569', Puzzle, 'Webhook / API externa'],
   ia: ['Bloque de IA', '#059669', Brain, 'Integración con GPT y Gemini para respuestas inteligentes'],
-  agente: ['Agente de IA', '#8b5cf6', Bot, 'Un agente responde dudas y cierra la venta'],
+  agente: ['Agente de IA', '#005ae3', Bot, 'Un agente responde dudas y cierra la venta'],
   kanban: ['Kanban', '#db2777', Columns3, 'Mueve el lead a una columna del tablero'],
   manipulador: ['Manipulador', '#ea580c', Wrench, 'Actualizar la fecha de creación del contacto en la base y guardar en un campo personalizado'],
   venta: ['Venta aprobada', '#16a34a', BadgeCheck, 'Registra la venta en el dashboard'],
-  pago: ['Pago', '#9333ea', CreditCard, 'Genera un cobro y continúa el flujo'],
+  pago: ['Pago', '#005ae3', CreditCard, 'Genera un cobro y continúa el flujo'],
   ariapay: ['Aria Pay', '#4f46e5', Wallet, 'Cobro integrado con estados de pago'],
   llamar: ['Llamar', '#0d9488', Phone, 'Realiza una llamada de voz'],
   kie: ['Integración Kie.ai', '#be185d', Sparkles, 'Genera imágenes o videos con IA'],
@@ -45,7 +45,7 @@ export const SEED_FLOWS = () => [
   seedFlow('Flujo nuevo 3', 'activo', ['mensaje', 'agente', 'kanban', 'venta'], '19/11/2026, 11:04 a.m.'),
 ]
 const STAT = { activo: ['#22c55e', 'ACTIVO', 'rgba(34,197,94,.1)', 'rgba(34,197,94,.35)'], pausado: ['#f59e0b', 'PAUSADO', 'rgba(245,158,11,.1)', 'rgba(245,158,11,.4)'], archivado: ['#ef4444', 'ARCHIVADO', 'rgba(239,68,68,.1)', 'rgba(239,68,68,.35)'] }
-const FCOL = [['#3b82f6', 'Azul'], ['#10b981', 'Verde'], ['#8b5cf6', 'Morado'], ['#f97316', 'Naranja'], ['#ef4444', 'Rojo'], ['#f59e0b', 'Amarillo'], ['#6b7280', 'Gris']]
+const FCOL = [['#3b82f6', 'Azul'], ['#10b981', 'Verde'], ['#005ae3', 'Morado'], ['#f97316', 'Naranja'], ['#ef4444', 'Rojo'], ['#f59e0b', 'Amarillo'], ['#6b7280', 'Gris']]
 
 function PopMenu({ items, children, btnClass, width = 200, alignRight = true }) {
   const [open, setOpen] = useState(false); const ref = useRef(); useOutside(ref, () => setOpen(false))
@@ -102,7 +102,7 @@ export default function Flows() {
           {rows.map(f => { const S = STAT[f.status] || STAT.pausado; return <div key={f.id} className="fl-row fl-tr" style={{ borderLeftColor: S[0] }} onClick={() => nav(`/flows/${f.id}/edit`)}>
             <span className="nm"><i style={{ background: S[0] }} />{f.name}</span>
             <span><span className="fl-bd" style={{ color: S[0], background: S[2], borderColor: S[3] }}><i />{S[1]}</span></span>
-            <span className="bl"><Zap size={13} color="#8b5cf6" />{f.nodes.length}</span>
+            <span className="bl"><Zap size={13} color="#005ae3" />{f.nodes.length}</span>
             <span className="dt">{f.updated}</span>
             <PopMenu btnClass="mn" width={207} items={[
               { icon: <Pencil size={17} />, label: 'Editar nombre del flujo', onClick: () => setMod({ t: 'rename', id: f.id, name: f.name }) },
@@ -234,8 +234,8 @@ export function FlowEditor() {
       </div>
       <div className="zoomctl"><button className="icon-btn" onClick={() => setView(v => ({ ...v, k: Math.max(.3, v.k * .85) }))}><ZoomOut size={14} /></button><button className="icon-btn" onClick={() => setView(v => ({ ...v, k: Math.min(2, v.k * 1.15) }))}><ZoomIn size={14} /></button><button className="icon-btn" onClick={fit}><Maximize size={14} /></button><button className="icon-btn" onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={14} /></button><span className="small muted" style={{ alignSelf: 'center', padding: '0 6px' }}>{Math.round(view.k * 100)}%</span></div>
       <div className="minimap"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`}>
-        {flow.nodes.map(n => <rect key={n.id} x={n.x} y={n.y} width={NW} height={80} rx="8" fill={sel === n.id ? '#8b5cf6' : (BLOCKS[n.type] || BLOCKS.mensaje)[1]} opacity=".8" />)}
-        {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(139,92,246,.08)" stroke="#8b5cf6" strokeWidth={4} />}
+        {flow.nodes.map(n => <rect key={n.id} x={n.x} y={n.y} width={NW} height={80} rx="8" fill={sel === n.id ? '#005ae3' : (BLOCKS[n.type] || BLOCKS.mensaje)[1]} opacity=".8" />)}
+        {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(0,90,227,.08)" stroke="#005ae3" strokeWidth={4} />}
       </svg></div>
     </div>
     <Modal open={!!edit && !edit.ai} onClose={() => setEdit(null)} title="Editar bloque" sub={edit && BLOCKS[edit.type]?.[0]} icon={<Pencil size={16} />} footer={<><button className="btn btn-g" onClick={() => setEdit(null)}>Cancelar</button><button className="btn btn-p" onClick={() => { setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === edit.id ? edit : n) })); setEdit(null); toast('Bloque guardado') }}>Guardar</button></>}>

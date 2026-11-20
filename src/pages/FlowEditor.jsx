@@ -39,7 +39,7 @@ const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llama
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
   if (n.type === 'template') { const t = n.tpl || {}; return [{ k: 'reply', l: 'Resposta livre', c: 'or', pc: '#d97706' }, { k: 'timeout', l: 'Timeout sem clique', s: `${t.timeout || 60} ${({ m: 'minutes', h: 'hours', d: 'days' })[t.unit || 'm']}`, c: 'gr', pc: '#6b7280' }, { k: 'fail', l: 'Falha de entrega', c: 'rd', pc: '#dc2626' }] }
-  if (n.type === 'menu') { const m = n.menu || {}; const o = (m.mode === 'buttons' ? m.buttons : m.options) || []; return [...o.map((x, i) => ({ k: 'o' + x.id, l: `${i + 1}. ${x.title || 'Opción sin título'}`, c: 'pu', pc: '#9333ea' })), ...(+m.exp > 0 ? [{ k: 'timeout', l: 'Sin respuesta', s: `${m.exp} ${({ m: 'minutos', h: 'horas', d: 'días' })[m.unit || 'd']}`, c: 'gr', pc: '#6b7280' }] : [])] }
+  if (n.type === 'menu') { const m = n.menu || {}; const o = (m.mode === 'buttons' ? m.buttons : m.options) || []; return [...o.map((x, i) => ({ k: 'o' + x.id, l: `${i + 1}. ${x.title || 'Opción sin título'}`, c: 'pu', pc: '#005ae3' })), ...(+m.exp > 0 ? [{ k: 'timeout', l: 'Sin respuesta', s: `${m.exp} ${({ m: 'minutos', h: 'horas', d: 'días' })[m.unit || 'd']}`, c: 'gr', pc: '#6b7280' }] : [])] }
   if (n.type === 'carrusel') return carOuts(n.cfg || {})
   if (n.type === 'esperar') return ESPERAR_OUTS(n.cfg || {})
   const d = NODE_DEF[n.type]; if (d && d.outs) return d.outs(n.cfg || {})
@@ -48,7 +48,7 @@ export const nodeOuts = (n, tpls = []) => {
 const newNode = (type, x, y) => ({ id: uid(), type, x, y, title: B(type)[0], desc: '', actions: [], stats: [0, 0, 0] })
 
 const ACT = {
-  text: ['Texto', MessageSquare, '#3b82f6', 'Mensaje de texto'], image: ['Imagen', Image, '#22c55e'], video: ['Vídeo', Video, '#a855f7'], audio: ['Audio', Mic, '#f97316'],
+  text: ['Texto', MessageSquare, '#3b82f6', 'Mensaje de texto'], image: ['Imagen', Image, '#22c55e'], video: ['Vídeo', Video, '#1a73f0'], audio: ['Audio', Mic, '#f97316'],
   delay: ['Intervalo', Clock, '#06b6d4', 'Retraso entre mensajes'], contact: ['Contacto', User, '#ec4899'], file: ['Archivo', File, '#6366f1'], sticker: ['Sticker', Sticker, '#f59e0b'],
 }
 const actBlank = t => ({ id: uid(), type: t, text: '', src: 'file', url: '', caption: '', file: null, typing: 3, rec: 6, voice: true, once: false, del: false, delTag: '', mode: 'normal', min: 0, max: 120, cname: '', cphone: '', ai: '', fname: '' })
@@ -59,7 +59,7 @@ function Editor({ value, onChange, ph, magic, rows }) {
   return <div className="fe-ed"><textarea ref={ta} value={value} onChange={e => onChange(e.target.value)} placeholder={ph} style={rows ? { minHeight: rows } : null} />
     <div className="tb"><button onClick={() => wrap('*')}><Bold size={16} /></button><button onClick={() => wrap('_')}><Italic size={16} /></button><button onClick={() => wrap('~')}><Strikethrough size={16} /></button>
       <PickBtn kind="emoji" title="Emojis" onPick={x => wrap(x, '')}><Smile size={16} /></PickBtn><PickBtn kind="var" title="Variable" onPick={x => wrap(x, '')}><Code size={16} /></PickBtn>
-      {magic && <><span style={{ width: 1, height: 18, background: 'var(--border2)', margin: '0 3px' }} /><button onClick={magic}><WandSparkles size={16} color="#a78bfa" /></button></>}</div></div>
+      {magic && <><span style={{ width: 1, height: 18, background: 'var(--border2)', margin: '0 3px' }} /><button onClick={magic}><WandSparkles size={16} color="#4d94ff" /></button></>}</div></div>
 }
 const Range = ({ label, v, max, set, unit = 's' }) => <><div style={{ display: 'flex', fontSize: 13.3, color: 'var(--soft)', marginTop: 15 }}><span>{label}</span><b style={{ margin: '0 auto', color: 'var(--text)' }}>{v} {unit}</b><span>{max} {unit}</span></div>
   <input type="range" className="fe-rng" min="0" max={max} value={v} onChange={e => set(+e.target.value)} style={{ marginTop: 9, background: `linear-gradient(90deg,#22d3ee ${v / max * 100}%,#374151 0)` }} /></>
@@ -94,8 +94,8 @@ function Media({ a, set, kind, tags }) {
       <div className="fe-small" style={{ marginTop: 8 }}>Pegue una URL pública o use variables del sistema (como <code>{'{nome_campo}'}</code>, <code>{'{nome}'}</code>). La URL se resuelve al ejecutar el flujo.</div>
       {['image', 'video'].includes(kind) && <><div className="fe-lb" style={{ marginTop: 16 }}>Leyenda</div><Editor value={a.caption} onChange={v => set({ caption: v })} ph="Leyenda (opcional)..." rows={90} /></>}</>}
     {a.src === 'ai' && <div style={{ border: '1.5px dashed var(--border2)', borderRadius: 9, padding: '16px 17px' }}>
-      <div style={{ textAlign: 'center' }}><span style={{ width: 68, height: 68, borderRadius: 9, background: '#6b21a8', display: 'inline-grid', placeItems: 'center', color: '#d8b4fe' }}><Mic size={30} /></span><div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 10 }}>Generar audio con IA <WandSparkles size={14} color="#a78bfa" /></div></div>
-      <div className="fe-lb" style={{ marginTop: 14 }}>Voz / Clave IA<span style={{ marginLeft: 'auto', fontSize: 12, color: '#c084fc' }}>Administrar claves</span></div>
+      <div style={{ textAlign: 'center' }}><span style={{ width: 68, height: 68, borderRadius: 9, background: '#6b21a8', display: 'inline-grid', placeItems: 'center', color: '#93c5fd' }}><Mic size={30} /></span><div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 10 }}>Generar audio con IA <WandSparkles size={14} color="#4d94ff" /></div></div>
+      <div className="fe-lb" style={{ marginTop: 14 }}>Voz / Clave IA<span style={{ marginLeft: 'auto', fontSize: 12, color: '#60a5fa' }}>Administrar claves</span></div>
       <div className="fe-help" style={{ marginTop: 0, fontSize: 13.3 }}>No hay claves ElevenLabs registradas.</div>
       <div className="fe-lb" style={{ marginTop: 14 }}>Voz</div><select className="l-in" style={{ height: 37 }} disabled><option>Selecciona la voz...</option></select>
       <div className="fe-lb" style={{ marginTop: 14 }}>Modelo de voz</div><select className="l-in" style={{ height: 37 }} defaultValue="v2"><option value="v3">Eleven v3, más expresivo</option><option value="v2">Multilingual v2, más natural</option><option value="turbo">Turbo v2.5, más rápido</option><option value="flash">Flash v2.5, el más rápido</option></select>
@@ -121,7 +121,7 @@ function MessageModal({ node, onClose, onSave }) {
       {acts.map((a, i) => { const [l, I, c, t2] = ACT[a.type]; return <div key={a.id} className="fe-blk" draggable onDragStart={() => drag.current = i} onDragOver={e => e.preventDefault()} onDrop={() => { const f = drag.current; if (f == null || f === i) return; setActs(x => { const y = [...x]; const [m] = y.splice(f, 1); y.splice(i, 0, m); return y }) }}>
         <div className="fe-bh"><I size={16} color={c} />{t2 || l}<span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}><button style={{ cursor: 'grab' }} title="Arrastrar"><GripVertical size={16} /></button><button onClick={() => setActs(x => x.filter((_, j) => j !== i))}><Trash2 size={16} /></button></span></div>
         {a.type === 'text' && <><div className="fe-lb">Contenido del mensaje *</div><Editor value={a.text} onChange={v => set(i, { text: v })} ph="Escriba el contenido del mensaje..." magic={() => set(i, { showAi: !a.showAi })} />
-          {a.showAi && <><div className="fe-lb" style={{ marginTop: 14 }}>IA<span style={{ marginLeft: 'auto', fontSize: 12, color: '#c084fc' }}>Administrar claves</span></div><LSelect className="l-in" bold value={a.aiKey || ''} onChange={v => set(i, { aiKey: v })} placeholder="Selecciona una IA..." options={[]} /></>}
+          {a.showAi && <><div className="fe-lb" style={{ marginTop: 14 }}>IA<span style={{ marginLeft: 'auto', fontSize: 12, color: '#60a5fa' }}>Administrar claves</span></div><LSelect className="l-in" bold value={a.aiKey || ''} onChange={v => set(i, { aiKey: v })} placeholder="Selecciona una IA..." options={[]} /></>}
           <Range label='Retraso de "escribiendo"' v={a.typing} max={60} set={v => set(i, { typing: v })} /><div className="fe-help">Tiempo que WhatsApp mostrará "escribiendo" antes de enviar este mensaje.</div><DelTag a={a} set={p => set(i, p)} tags={tagNames} /></>}
         {['image', 'video', 'audio', 'file', 'sticker'].includes(a.type) && <Media a={a} set={p => set(i, p)} kind={a.type} tags={tagNames} />}
         {a.type === 'delay' && <><div className="fe-lb" style={{ color: 'var(--text)' }}>Retraso entre mensajes</div>
@@ -146,7 +146,7 @@ function NodeModal({ node, onClose, onSave }) {
   return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm" style={{ maxWidth: 540 }}>
     <div className="fe-mh"><span className="ic" style={{ background: node.type === 'inicio' ? '#22c55e' : c }}><I size={20} /></span><h2>Editar {node.type === 'inicio' ? 'inicio' : B(node.type)[0].toLowerCase()}</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
     <div style={{ padding: '18px 25px 0' }}>
-      <div style={{ display: 'flex', gap: 13, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}><I size={20} color="#a78bfa" style={{ marginTop: 3 }} /><div><b style={{ fontSize: 16.5 }}>{node.type === 'inicio' ? 'Inicio' : B(node.type)[0]}</b><div style={{ fontSize: 13, color: 'var(--soft)', marginTop: 2 }}>{node.type === 'inicio' ? 'Nodo de inicio del flujo' : B(node.type)[3]}</div></div></div>
+      <div style={{ display: 'flex', gap: 13, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}><I size={20} color="#4d94ff" style={{ marginTop: 3 }} /><div><b style={{ fontSize: 16.5 }}>{node.type === 'inicio' ? 'Inicio' : B(node.type)[0]}</b><div style={{ fontSize: 13, color: 'var(--soft)', marginTop: 2 }}>{node.type === 'inicio' ? 'Nodo de inicio del flujo' : B(node.type)[3]}</div></div></div>
       <div className="fe-lb" style={{ marginTop: 20 }}>Nombre *</div><input className="l-in" style={{ height: 41, background: 'var(--in2)', fontWeight: 700 }} value={n.title} onChange={e => setN({ ...n, title: e.target.value })} />
       <div className="fe-lb" style={{ marginTop: 17 }}>Descripción</div><textarea className="l-in" style={{ height: 82, padding: '11px 13px', background: 'var(--in2)', resize: 'vertical' }} value={n.desc} onChange={e => setN({ ...n, desc: e.target.value })} placeholder="Descripción opcional del nodo" />
       <div style={{ border: '1px solid var(--border)', borderRadius: 7, padding: '13px 14px', fontSize: 13.3, color: 'var(--soft)', lineHeight: 1.5, marginTop: 33 }}>{info}</div>
@@ -338,8 +338,8 @@ export default function FlowEditor() {
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
       <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#15121f)', display: 'block' }}>
-        {flow.nodes.map(n => <rect key={n.id} x={n.x} y={n.y} width={NW} height={NH} fill={sel === n.id ? '#8b5cf6' : n.type === 'inicio' ? '#10b981' : B(n.type)[1]} />)}
-        {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(139,92,246,.06)" stroke="#8b5cf6" strokeWidth={mmW / 140} />}
+        {flow.nodes.map(n => <rect key={n.id} x={n.x} y={n.y} width={NW} height={NH} fill={sel === n.id ? '#005ae3' : n.type === 'inicio' ? '#10b981' : B(n.type)[1]} />)}
+        {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(0,90,227,.06)" stroke="#005ae3" strokeWidth={mmW / 140} />}
       </svg></div>
     </div>
     {del && <LModal open onClose={() => setDel(null)} title="Eliminar nodo" icon={<TriangleAlert size={21} color="#ef4444" />} width={472} bodyStyle={{ padding: '22px 24px 0' }}>
@@ -443,7 +443,7 @@ function TagsModal({ node, onClose, onSave }) {
   const all = [...new Set([...store.map(t => t.name), ...contacts.flatMap(c => c.tags || [])])]
   const [tags, setTags] = useState(node.tags || []); const [add, setAdd] = useState(node.tagMode !== 'remove'); const [q, setQ] = useState('')
   const sug = all.filter(t => !tags.includes(t) && t.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
-  const pick = t => { t = t.trim(); if (!t) return; if (!all.includes(t)) setStore(x => [...x, { id: uid(), name: t, color: '#8b5cf6' }]); if (!tags.includes(t)) setTags([...tags, t]); setQ('') }
+  const pick = t => { t = t.trim(); if (!t) return; if (!all.includes(t)) setStore(x => [...x, { id: uid(), name: t, color: '#005ae3' }]); if (!tags.includes(t)) setTags([...tags, t]); setQ('') }
   return <NModal title="Editar etiquetas" icon={<Tag size={20} />} grad="#6366f1" width={514} onClose={onClose}
     footer={<Foot onClose={onClose} onOk={() => onSave({ ...node, tags, tagMode: add ? 'add' : 'remove', desc: tags.length ? `${add ? 'Añadir' : 'Quitar'} etiquetas: ${tags.join(', ')}` : '' })} />}>
     <div className="fe-lb" style={{ fontWeight: 600 }}>Etiquetas</div>
@@ -493,7 +493,7 @@ function MenuModal({ node, onClose, onSave }) {
   const L = m.mode === 'list'; const key = L ? 'options' : 'buttons'; const list = m[key]
   const maxExp = { m: 44640, h: 744, d: 31 }[m.unit]
   const ok = m.text.trim() && (!L || m.btn.trim()) && list.length > 0 && list.every(o => o.title.trim())
-  return <NModal title="Menú" icon={<List size={20} />} grad="#a855f7" width={512} onClose={onClose}
+  return <NModal title="Menú" icon={<List size={20} />} grad="#1a73f0" width={512} onClose={onClose}
     footer={<Foot onClose={onClose} ok={ok} onOk={() => onSave({ ...node, menu: m, desc: m.text })} />}>
     <div className="fe-seg" style={{ marginTop: 10 }}><button className={L ? 'on' : ''} onClick={() => u({ mode: 'list' })}><List size={15} />Lista</button><button className={!L ? 'on' : ''} onClick={() => u({ mode: 'buttons' })}><Square size={14} />Botones</button></div>
     {!L && <div className="fe-blk" style={{ padding: '15px 15px', marginBottom: 14 }}><label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.3, cursor: 'pointer' }}><input type="checkbox" checked={m.img} onChange={e => u({ img: e.target.checked })} style={{ width: 15, height: 15 }} /><b>Imagen</b><span style={{ color: 'var(--soft)', marginLeft: -5 }}>(opcional)</span></label>

@@ -57,7 +57,7 @@ export function TokensModal({ open, onClose }) {
     footer={<button className="lb2 g" onClick={onClose}>Cancelar</button>}>
     <div style={{ fontSize: 13.3, fontWeight: 600 }}>Cuántos tokens Leona quieres comprar</div>
     <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 3 }}>1.000 tokens Leona = R$ 1,00. Arrastra la barra o escribe el monto.</div>
-    <input type="range" className="rng" style={{ marginTop: 17, background: `linear-gradient(90deg,#8b5cf6 ${(n - 10000) / 990000 * 100}%,#e5e7eb 0)` }} min={10000} max={1000000} step={10000} value={n} onChange={e => setN(+e.target.value)} />
+    <input type="range" className="rng" style={{ marginTop: 17, background: `linear-gradient(90deg,#005ae3 ${(n - 10000) / 990000 * 100}%,#e5e7eb 0)` }} min={10000} max={1000000} step={10000} value={n} onChange={e => setN(+e.target.value)} />
     <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 25 }}>Tokens</div>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 7 }}><input className="l-in" style={{ height: 37, background: 'var(--in2)', fontWeight: 700 }} value={n.toLocaleString('en-US')} onChange={e => setN(Math.min(10000000, +e.target.value.replace(/\D/g, '') || 0))} onBlur={() => setN(x => Math.max(10000, x))} /><span style={{ fontSize: 13.3, color: '#94a3b8', whiteSpace: 'nowrap' }}>tokens Leona</span></div>
     <div style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 6 }}>Pagas</div>

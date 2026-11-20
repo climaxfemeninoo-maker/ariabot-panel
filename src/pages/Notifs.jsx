@@ -20,15 +20,15 @@ export function NotifPanel({ style }) {
     setCfg({ ...cfg, device: v }); toast(v ? 'Notificaciones del dispositivo activadas' : 'Notificaciones del dispositivo desactivadas')
   }
   return <div className="nt-pop" style={style} onClick={e => e.stopPropagation()}>
-    <div className="nt-h"><Bell size={16} color="#a78bfa" />Notificaciones
+    <div className="nt-h"><Bell size={16} color="#4d94ff" />Notificaciones
       {list.length > 0 && <><button title="Marcar todo leído" onClick={() => setList(l => l.map(x => ({ ...x, r: true })))}><Check size={15} /></button><button title="Borrar todo" onClick={() => setList([])}><Trash2 size={14} /></button></>}</div>
     <div className="nt-body">{list.length === 0 ? <div className="nt-empty"><Bell size={30} strokeWidth={1.8} /><span>Sin notificaciones</span></div>
       : list.map(n => <div key={n.id} className={'nt-it' + (n.r ? '' : ' un')} onClick={() => setList(l => l.map(x => x.id === n.id ? { ...x, r: true } : x))}><i /><div><b>{n.t}</b><p>{n.d}</p></div></div>)}</div>
     <div className="nt-f">
-      <div className="nt-row"><span>Recibir en el dispositivo</span><em style={{ color: cfg.device ? '#a78bfa' : '#94a3b8' }}>{cfg.device ? 'Activado' : 'Activar'}</em><Toggle on={cfg.device} onChange={setDevice} /></div>
+      <div className="nt-row"><span>Recibir en el dispositivo</span><em style={{ color: cfg.device ? '#4d94ff' : '#94a3b8' }}>{cfg.device ? 'Activado' : 'Activar'}</em><Toggle on={cfg.device} onChange={setDevice} /></div>
       <div className="nt-row" style={{ gap: 10, marginTop: 12 }}>
         <button style={{ display: 'grid', color: 'var(--soft)' }} onClick={() => { setCfg({ ...cfg, vol: cfg.vol ? 0 : 50 }) }}>{cfg.vol ? <Volume2 size={16} /> : <VolumeX size={16} />}</button>
-        <input type="range" className="nt-rng" min="0" max="100" value={cfg.vol} style={{ background: `linear-gradient(90deg,#8b5cf6 ${cfg.vol}%,var(--border2) 0)` }} onChange={e => setCfg({ ...cfg, vol: +e.target.value })} onMouseUp={() => playPing(cfg.vol / 100)} onTouchEnd={() => playPing(cfg.vol / 100)} />
+        <input type="range" className="nt-rng" min="0" max="100" value={cfg.vol} style={{ background: `linear-gradient(90deg,#005ae3 ${cfg.vol}%,var(--border2) 0)` }} onChange={e => setCfg({ ...cfg, vol: +e.target.value })} onMouseUp={() => playPing(cfg.vol / 100)} onTouchEnd={() => playPing(cfg.vol / 100)} />
         <small>{cfg.vol}%</small></div>
       <button className="nt-row nt-adv" onClick={() => setAdv(!adv)}><span>Avanzado</span><ChevronDown size={16} style={{ marginLeft: 'auto', transform: adv ? 'rotate(180deg)' : '', transition: '.2s' }} /></button>
       {adv && [['msgs', 'Mensajes nuevos en Chats'], ['sales', 'Ventas registradas'], ['conns', 'Conexiones desconectadas']].map(([k, l]) => <div key={k} className="nt-row" style={{ marginTop: 10, fontSize: 12.5 }}><span style={{ color: 'var(--soft)' }}>{l}</span><span style={{ marginLeft: 'auto' }}><Toggle on={cfg[k]} onChange={v => setCfg({ ...cfg, [k]: v })} /></span></div>)}

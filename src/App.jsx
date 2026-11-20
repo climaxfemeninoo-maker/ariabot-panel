@@ -112,7 +112,7 @@ function TrilhaDesk() { const nav = useNavigate(); return <HuellaModal open onCl
 function MobileNav({ onAll }) {
   const loc = useLocation(); const on = p => loc.pathname.startsWith(p); const [menu, setMenu] = useState(false); const nav = useNavigate()
   return <><nav className="mb-nav">
-    <NavLink to="/welcome" title="Dashboard"><span className="sq" style={{ background: on('/welcome') ? 'linear-gradient(135deg,#a855f7,#7c3aed)' : 'transparent', color: on('/welcome') ? '#fff' : '#8f8a9e' }}><LayoutGrid size={15} fill="currentColor" /></span></NavLink>
+    <NavLink to="/welcome" title="Dashboard"><span className="sq" style={{ background: on('/welcome') ? 'linear-gradient(135deg,#1a73f0,#004fc7)' : 'transparent', color: on('/welcome') ? '#fff' : '#8f8a9e' }}><LayoutGrid size={15} fill="currentColor" /></span></NavLink>
     <NavLink to="/facebook/campaigns" title="Facebook"><span className="sq" style={{ background: '#1d4ed8', fontWeight: 800, fontSize: 15, fontFamily: 'Arial,sans-serif', opacity: on('/facebook') ? 1 : .85 }}>f</span></NavLink>
     <NavLink to="/chats" title="Chats"><MessagesSquare size={24} strokeWidth={1.7} color={on('/chats') ? '#fff' : '#8f8a9e'} /></NavLink>
     <NavLink to="/connections" title="Conexiones"><QrCode size={22} strokeWidth={1.7} color={on('/connections') ? '#fff' : '#8f8a9e'} /></NavLink>

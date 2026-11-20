@@ -43,7 +43,7 @@ const CSS = `
 .lv .la-foot{text-align:center;font-size:16.4px;line-height:22px;margin-top:28px}
 .lv .la-foot .la-link{font-size:16.4px;font-weight:500}
 .lv .la-copy{font-size:14.1px;margin-top:38px;text-align:center}
-.lv .la-btn{background:#8b5cf6}.lv .la-btn:hover{background:#7c3aed}
+.lv .la-btn{background:#005ae3}.lv .la-btn:hover{background:#004fc7}
 /* login oscuro */
 html.dark .lv{background:radial-gradient(1000px 520px at 50% -8%,rgba(91,56,176,.22),transparent 70%),#110f20;color:#fff}
 html.dark .lv .la-toggle{color:#f59e0b}
@@ -54,27 +54,27 @@ html.dark .lv .la-sub,html.dark .lv .la-foot{color:#d6d3e6}
 html.dark .lv .la-ic,html.dark .lv .la-eye{color:#8f89ad}
 html.dark .lv .la-in{background:#241e42;border:1px solid rgba(255,255,255,.04);color:#fff;color-scheme:dark}
 html.dark .lv .la-in::placeholder{color:#9b95b9}
-html.dark .lv .la-in:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.18)}
+html.dark .lv .la-in:focus{border-color:#005ae3;box-shadow:0 0 0 3px rgba(0,90,227,.18)}
 html.dark .lv .la-in:-webkit-autofill{-webkit-box-shadow:0 0 0 100px #241e42 inset;-webkit-text-fill-color:#fff}
 html.dark .lv .la-row label{color:#e6e3f1}
 html.dark .lv .la-row input{color-scheme:dark}
-html.dark .lv .la-link{color:#a78bfa}
+html.dark .lv .la-link{color:#4d94ff}
 html.dark .lv .la-div{background:rgba(228,225,244,.85)}
 html.dark .lv .la-copy{color:#9b96b3}
 /* login claro */
-html:not(.dark) .lv{background:radial-gradient(900px 420px at 50% -10%,rgba(167,139,250,.14),transparent 70%),radial-gradient(rgba(124,58,237,.05) 1px,transparent 1.2px) 0 0/22px 22px,#fff;color:#111827}
+html:not(.dark) .lv{background:radial-gradient(900px 420px at 50% -10%,rgba(77,148,255,.14),transparent 70%),radial-gradient(rgba(0,79,199,.05) 1px,transparent 1.2px) 0 0/22px 22px,#fff;color:#111827}
 html:not(.dark) .lv .la-toggle{background:#fff;border:1px solid #e5e7eb;color:#374151}
 html:not(.dark) .lv .la-card{background:#f9fafb;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(17,24,39,.04)}
-html:not(.dark) .lv .la-card:after{content:'';position:absolute;top:-70px;left:-50px;width:230px;height:160px;background:radial-gradient(closest-side,rgba(167,139,250,.28),transparent);pointer-events:none}
+html:not(.dark) .lv .la-card:after{content:'';position:absolute;top:-70px;left:-50px;width:230px;height:160px;background:radial-gradient(closest-side,rgba(77,148,255,.28),transparent);pointer-events:none}
 html:not(.dark) .lv .la-logo{filter:drop-shadow(0 9px 10px rgba(17,24,39,.28))}
 html:not(.dark) .lv .la-h{color:#111827}
 html:not(.dark) .lv .la-sub,html:not(.dark) .lv .la-foot{color:#6b7280}
 html:not(.dark) .lv .la-ic,html:not(.dark) .lv .la-eye{color:#6b7280}
 html:not(.dark) .lv .la-in{background:#e9f0fe;border:1px solid #dbe4f5;color:#111827}
 html:not(.dark) .lv .la-in::placeholder{color:#8a93a6}
-html:not(.dark) .lv .la-in:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.15)}
+html:not(.dark) .lv .la-in:focus{border-color:#005ae3;box-shadow:0 0 0 3px rgba(0,90,227,.15)}
 html:not(.dark) .lv .la-row label{color:#4b5563}
-html:not(.dark) .lv .la-link{color:#8b5cf6}
+html:not(.dark) .lv .la-link{color:#005ae3}
 html:not(.dark) .lv .la-div{background:#e5e7eb}
 html:not(.dark) .lv .la-copy{color:#6b7280}
 
@@ -86,15 +86,15 @@ html:not(.dark) .lv .la-copy{color:#6b7280}
 .gv .la-ic{left:17px}
 .gv .la-in{height:56px;border-radius:9px;padding:0 48px 0 46px;font-size:18.7px}
 .gv .la-eye{right:14px}
-.gv .la-btn{height:56px;border-radius:9px;font-size:16.3px;font-weight:600;background:#9333ea}
-.gv .la-btn:hover{background:#7e22ce}
+.gv .la-btn{height:56px;border-radius:9px;font-size:16.3px;font-weight:600;background:#005ae3}
+.gv .la-btn:hover{background:#004fc7}
 .gv .la-lb{display:block;font-size:16.4px;font-weight:600;line-height:20px;margin:29px 0 12px}
 .gv .la-lb.first{margin-top:39px}
 .gv .la-lb span{color:#ef4444}
 .gv .la-hint{font-size:14px;line-height:17px;margin-top:9px}
 .gv .la-hint + .la-lb{margin-top:31px}
 .gv .la-foot{text-align:center;font-size:16.7px;line-height:22px;margin-top:29px}
-.gv .la-foot .la-link{font-size:16.7px;font-weight:600;color:#9333ea}
+.gv .la-foot .la-link{font-size:16.7px;font-weight:600;color:#005ae3}
 .gv .la-back{display:flex;align-items:center;justify-content:center;gap:6px;margin:30px auto 0;font-size:16.5px;font-weight:500}
 .gv .la-copy{font-size:15.5px;margin:40px 0 20px;text-align:center}
 .gv.reg .la-card{padding-bottom:41px}
@@ -111,11 +111,11 @@ html.dark .gv .la-lb{color:#e5e7eb}
 html.dark .gv .la-ic,html.dark .gv .la-eye{color:#9ca3af}
 html.dark .gv .la-in{background:#374151;border:1px solid #4b5563;color:#fff;color-scheme:dark}
 html.dark .gv .la-in::placeholder{color:#9ca3af}
-html.dark .gv .la-in:focus{border-color:#a855f7;box-shadow:0 0 0 2px #a855f7}
+html.dark .gv .la-in:focus{border-color:#1a73f0;box-shadow:0 0 0 2px #1a73f0}
 html.dark .gv .la-in:-webkit-autofill{-webkit-box-shadow:0 0 0 100px #374151 inset;-webkit-text-fill-color:#fff}
 html.dark .gv .la-hint{color:#9ca3af}
 html.dark .gv .la-foot{color:#e5e7eb}
-html.dark .gv .la-back{color:#c084fc}
+html.dark .gv .la-back{color:#60a5fa}
 html.dark .gv .la-copy{color:#9ca3af}
 /* gris claro */
 html:not(.dark) .gv{background:#fff;color:#111827}
@@ -127,10 +127,10 @@ html:not(.dark) .gv .la-lb{color:#374151}
 html:not(.dark) .gv .la-ic,html:not(.dark) .gv .la-eye{color:#9ca3af}
 html:not(.dark) .gv .la-in{background:#fff;border:1px solid #e5e7eb;color:#111827}
 html:not(.dark) .gv .la-in::placeholder{color:#9ca3af}
-html:not(.dark) .gv .la-in:focus{border-color:#a855f7;box-shadow:0 0 0 2px #a855f7}
+html:not(.dark) .gv .la-in:focus{border-color:#1a73f0;box-shadow:0 0 0 2px #1a73f0}
 html:not(.dark) .gv .la-hint{color:#6b7280}
 html:not(.dark) .gv .la-foot{color:#374151}
-html:not(.dark) .gv .la-back{color:#9333ea}
+html:not(.dark) .gv .la-back{color:#005ae3}
 html:not(.dark) .gv .la-copy{color:#6b7280}
 @media(max-width:560px){.lv .la-card,.gv .la-card{padding-left:22px;padding-right:22px}}
 `

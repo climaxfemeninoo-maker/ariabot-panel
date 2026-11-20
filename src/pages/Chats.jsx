@@ -3,7 +3,7 @@ import { MessageCircle, MessageSquare, Search, Plus, Filter, CalendarDays, Calen
 import { useStore, useToast, uid, useOutside, Menu } from '../ui'
 import { LModal, LSelect } from './leona'
 
-const COLORS = ['#8b5cf6', '#22c55e', '#f59e0b', '#ec4899', '#06b6d4', '#ef4444']
+const COLORS = ['#005ae3', '#22c55e', '#f59e0b', '#ec4899', '#06b6d4', '#ef4444']
 const hhmm = () => new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
 const QUICK = ['¡Hola! ¿En qué puedo ayudarte? 😊', 'Te envío la información en un momento.', 'Puedes pagar por Yape, Plin o tarjeta.', '¡Gracias por tu compra! 🙌']
 export const COUNTRIES = [['br', '+55', 'Brasil'], ['pe', '+51', 'Perú'], ['mx', '+52', 'México'], ['co', '+57', 'Colombia'], ['ar', '+54', 'Argentina'], ['cl', '+56', 'Chile'], ['ec', '+593', 'Ecuador'], ['bo', '+591', 'Bolivia'], ['py', '+595', 'Paraguay'], ['uy', '+598', 'Uruguay'], ['ve', '+58', 'Venezuela'], ['us', '+1', 'Estados Unidos'], ['es', '+34', 'España'], ['pt', '+351', 'Portugal'], ['cr', '+506', 'Costa Rica'], ['pa', '+507', 'Panamá'], ['gt', '+502', 'Guatemala'], ['do', '+1', 'Rep. Dominicana']]
@@ -56,7 +56,7 @@ export default function Chats() {
   return <div className="ch-wrap">
     <div className={'ch-list' + (hide ? ' hide' : '')}>
       <div className="ch-top">
-        <div className="ch-ttl"><MessageCircle size={15} color="#8b5cf6" strokeWidth={2.2} />Empresa Pablo Monja Suclupe</div>
+        <div className="ch-ttl"><MessageCircle size={15} color="#005ae3" strokeWidth={2.2} />Empresa Pablo Monja Suclupe</div>
         <div className="ch-srow">
           <div className="ch-srch"><Search size={14} /><input value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar chats..." /></div>
           <button className="ch-pb" style={{ width: 27, height: 27 }} title="Crear chat nuevo" onClick={() => setModal('new')}><Plus size={16} /></button>

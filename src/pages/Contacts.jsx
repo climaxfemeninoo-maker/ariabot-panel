@@ -5,7 +5,7 @@ import { useStore, useToast, uid, downloadCSV, useOutside } from '../ui'
 import { LModal, LSelect } from './leona'
 import { COUNTRIES, flagUrl, findCountry, UF } from './countries'
 
-const AV = ['#7c3aed', '#059669', '#d97706', '#db2777', '#0891b2', '#dc2626', '#4f46e5']
+const AV = ['#004fc7', '#059669', '#d97706', '#db2777', '#0891b2', '#dc2626', '#4f46e5']
 const avc = s => AV[[...(s || 'x')].reduce((a, c) => a + c.charCodeAt(0), 0) % AV.length]
 const ini = n => (n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()
 const TAGC = { Venta: ['#1e1b6b', '#3730a3', '#4f46e5'] }
@@ -84,7 +84,7 @@ export default function Contacts() {
             <td style={{ fontSize: 13.8, letterSpacing: '.02em' }}>{(c.phone || '').replace(/\s+/g, '')}</td>
             <td>{(c.tags || []).length ? c.tags.map(t => <span key={t} className="ct-tag" style={TAGC[t] ? { background: TAGC[t][0], borderColor: TAGC[t][1], color: TAGC[t][2] } : null}>{t}</span>) : <span style={{ color: '#94a3b8' }}>-</span>}</td>
             <td><div className="ct-act" style={{ paddingRight: 12 }}>
-              <button title="Abrir conversación" onClick={() => chat(c)}><MessageCircle size={16} color="#8b5cf6" /></button>
+              <button title="Abrir conversación" onClick={() => chat(c)}><MessageCircle size={16} color="#005ae3" /></button>
               <button title="Editar" onClick={() => { setEdit(c); setModal('form') }}><Pencil size={15} /></button>
               <button title="Eliminar" onClick={() => setDel(c)}><Trash2 size={15} color="#ef4444" /></button></div></td>
           </tr>)}</tbody></table>}
@@ -114,7 +114,7 @@ function FindContact({ list, onClose, onPick, onNew }) {
   const [q, setQ] = useState('')
   const res = q.trim() ? list.filter(c => [c.name, c.phone, c.email].join(' ').toLowerCase().includes(q.toLowerCase())) : []
   return <LModal open onClose={onClose} title="Nuevo contacto" desc="Escriba para buscar contactos existentes" width={479} bodyStyle={{ padding: '22px 22px 18px' }}>
-    <div className="l-ico"><Search size={15} /><input className="l-in soft" autoFocus style={{ borderColor: 'var(--p)', boxShadow: '0 0 0 2px rgba(139,92,246,.35)' }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar por nombre, teléfono o correo..." /></div>
+    <div className="l-ico"><Search size={15} /><input className="l-in soft" autoFocus style={{ borderColor: 'var(--p)', boxShadow: '0 0 0 2px rgba(0,90,227,.35)' }} value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar por nombre, teléfono o correo..." /></div>
     <div style={{ minHeight: 230 }}>
       {!q.trim() ? <div style={{ textAlign: 'center', fontSize: 13.3, color: '#94a3b8', paddingTop: 30 }}>Escriba para buscar contactos existentes</div>
         : res.length ? <div style={{ marginTop: 10 }}>{res.map(c => <button key={c.id} className="l-opt" style={{ height: 46 }} onClick={() => onPick(c)}><span className="ct-av" style={{ width: 30, height: 30, fontSize: 11, background: avc(c.name) }}>{ini(c.name)}</span>

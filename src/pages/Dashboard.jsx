@@ -136,10 +136,10 @@ function Ventas({ P, fs, cur, contacts, inP, onNew, onDel }) {
     <div className="db-kpis">
       <Kpi icon={Users} color="#3b82f6" value={leads} label="Leads nuevos" tip="Contactos que entraron en el período." />
       <Kpi icon={DollarSign} color="#2dd4bf" value={money(total)} valueColor="#2dd4bf" label="Facturación" tip="Suma del valor de las ventas del período." />
-      <Kpi icon={ShoppingBag} color="#a855f7" value={fs.length} label="Ventas" tip="Cantidad de ventas registradas." />
+      <Kpi icon={ShoppingBag} color="#1a73f0" value={fs.length} label="Ventas" tip="Cantidad de ventas registradas." />
       <Kpi icon={Trophy} color="#f59e0b" value={(ad ? total / ad : 0).toFixed(2)} valueColor="#fbbf24" label="ROAS" tip="Facturación ÷ gasto en anuncios." />
       <Kpi icon={CircleCheck} color="#22c55e" value={conv.toFixed(2) + '%'} label="Tasa de conversión" tip="Ventas ÷ leads nuevos." />
-      <Kpi icon={ShoppingCart} color="#a855f7" value={money(fs.length ? total / fs.length : 0)} label="Ticket promedio" tip="Facturación ÷ ventas." />
+      <Kpi icon={ShoppingCart} color="#1a73f0" value={money(fs.length ? total / fs.length : 0)} label="Ticket promedio" tip="Facturación ÷ ventas." />
       <Kpi icon={Gem} color="#22c55e" value={money(total - ad)} valueColor="#22c55e" label="Beneficio" tip="Facturación − gasto en anuncios." />
       <Kpi icon={MegaphoneIcon} color="#ef4444" value={money(ad)} valueColor="#ef4444" label="Gasto Meta (Ad)" tip="Gasto en Meta Ads del período." extra={<span className="fbtn"><Filter size={13} /></span>} />
     </div>
@@ -147,7 +147,7 @@ function Ventas({ P, fs, cur, contacts, inP, onNew, onDel }) {
     <div className="db-g21">
       <Section title="Ventas por período" sub="Histórico temporal de conversiones y facturación" style={{ height: 321 }}
         right={<Seg sm value={mode} onChange={setMode} options={[['valor', 'Valor'], ['cant', 'Cant.']]} />}>
-        <LineChart labels={labels} showLabel={show} height={228} values={series.map(s => mode === 'valor' ? s.v : s.n)} color={mode === 'valor' ? '#2dd4bf' : '#8b5cf6'} name={mode === 'valor' ? 'Faturamento' : 'Vendas'} fmt={mode === 'valor' ? money : v => v} />
+        <LineChart labels={labels} showLabel={show} height={228} values={series.map(s => mode === 'valor' ? s.v : s.n)} color={mode === 'valor' ? '#2dd4bf' : '#005ae3'} name={mode === 'valor' ? 'Faturamento' : 'Vendas'} fmt={mode === 'valor' ? money : v => v} />
       </Section>
       <Section title="Ventas por horario" sub="Total de ventas del período filtrado, por hora del día" style={{ height: 321 }}>
         <BarChart labels={hours.map(x => pad(x) + 'h')} values={hv} height={228} />
@@ -180,7 +180,7 @@ function Ventas({ P, fs, cur, contacts, inP, onNew, onDel }) {
   </>
 }
 
-function Bars({ data, fmt, color = '#8b5cf6', pct }) {
+function Bars({ data, fmt, color = '#005ae3', pct }) {
   if (!data.length) return <EmptyBox h={79} center />
   const max = Math.max(...data.map(d => d[1]), 1); const tot = data.reduce((a, d) => a + d[1], 0) || 1
   return <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 11, overflowY: 'auto' }}>
@@ -218,7 +218,7 @@ function Atencion({ P, chats, contacts, inP }) {
   return <>
     <div className="db-kpis k5">
       <Kpi icon={Users} color="#3b82f6" value={nuevos} label="Leads nuevos" tip="Contactos creados en el período." />
-      <Kpi icon={UserCheck} color="#a855f7" value={atendidos} label="Leads atendidos" tip="Chats que recibieron respuesta de un agente." />
+      <Kpi icon={UserCheck} color="#1a73f0" value={atendidos} label="Leads atendidos" tip="Chats que recibieron respuesta de un agente." />
       <Kpi icon={CircleCheck} color="#22c55e" value={fin} label="Leads finalizados" tip="Chats marcados como resueltos." />
       <Kpi icon={Clock} color="#f59e0b" value="—" label="Tiempo de respuesta" green tip="Promedio hasta la primera respuesta humana." />
       <Kpi icon={MessageSquareOff} color="#f43f5e" value={sinResp} label="Sin respuesta" green tip="Chats sin respuesta de un agente." />

@@ -3,7 +3,7 @@ import { PlayCircle, Play, Search, Check, Clock, Pause } from 'lucide-react'
 import { useStore, Modal, PageHead } from '../ui'
 
 const V = [['Primeros pasos en AriaBot', 'Inicio', '4:12'], ['Conecta tu WhatsApp por QR', 'Conexiones', '3:05'], ['Crea tu primer flujo de ventas', 'Flujos', '8:40'], ['Bloque de IA: respuestas inteligentes', 'Flujos', '6:22'], ['Configura un agente de IA que vende', 'Agentes', '9:15'], ['Kanban: organiza tu pipeline', 'CRM', '5:10'], ['Webhooks con Hotmart y Kiwify', 'Integraciones', '7:48'], ['Envíos masivos sin bloqueos', 'Envíos', '6:01'], ['Mide tu ROAS con Meta Ads', 'Facebook', '10:30']]
-const G = ['#7c3aed,#c026d3', '#0ea5e9,#6366f1', '#16a34a,#0d9488', '#ea580c,#db2777', '#8b5cf6,#2563eb', '#db2777,#9333ea', '#ca8a04,#ea580c', '#0891b2,#7c3aed', '#2563eb,#0ea5e9']
+const G = ['#004fc7,#c026d3', '#0ea5e9,#6366f1', '#16a34a,#0d9488', '#ea580c,#db2777', '#005ae3,#2563eb', '#db2777,#005ae3', '#ca8a04,#ea580c', '#0891b2,#004fc7', '#2563eb,#0ea5e9']
 
 export default function Tutorials() {
   const [cat, setCat] = useState('Todos'); const [q, setQ] = useState(''); const [open, setOpen] = useState(null); const [seen, setSeen] = useStore('seen', [])
