@@ -35,6 +35,7 @@ export const FB = {
   kie: ['Integración Kie.ai', '#d946ef', Sparkles, 'Bloque nativo para generación de audio, imagen y video (Veo)'],
 }
 const B = t => FB[t] || FB.mensaje
+const PAL = ['mensaje', 'template', 'etiquetas', 'carrusel', 'notificacion', 'conexion', 'intervalo', 'departamento', 'ia', 'kanban']
 const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#f59e0b', 'Agente de IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
@@ -334,7 +335,7 @@ export default function FlowEditor() {
       <div className="fe-tools"><button className={'fe-tb' + (panel === 'tools' ? ' p' : '')} onClick={() => setPanel(panel === 'tools' ? null : 'tools')}><LayoutGrid size={16} />Herramientas</button>
         <button className={'fe-tb' + (panel === 'sim' ? ' p' : '')} onClick={() => setPanel(panel === 'sim' ? null : 'sim')}><Play size={14} fill="currentColor" />Simular</button></div>
       {panel === 'tools' && <div className="fe-pal"><div className="s"><div><Search size={16} color="#8f8a9e" /><input autoFocus value={pq} onChange={e => setPq(e.target.value)} placeholder="Buscar bloques..." /></div></div>
-        <div className="l">{Object.entries(FB).filter(([k, b]) => k !== 'inicio' && b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{k === 'agente' ? <img className="av ag" src="/leona-mark.png" alt="" /> : k === 'ariapay' ? <img className="av" src="/leona-mark.png" alt="" /> : <I size={19} color={c} />}{l}</button>)}</div></div>}
+        <div className="l">{Object.entries(FB).filter(([k, b]) => PAL.includes(k) && b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{k === 'agente' ? <img className="av ag" src="/leona-mark.png" alt="" /> : k === 'ariapay' ? <img className="av" src="/leona-mark.png" alt="" /> : <I size={19} color={c} />}{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
       <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#12161f)', display: 'block' }}>

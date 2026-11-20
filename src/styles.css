@@ -1735,10 +1735,10 @@ html:not(.dark) .db-mi:hover:not(.on),html:not(.dark) .l-opt:hover:not(.on),html
 .lb2,.kb-btn,.lp-btn,.db-btn,.btn{white-space:nowrap}
 /* ===== Campos para llenar (estilo oscuro con borde gris) ===== */
 html.dark{--in2:#101727}
-html.dark input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),html.dark textarea,html.dark select,
+html.dark input[class]:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),html.dark textarea[class],html.dark select,
 html.dark .l-in,html.dark .l-selb,html.dark .input,html.dark .fe-vin,html.dark .fe-ed,html.dark .fbx-in,html.dark .fbm-q,html.dark .fe-curb{background-color:#101727!important;border-color:#374151!important;color:#f3f4f6}
 html.dark .fe-vin input,html.dark .fe-vin textarea,html.dark .fe-ed textarea,html.dark .fbm-q input,html.dark .fe-pal .s input,html.dark .ai-f textarea,html.dark .vp-s input{background:transparent!important;border:none!important}
-html.dark input:focus,html.dark textarea:focus,html.dark select:focus,html.dark .l-in:focus,html.dark .fe-vin:focus-within,html.dark .fe-ed:focus-within,html.dark .l-selb.open{border-color:#005ae3!important;box-shadow:0 0 0 1px #005ae3!important}
+html.dark input[class]:focus,html.dark textarea[class]:focus,html.dark select:focus,html.dark .l-in:focus,html.dark .fe-vin:focus-within,html.dark .fe-ed:focus-within,html.dark .l-selb.open{border-color:#005ae3!important;box-shadow:0 0 0 1px #005ae3!important}
 html.dark input::placeholder,html.dark textarea::placeholder{color:#6b7280}
 /* títulos de los campos */
 .tm-lb,.fe-lb,.lm .lb,.lm label.lb{text-transform:uppercase;letter-spacing:.06em;font-size:12px!important;font-weight:600!important;color:#9ca3af!important}
@@ -1772,3 +1772,23 @@ html.dark .fbx-t tr.sel td{background:#2a3a5c}
 .fbx-bud>span{display:inline-flex;align-items:center;gap:6px}
 .fbx-tw::-webkit-scrollbar{height:8px;width:8px}.fbx-tw::-webkit-scrollbar-thumb{background:#4b5468;border-radius:8px}.fbx-tw::-webkit-scrollbar-track{background:transparent}
 .fbx-money{display:flex;align-items:center;gap:8px;padding:6px 0}.fbx-money span{font-size:16px;color:var(--muted)}.fbx-money input{height:44px;font-size:15px}
+
+input:not([class]):focus,textarea:not([class]):focus{outline:none;box-shadow:none}
+/* filtros de Campañas como Utmify */
+html.dark input.fbx-in.fbx-in.fbx-in.fbx-in.fbx-in,html.dark button.fbx-in{background-color:#283046!important;border-color:#404656!important;color:#d0d2d6}
+html.dark input.fbx-in:focus,html.dark button.fbx-in.on{border-color:#005ae3!important;box-shadow:none!important}
+html.dark .fbx-filters label{font-weight:500!important;font-size:12.5px!important;color:#d0d2d6!important}
+/* casillas de la tabla */
+.fbx-t input[type=checkbox],.fbx-menu.chk input[type=checkbox],.fbx-cols input[type=checkbox]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:4px;border:1.5px solid #404656;background:#283046;display:inline-grid;place-items:center;cursor:pointer;vertical-align:middle;transition:.15s}
+.fbx-t thead input[type=checkbox]{background:#2f3850}
+.fbx-t input[type=checkbox]:checked,.fbx-menu.chk input[type=checkbox]:checked,.fbx-cols input[type=checkbox]:checked{background:#005ae3;border-color:#005ae3;box-shadow:0 0 8px rgba(0,90,227,.55)}
+.fbx-t input[type=checkbox]:checked::after,.fbx-menu.chk input[type=checkbox]:checked::after,.fbx-cols input[type=checkbox]:checked::after{content:'';width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.fbx-t .ck{text-align:center;padding:0 18px!important}
+/* popover de presupuesto */
+.fbx-pop{position:fixed;z-index:500;width:250px;background:#283046;border:1px solid #404656;border-radius:6px;padding:16px;box-shadow:0 14px 34px rgba(0,0,0,.45);animation:dbIn .14s}
+.fbx-pop .r{display:flex;align-items:center;gap:10px}.fbx-pop label{font-size:13px;color:#d0d2d6}
+.fbx-pop input{flex:1;height:34px;padding:0 10px;border-radius:5px;background:#283046!important;border:1px solid #005ae3!important;color:#fff;font-size:13.5px;outline:none;min-width:0}
+.fbx-pop .b{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+.fbx-pop .b button{flex:1;height:34px;border-radius:5px;font-size:13px;font-weight:600}
+.fbx-pop .c{border:1px solid #d0d2d6;color:#d0d2d6}.fbx-pop .c:hover{background:rgba(255,255,255,.05)}
+.fbx-pop .p{background:#005ae3;color:#fff}.fbx-pop .p:hover{background:#004fc7}
