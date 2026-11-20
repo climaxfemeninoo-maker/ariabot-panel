@@ -4,6 +4,7 @@ import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search,
 import { useStore, useToast, uid, nowStr, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 import { PickBtn } from './flowPickers'
+import { StartModal, startMatches } from './flowNodes'
 import { NODE_DEF, ESPERAR_OUTS, GenericNodeModal, CarouselModal, carOuts } from './flowNodes'
 
 export const FB = {
@@ -213,7 +214,7 @@ function Simulator({ flow, onClose, onStep }) {
       if (state.kind === 'tpl') port = 'reply'
       if (state.kind === 'car') { const b = state.o.find(x => x.title.toLowerCase() === t.toLowerCase()); port = b ? 'b' + b.id : 'fallback' }
       const n = next(state.id, port); setState(null); if (n) run(n); else { setState('done'); onStep(null); say('Fin del flujo', 'sys') } }
-    else if (!state) run(flow.nodes.find(n => n.type === 'inicio') || flow.nodes[0])
+    else if (!state) { const st = flow.nodes.find(n => n.type === 'inicio') || flow.nodes[0]; if (st && st.type === 'inicio' && st.cfg && !startMatches(st.cfg, t, !msgs.some(m => m.f === 'me'))) { say(st.cfg.on === false ? 'El activador está pausado.' : 'Este mensaje no coincide con el activador del flujo.', 'sys'); return } run(st) }
   }
   return <div className="fe-sim">
     <div className="h"><i><MessageCircle size={19} /></i><div style={{ minWidth: 0, flex: 1 }}><b style={{ fontSize: 14 }}>Simulador</b><div style={{ fontSize: 12, opacity: .85, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Prueba local, sin WhatsApp y sin guardar datos</div></div>
@@ -351,6 +352,7 @@ export default function FlowEditor() {
     {edit && !['template', 'etiquetas', 'pix', 'menu'].includes(edit.type) && (edit.type === 'mensaje' ? <MessageModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Mensaje guardado') }} />
       : (() => { const save = n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || (nodeOuts(n) ? (nodeOuts(n).some(o => o.k === (e.port || 'main'))) : !e.port || e.port === 'main')) })); setEdit(null); toast('Nodo guardado') }
         const [, c, I] = B(edit.type)
+        if (edit.type === 'inicio') return <StartModal node={edit} flowName={flow.name} onClose={() => setEdit(null)} onSave={save} />
         if (edit.type === 'carrusel') return <CarouselModal node={edit} onClose={() => setEdit(null)} onSave={save} />
         if (NODE_DEF[edit.type]) return <GenericNodeModal node={edit} def={NODE_DEF[edit.type]} color={c} icon={<I size={20} />} flowId={flow.id} onClose={() => setEdit(null)} onSave={save} />
         return <NodeModal node={edit} onClose={() => setEdit(null)} onSave={save} /> })())}

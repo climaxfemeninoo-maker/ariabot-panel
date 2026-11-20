@@ -1858,3 +1858,45 @@ html:not(.dark) .db-tbl th,html:not(.dark) .ct-tbl th,html:not(.dark) .wh-th,htm
 ::-webkit-scrollbar-corner{background:transparent}
 html:not(.dark) *{scrollbar-color:rgba(100,116,139,.3) transparent}
 html:not(.dark) ::-webkit-scrollbar-thumb{background:rgba(100,116,139,.25)!important;background-clip:padding-box!important}
+/* ===== Activador (nodo de inicio) ===== */
+.lm.ini{overflow:hidden;border-radius:14px}
+.ini-hd{display:flex;align-items:center;gap:13px;padding:18px 20px 16px;background:linear-gradient(120deg,rgba(0,90,227,.22),rgba(34,197,94,.08) 70%,transparent);border-bottom:1px solid var(--border)}
+.ini-hd h2{font-size:17px;font-weight:700}.ini-hd p{font-size:12.8px;color:var(--muted);margin-top:2px}.ini-hd p b{color:var(--text)}
+.ini-ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#22c55e,#005ae3);box-shadow:0 6px 18px rgba(0,90,227,.35);flex-shrink:0}
+.ini-x{margin-left:auto;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--muted);align-self:flex-start}.ini-x:hover{background:var(--btn2h);color:var(--text)}
+.ini-b{padding:4px 22px 0!important;overflow-y:auto}
+.ini-sec{display:flex;align-items:center;gap:10px;margin:18px 0 9px}.ini-sec b{font-size:13.5px}
+.ini-si{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent);border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.ini-cnt{margin-left:auto;font-size:11px;font-weight:700;background:var(--btn2h);border-radius:9px;padding:1px 8px;color:var(--soft)}
+.ini-trig{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ini-trig button{position:relative;text-align:left;padding:12px 13px;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--soft);transition:.15s;display:flex;flex-direction:column;gap:4px}
+.ini-trig button b{font-size:13.5px;color:var(--text)}.ini-trig button small{font-size:11.8px;line-height:1.4}
+.ini-trig button:hover{border-color:#3b5b99}
+.ini-trig button.on{border-color:#005ae3;background:rgba(0,90,227,.1);color:#4d94ff;box-shadow:0 0 0 1px #005ae3}
+.ini-trig button i{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;background:#005ae3;color:#fff;display:grid;place-items:center}
+.ini-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:46px;padding:7px 9px;border-radius:8px;border:1px solid #374151;background:#101727;cursor:text}
+html:not(.dark) .ini-chips{background:#f8fafc;border-color:#e2e8f0}
+.ini-chips:focus-within{border-color:#005ae3}
+.ini-chips span{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 6px 0 11px;border-radius:14px;background:rgba(244,63,94,.14);border:1px solid rgba(244,63,94,.35);color:#fda4af;font-size:12.8px;font-weight:600;animation:pop .15s}
+html:not(.dark) .ini-chips span{color:#be123c}
+.ini-chips span button{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;color:inherit}.ini-chips span button:hover{background:rgba(244,63,94,.25)}
+.ini-chips input{flex:1;min-width:160px;background:transparent!important;border:none!important;outline:none;color:var(--text);font-size:13.5px;height:30px;box-shadow:none!important}
+.ini-row{display:flex;align-items:center;gap:12px;margin-top:10px}
+.ini-cs{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--soft);white-space:nowrap;cursor:pointer}.ini-cs input{accent-color:#005ae3}
+.ini-conns{display:flex;flex-wrap:wrap;gap:7px}
+.ini-conns button{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--border2);font-size:12.8px;font-weight:600;color:var(--soft)}
+.ini-conns button small{font-weight:400;color:var(--muted)}
+.ini-conns button .dot{width:7px;height:7px;border-radius:50%}
+.ini-conns button.on{border-color:#22c55e;background:rgba(34,197,94,.1);color:var(--text)}
+.ini-tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.ini-card{display:flex;align-items:center;gap:11px;padding:13px 14px;border-radius:11px;border:1px solid var(--border2);transition:.2s}
+.ini-card>div{flex:1}.ini-card b{display:block;font-size:13.5px}.ini-card small{font-size:12px;color:var(--muted)}
+.ini-card.g{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.06)}.ini-card.g small{color:#22c55e}
+.ini-card.b{border-color:rgba(0,90,227,.5);background:rgba(0,90,227,.07)}.ini-card.b small{color:#4d94ff}
+.ini-cool{display:flex;align-items:center;gap:9px;margin-top:10px;padding:10px 12px;border-radius:9px;border:1px dashed var(--border2);font-size:12.8px;color:var(--soft)}
+.ini-cool span{flex:1}.ini-cool input{width:70px;height:32px;padding:0 9px}.ini-cool select{width:110px;height:32px;padding:0 8px}
+.ini-test{margin-top:18px;padding:13px 14px;border-radius:11px;background:rgba(0,90,227,.06);border:1px solid rgba(0,90,227,.25)}
+.ini-test .h{display:flex;align-items:center;gap:8px;margin-bottom:9px;color:#4d94ff}.ini-test .h b{font-size:13px;color:var(--text)}
+.ini-test .r{margin-top:9px;font-size:12.8px;font-weight:600;padding:7px 10px;border-radius:7px}
+.ini-test .r.ok{background:rgba(34,197,94,.12);color:#22c55e}.ini-test .r.no{background:rgba(239,68,68,.12);color:#f87171}
+.ini-ft{display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);margin-top:20px;padding:15px 0 18px}
