@@ -1375,3 +1375,30 @@ html:not(.dark) .fbx-name{color:#7c3aed}
   html.dark,html.dark body,html.dark #root,html.dark .app,html.dark .main,html.dark .md,html.dark .mv,html.dark .tr,html.dark .page{background:#0d0a13 !important;background-image:none !important}
   html.dark .md-top{background:linear-gradient(#0d0a13 75%,rgba(13,10,19,0)) !important}
 }
+/* Facebook: tipografía igual al resto del panel */
+.fbx-tabs button{font-size:13.3px;font-weight:600;height:41px;gap:8px}
+.fbx-tabs button.on{height:45px}
+.fbx-tabs button svg{width:17px;height:17px}
+.fbx-bar{padding:14px 13px}
+.fbx-ib>button{height:32px;width:40px}
+.fbx-chip{font-size:10.7px;font-weight:700;height:18px}
+.fbx-upd{font-size:12.5px;color:var(--muted)}
+.fbx-btn{font-size:13.3px;font-weight:600;height:34px;min-width:116px}
+.fbx-filters{padding:16px 18px 18px;gap:20px}
+.fbx-filters label{font-size:12px;font-weight:500;color:var(--muted)}
+.fbx-in{font-size:13.3px;height:36px}
+.fbx-menu button,.fbx-menu.chk label{font-size:13.3px}
+.fbx-t th{background:var(--deep);font-size:10.7px;font-weight:600;letter-spacing:.06em;color:#94a3b8;padding:0 18px;border-right:none;border-bottom:1px solid var(--border)}
+.fbx-t td{font-size:13px;font-weight:400;padding:0 18px;height:40px;border-right:none}
+.fbx-t .ck{padding-left:18px}
+.fbx-t tr.tot td{font-weight:600;font-size:12px;text-transform:none;color:var(--soft);background:var(--card)}
+.fbx-t tr.tot td.nm{text-transform:uppercase;font-size:11px;letter-spacing:.04em}
+.fbx-name{font-weight:500;color:#c4b5fd}
+.fbx-st{font-size:11px;font-weight:600}
+.fbx-why{font-size:13px;margin-top:16px;color:var(--muted)}
+.fbx-link{font-size:13px;font-weight:600}
+.fbx-mh h3{font-size:16px;font-weight:700}.fbx-mh p{font-size:13px;color:var(--muted)}
+.fbx-cols label,.fbx-cols .it{font-size:13.3px}
+.fbx-dp{font-size:13.3px}.fbx-dr b{font-size:13.3px;font-weight:600}.fbx-dr span{font-size:12px}
+.fbx-tipb{font-size:12px}
+html:not(.dark) .fbx-t th{background:#f8fafc}
