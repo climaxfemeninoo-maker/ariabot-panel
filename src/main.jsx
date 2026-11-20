@@ -5,9 +5,12 @@ import App from './App'
 import Auth from './pages/Auth'
 import { ToastProvider, useStore } from './ui'
 import './styles.css'
+import { applyLang } from './i18n'
 
 function Root() {
   const [authed, setAuthed] = useStore('authed', false)
+  const [lang] = useStore('lang', 'es-LA')
+  React.useEffect(() => { const t = setTimeout(() => applyLang(lang), 0); return () => clearTimeout(t) }, [lang, authed])
   if (!authed) return <Auth onAuth={() => setAuthed(true)} />
   return <BrowserRouter><App /></BrowserRouter>
 }

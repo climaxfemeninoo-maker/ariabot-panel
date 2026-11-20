@@ -76,8 +76,8 @@ export function Rewards() {
   const months = false
   const unlocked = REWARDS.filter(r => rev >= r.min).length
   const ready = REWARDS.filter(r => rev >= r.min && months && !orders.some(o => o.min === r.min)).length
-  const glass = { background: 'rgba(16,22,36,.75)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 18 }
-  return <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50, color: '#fff', background: 'radial-gradient(700px 380px at 22% 12%,rgba(0,90,227,.55) 0%,transparent 70%),radial-gradient(620px 360px at 78% 22%,rgba(0,40,160,.6) 0%,transparent 70%),radial-gradient(900px 500px at 100% 0%,#0a1f6b 0%,transparent 60%),radial-gradient(900px 500px at 50% 100%,#0b1a4a 0%,transparent 60%),#050816' }}>
+  const glass = { background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 18, backdropFilter: 'blur(22px) saturate(180%)', WebkitBackdropFilter: 'blur(22px) saturate(180%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.18), 0 12px 34px rgba(0,10,50,.35)' }
+  return <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50, color: '#fff', background: 'linear-gradient(160deg,#000a3d 0%,#001a7a 30%,#0033b0 62%,#005ae3 100%) fixed' }}>
     <div style={{ maxWidth: 1040, margin: '0 auto', padding: '25px 0 80px' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <button onClick={() => nav(-1)} title="Volver" style={{ color: '#cbd5e1', display: 'grid', marginRight: 14 }}><ArrowLeft size={18} /></button>
@@ -95,10 +95,10 @@ export function Rewards() {
             <div style={{ height: 8, borderRadius: 8, background: 'rgba(255,255,255,.08)', marginTop: 11, overflow: 'hidden' }}><div style={{ width: pct + '%', height: '100%', background: 'linear-gradient(90deg,#facc15,#22d3ee)' }} /></div></>}
         </div>
       </div>
-      <div style={{ ...glass, borderRadius: 14, marginTop: 29, padding: '19px 18px', background: 'rgba(60,14,24,.45)', borderColor: 'rgba(239,68,68,.45)' }}>
+      <div style={{ ...glass, borderRadius: 14, marginTop: 29, padding: '19px 18px', background: 'rgba(120,20,40,.28)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', borderColor: 'rgba(239,68,68,.45)' }}>
         <div style={{ fontSize: 15, fontWeight: 700, color: '#fecaca' }}>Primeiro lote em produção</div>
         <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.55, color: '#fecaca', marginTop: 7 }}>Este primeiro lote está sendo produzido de uma vez, então o envio pode levar cerca de 30 dias úteis. Assim que as peças ficarem prontas, saem na hora. Agradecemos a paciência de todos.</div></div>
-      <div style={{ ...glass, borderRadius: 14, marginTop: 22, padding: '19px 18px 17px', background: 'rgba(48,36,10,.45)', borderColor: 'rgba(234,179,8,.4)' }}>
+      <div style={{ ...glass, borderRadius: 14, marginTop: 22, padding: '19px 18px 17px', background: 'rgba(110,80,10,.26)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', borderColor: 'rgba(234,179,8,.4)' }}>
         <div style={{ fontSize: 15, fontWeight: 700 }}>Requisitos para resgate</div>
         {[['3 meses de Nubify', months], ['Faturamento atingido', unlocked > 0]].map(([t, ok]) => <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 15, fontWeight: 700, color: ok ? '#4ade80' : '#a5a3c4', marginTop: 14 }}><span style={{ width: 11, height: 11, borderRadius: '50%', border: '2px solid currentColor', background: ok ? 'currentColor' : 'none' }} />{t}</div>)}</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 13, marginTop: 22 }}>
@@ -112,7 +112,7 @@ export function Rewards() {
             return <div key={r.min} style={{ display: 'flex', gap: 24, marginBottom: 18 }}>
               <div style={{ width: 22, position: 'relative', flexShrink: 0 }}><span style={{ position: 'absolute', left: 10, top: 0, bottom: -18, width: 2, background: i === REWARDS.length - 1 ? 'transparent' : 'rgba(255,255,255,.2)' }} /><span style={{ position: 'absolute', left: 3, top: 102, width: 16, height: 16, borderRadius: '50%', border: '2px solid ' + (ok ? '#22c55e' : '#cbd5e1'), background: ok ? '#22c55e' : '#06080b' }} /></div>
               <div style={{ ...glass, borderRadius: 14, flex: 1, display: 'flex', gap: 20, padding: '23px 20px 22px', opacity: ok ? 1 : .78 }}>
-                <div style={{ position: 'relative', width: 133, height: 133, borderRadius: 13, overflow: 'hidden', flexShrink: 0, marginTop: 24 }}><img src={r.img} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: `${ok ? '' : 'brightness(.55) '}${r.hue ? `hue-rotate(${r.hue}deg)` : ''}` }} /><span style={{ position: 'absolute', bottom: 7, left: 0, right: 0, textAlign: 'center', fontSize: 12, fontWeight: 700, color: '#a5a3c4' }}>{r.lbl}</span></div>
+                <div style={{ position: 'relative', width: 150, flexShrink: 0, marginTop: 22, alignSelf: 'flex-start' }}><img src={r.img} alt={r.title} style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 10, boxShadow: '0 10px 30px rgba(0,0,0,.4)', filter: `${ok ? '' : 'brightness(.55) '}${r.hue ? `hue-rotate(${r.hue}deg)` : ''}` }} /></div>
                 <div style={{ flex: 1, paddingTop: 22 }}><span style={{ display: 'inline-block', fontSize: 11.5, fontWeight: 800, letterSpacing: '.1em', color: ok ? '#4ade80' : '#a5a3c4', background: 'rgba(255,255,255,.06)', borderRadius: 14, padding: '6px 11px' }}>{ok ? 'DESBLOQUEADO' : 'BLOQUEADO'}</span>
                   <div style={{ fontSize: 19, fontWeight: 700, marginTop: 13 }}>{r.title}</div>
                   <ul style={{ listStyle: 'none', marginTop: 9 }}>{r.items.map(it => { const vip = Array.isArray(it); return <li key={vip ? it[0] : it} style={{ fontSize: 15.5, fontWeight: 700, color: vip ? '#fcd34d' : '#a5a3c4', lineHeight: 1.55 }}><span style={{ color: vip ? '#f59e0b' : '#004fc7', marginRight: 8 }}>•</span>{vip ? it[0] : it}</li> })}</ul></div>
