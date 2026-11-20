@@ -1743,3 +1743,32 @@ html.dark input::placeholder,html.dark textarea::placeholder{color:#6b7280}
 /* títulos de los campos */
 .tm-lb,.fe-lb,.lm .lb,.lm label.lb{text-transform:uppercase;letter-spacing:.06em;font-size:12px!important;font-weight:600!important;color:#9ca3af!important}
 html:not(.dark) .tm-lb,html:not(.dark) .fe-lb{color:#6b7280!important}
+/* ===== arreglo: menús con ancho propio ===== */
+.db-menu{width:max-content!important;min-width:100%!important;right:auto!important}
+.db-curmenu{width:220px!important;padding:0!important}
+.db-curmenu .db-search{margin:8px!important}
+.db-curmenu .db-mi{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ===== Interruptores azules con brillo ===== */
+.sw.on,.l-tg.on,.mv-tsw.on{background:#005ae3!important;box-shadow:0 0 8px rgba(0,90,227,.6)}
+/* ===== Facebook (Campañas) como Utmify ===== */
+html.dark .fbx-panel{background:#283046;border-color:#283046}
+html.dark .fbx-tabs button{background:#283046;border-color:#283046;color:#d0d2d6}
+html.dark .fbx-tabs button.on{background:#283046;color:#005ae3;box-shadow:inset 0 -2px 0 #005ae3}
+html.dark .fbx-bar{border-color:#3b4253}
+html.dark .fbx-ib>button{background:#343d55;color:#d0d2d6}
+html.dark .fbx-in{background-color:#283046!important;border-color:#404656!important;color:#d0d2d6}
+html.dark .fbx-filters label{color:#d0d2d6;font-weight:600;font-size:11.5px}
+html.dark .fbx-tw{border-top:1px solid #3b4253}
+html.dark .fbx-t th{background:#343d55;color:#d0d2d6;font-weight:700;border-right:1px solid #3b4253;border-bottom:1px solid #3b4253;height:40px}
+html.dark .fbx-t td{background:#283046;color:#d0d2d6;border-right:1px solid #3b4253;border-top:1px solid #3b4253}
+html.dark .fbx-t tbody tr:hover td{background:#2c3550}
+html.dark .fbx-t tfoot td{background:#343d55;border-top:1px solid #404656;font-weight:700;color:#d0d2d6}
+html.dark .fbx-t tr.sel td{background:#2a3a5c}
+.fbx-t td.nm .fbx-name{color:#d0d2d6;font-weight:400}
+.fbx-t tbody tr:hover .fbx-name{text-decoration:underline}
+.fbx-t tbody td.nm{position:relative}
+.fbx-pen{display:inline-grid;place-items:center;color:#d0d2d6;opacity:0;vertical-align:middle;margin-left:4px;padding:2px;transition:.15s}
+.fbx-t tbody tr:hover .fbx-pen{opacity:1}.fbx-pen:hover{color:#4d94ff}
+.fbx-bud>span{display:inline-flex;align-items:center;gap:6px}
+.fbx-tw::-webkit-scrollbar{height:8px;width:8px}.fbx-tw::-webkit-scrollbar-thumb{background:#4b5468;border-radius:8px}.fbx-tw::-webkit-scrollbar-track{background:transparent}
+.fbx-money{display:flex;align-items:center;gap:8px;padding:6px 0}.fbx-money span{font-size:16px;color:var(--muted)}.fbx-money input{height:44px;font-size:15px}

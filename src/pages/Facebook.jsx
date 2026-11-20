@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { Archive, FolderPlus, LayoutGrid, Tablet, Settings, ArrowUp, Activity, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, Info, X, Columns2, SlidersHorizontal, Zap, Lock, GripVertical, Loader2, Search, RefreshCw } from 'lucide-react'
+import { Pencil, Archive, FolderPlus, LayoutGrid, Tablet, Settings, ArrowUp, Activity, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, Info, X, Columns2, SlidersHorizontal, Zap, Lock, GripVertical, Loader2, Search, RefreshCw } from 'lucide-react'
 import { useStore, useToast, uid, useOutside, downloadCSV, Switch } from '../ui'
 import { Toggle } from './leona'
 
@@ -147,7 +147,7 @@ export default function Facebook() {
   const [cols, setCols] = useStore('fbx_cols', DEF_ORDER)
   const [adv, setAdv] = useStore('fbx_adv', { skipUnselected: false })
   const [upd, setUpd] = useStore('fbx_upd', Date.now())
-  const [st, setSt] = useState({}); const [sort, setSort] = useState({ k: null, dir: -1 }); const [, tick] = useState(0)
+  const [st, setSt] = useState({}); const [sort, setSort] = useState({ k: null, dir: -1 }); const [ed, setEd] = useState(null); const [, tick] = useState(0)
   const [sel, setSel] = useState({ acc: [], camp: [], set: [], ad: [] })
   const [menu, setMenu] = useState(false); const [modal, setModal] = useState(null); const [folded, setFolded] = useState(false); const [spin, setSpin] = useState(false)
   const mref = useRef(); useOutside(mref, () => setMenu(false))
@@ -223,15 +223,17 @@ export default function Facebook() {
         <tbody>
           {rows.map(r => <tr key={r.id} className={(S.includes(r.id) ? 'sel' : '') + (tab === 'camp' ? ' tall' : '')}>
             {tab !== 'acc' && <><td className="ck"><input type="checkbox" checked={S.includes(r.id)} onChange={e => setS(e.target.checked ? [...S, r.id] : S.filter(x => x !== r.id))} /></td><td className="swc"><Switch on={r.status === 'ACTIVE'} onChange={v => toggle(r, v)} /></td></>}
-            <td className={'nm' + (tab === 'camp' ? ' wrap' : '')}><span className="fbx-name" title={r.name} onClick={() => { const nx = { acc: 'camp', camp: 'set', set: 'ad' }[tab]; if (nx) { setSel(s => ({ ...s, [tab]: [r.id] })); setTab(nx) } }}>{tab === 'camp' && <i className={'fbx-dot' + (r.status === 'ACTIVE' && r.row.ganancia >= 0 ? ' g' : '')} />}{r.name}</span>{r.status === 'RESTRICTED' && <small>Con restricciones</small>}</td>
-            {shown.map(k => <td key={k} className={(CM[k][4] === 't' ? '' : 'r') + (red(k, r.row[k]) ? ' neg' : '') + (k === 'ganancia' && r.row[k] > 0 ? ' pos' : '')}>{k === 'estadoCuenta' ? <span className={'fbx-st ' + (r.status === 'ACTIVE' ? 'ok' : 'bad')}>{fmt(k, r.row[k])}</span>
-              : k === 'presupuesto' && r.row[k] != null && tab !== 'acc' ? <span className="fbx-bud"><small>Diario</small>{usd(r.row[k])}</span> : cell(k, r.row[k])}</td>)}</tr>)}
+            <td className={'nm' + (tab === 'camp' ? ' wrap' : '')}><span className="fbx-name" title={r.name} onClick={() => { const nx = { acc: 'camp', camp: 'set', set: 'ad' }[tab]; if (nx) { setSel(s => ({ ...s, [tab]: [r.id] })); setTab(nx) } }}>{tab === 'camp' && <i className={'fbx-dot' + (r.status === 'ACTIVE' && r.row.ganancia >= 0 ? ' g' : '')} />}{r.name}</span>{tab !== 'acc' && <button className="fbx-pen" title="Editar nombre" onClick={() => setEd({ id: r.id, k: 'name', v: r.name })}><Pencil size={13} /></button>}{r.status === 'RESTRICTED' && <small>Con restricciones</small>}</td>
+            {shown.map(k => <td key={k} className={(CM[k][4] === 't' ? '' : 'r') + (red(k, r.row[k]) ? ' neg' : '') + (k === 'ganancia' && r.row[k] > 0 ? ' pos' : '')}>{k === 'estadoCuenta' ? fmt(k, r.row[k])
+              : k === 'presupuesto' && r.row[k] != null && tab !== 'acc' ? <span className="fbx-bud"><small>Diario</small><span><button className="fbx-pen" title="Editar presupuesto" onClick={() => setEd({ id: r.id, k: 'budget', v: String(r.budget).replace('.', ',') })}><Pencil size={13} /></button>{usd(r.row[k])}</span></span> : cell(k, r.row[k])}</td>)}</tr>)}
         </tbody>
         <tfoot><tr className="tot">{tab !== 'acc' && <><td className="ck">N/A</td><td>N/A</td></>}<td className="nm">{rows.length} {(rows.length === 1 ? (tab === 'acc' ? 'cuenta' : ent) : plural).toUpperCase()}</td>{shown.map(k => <td key={k} className={(CM[k][4] === 't' ? '' : 'r') + (red(k, tot[k]) ? ' neg' : '')}>{k === 'ganancia' || k === 'roas' ? (tot[k] == null ? 'N/A' : cell(k, tot[k])) : totVal(k)}</td>)}</tr></tfoot></table></div>
     </div>
     <div className="fbx-why"><span>¿Por qué no aparecen {plural}?</span><Tip text={data ? `Revise los filtros: estado, período, cuenta de anuncio y producto. ${adv.skipUnselected ? 'La opción "No buscar datos de campañas no seleccionadas" está activa.' : ''}` : 'Aún no hay ninguna cuenta de anuncios de Meta conectada. Conecte su perfil para importar cuentas, campañas, conjuntos y anuncios.'} />
       {!data ? <button className="fbx-link" onClick={() => setModal('connect')}>Conectar cuenta de Meta</button> : <button className="fbx-link" style={{ color: 'var(--muted)' }} onClick={() => { setData(null); setSel({ acc: [], camp: [], set: [], ad: [] }); toast('Cuenta desconectada', 'info') }}>Desconectar</button>}</div>
 
+    {ed && <Mod title={ed.k === 'name' ? 'Editar nombre' : 'Diario'} w={420} onClose={() => setEd(null)} foot={<><button className="fbx-btn g" onClick={() => setEd(null)}>Cancelar</button><button className="fbx-btn" onClick={() => { const key = tab === 'camp' ? 'camps' : tab === 'set' ? 'sets' : 'ads'; let v = ed.v; if (ed.k === 'budget') { v = parseFloat(String(v).replace(',', '.')); if (!(v > 0)) return toast('Ingrese un valor válido', 'err') } else if (!v.trim()) return; setData(D => ({ ...D, [key]: D[key].map(y => y.id === ed.id ? { ...y, [ed.k]: v } : y) })); setEd(null); toast(ed.k === 'name' ? 'Nombre actualizado' : 'Presupuesto actualizado') }}>Guardar</button></>}>
+      <div className="fbx-money">{ed.k === 'budget' && <span>$</span>}<input autoFocus className="fbx-in" value={ed.v} onChange={e => setEd({ ...ed, v: e.target.value })} inputMode={ed.k === 'budget' ? 'decimal' : 'text'} /></div></Mod>}
     {modal === 'cols' && <ColsModal cols={cols} onClose={() => setModal(null)} onSave={c => { setCols(c); setModal(null); toast('Columnas guardadas') }} first={nameHdr} />}
     {modal === 'adv' && <AdvModal adv={adv} onClose={() => setModal(null)} onSave={a => { setAdv(a); setModal(null); toast('Configuración guardada') }} />}
     {modal === 'diag' && <Diag data={data} onClose={() => setModal(null)} />}
