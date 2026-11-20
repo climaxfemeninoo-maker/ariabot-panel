@@ -1,16 +1,16 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search, ZoomIn, ZoomOut, Maximize2, RotateCcw, MessageSquare, FileText, Tag, CreditCard, List, Save, MessageCircle, Bell, GitBranch, Share2, Target, Clock, Building2, Globe, Bot, Kanban, SlidersHorizontal, DollarSign, Wallet, PhoneCall, Sparkles, Copy, Trash2, X, Send, Image, Video, Mic, User, File, Sticker, GripVertical, Bold, Italic, Strikethrough, Smile, Code, WandSparkles, Upload, Link2, Repeat, CirclePlay, Workflow } from 'lucide-react'
+import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search, ZoomIn, ZoomOut, Maximize2, RotateCcw, MessageSquare, FileText, Tag, CreditCard, List, Save, MessageCircle, Bell, GitBranch, Share2, Target, Clock, Building2, Globe, Bot, Kanban, SlidersHorizontal, DollarSign, Wallet, PhoneCall, Sparkles, Copy, Trash2, X, Send, Image, Video, Mic, User, File, Sticker, GripVertical, Bold, Italic, Strikethrough, Smile, Code, WandSparkles, Upload, Link2, Repeat, CirclePlay, Workflow, TriangleAlert, Plus, Square, KeyRound, ChevronDown } from 'lucide-react'
 import { useStore, useToast, uid, nowStr, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 
 export const FB = {
   inicio: ['Início', '#16a34a', CirclePlay, 'Nodo de inicio del flujo', ['#22c55e', '#16a34a']],
-  mensaje: ['Mensaje', '#3b82f6', MessageSquare, 'Envía texto, imagen, audio o video'],
-  template: ['Template WhatsApp', '#2563eb', FileText, 'Envía una plantilla aprobada por Meta'],
-  etiquetas: ['Etiquetas', '#818cf8', Tag, 'Añadir o quitar etiquetas del cliente'],
-  pix: ['Botón PIX', '#22c55e', CreditCard, 'Botón de pago rápido con QR'],
-  menu: ['Menú', '#a855f7', List, 'Opciones para que el cliente elija'],
+  mensaje: ['Mensaje', '#3b82f6', MessageSquare, 'Envía texto, imagen, audio o video', ['#3b82f6', '#2563eb']],
+  template: ['Template WhatsApp', '#2563eb', FileText, 'Envía una plantilla aprobada por Meta', ['#2563eb', '#1d4ed8']],
+  etiquetas: ['Etiquetas', '#6366f1', Tag, 'Añadir etiquetas al cliente', ['#6366f1', '#4f46e5']],
+  pix: ['Botón PIX', '#10b981', CreditCard, 'Enviar botón de pago PIX', ['#10b981', '#059669']],
+  menu: ['Menú', '#a855f7', List, 'Opciones para que el cliente elija', ['#a855f7', '#9333ea']],
   carrusel: ['Carrusel', '#0ea5e9', LayoutGrid, 'Tarjetas deslizables con botones'],
   esperar: ['Esperar respuesta', '#f97316', Save, 'Pausa hasta que el cliente responda'],
   controlador: ['Controlador de chat', '#94a3b8', MessageCircle, 'Abre o cierra la atención'],
@@ -34,13 +34,18 @@ export const FB = {
 }
 const B = t => FB[t] || FB.mensaje
 const NW = 260, NH = 150, OUTY = 108
+export const nodeOuts = (n, tpls = []) => {
+  if (n.type === 'template') { const t = n.tpl || {}; return [{ k: 'reply', l: 'Resposta livre', c: 'or', pc: '#d97706' }, { k: 'timeout', l: 'Timeout sem clique', s: `${t.timeout || 60} ${({ m: 'minutes', h: 'hours', d: 'days' })[t.unit || 'm']}`, c: 'gr', pc: '#6b7280' }, { k: 'fail', l: 'Falha de entrega', c: 'rd', pc: '#dc2626' }] }
+  if (n.type === 'menu') { const m = n.menu || {}; const o = (m.mode === 'buttons' ? m.buttons : m.options) || []; return [...o.map((x, i) => ({ k: 'o' + x.id, l: `${i + 1}. ${x.title || 'Opción sin título'}`, c: 'pu', pc: '#9333ea' })), ...(+m.exp > 0 ? [{ k: 'timeout', l: 'Sin respuesta', s: `${m.exp} ${({ m: 'minutos', h: 'horas', d: 'días' })[m.unit || 'd']}`, c: 'gr', pc: '#6b7280' }] : [])] }
+  return null
+}
 const newNode = (type, x, y) => ({ id: uid(), type, x, y, title: B(type)[0], desc: '', actions: [], stats: [0, 0, 0] })
 
 const ACT = {
   text: ['Texto', MessageSquare, '#3b82f6', 'Mensaje de texto'], image: ['Imagen', Image, '#22c55e'], video: ['Vídeo', Video, '#a855f7'], audio: ['Audio', Mic, '#f97316'],
   delay: ['Intervalo', Clock, '#06b6d4', 'Retraso entre mensajes'], contact: ['Contacto', User, '#ec4899'], file: ['Archivo', File, '#6366f1'], sticker: ['Sticker', Sticker, '#f59e0b'],
 }
-const actBlank = t => ({ id: uid(), type: t, text: '', src: 'file', url: '', caption: '', file: null, typing: 3, rec: 6, voice: true, once: false, del: false, delTag: '', mode: 'normal', min: 0, max: 120, cname: '', cphone: '', ai: '' })
+const actBlank = t => ({ id: uid(), type: t, text: '', src: 'file', url: '', caption: '', file: null, typing: 3, rec: 6, voice: true, once: false, del: false, delTag: '', mode: 'normal', min: 0, max: 120, cname: '', cphone: '', ai: '', fname: '' })
 
 function Editor({ value, onChange, ph, magic, rows }) {
   const ta = useRef()
@@ -58,17 +63,18 @@ function DelTag({ a, set, tags }) {
     {a.del && <><div className="fe-lb" style={{ marginTop: 14 }}>Etiqueta que activa la eliminación</div><LSelect className="l-in" value={a.delTag} onChange={v => set({ delTag: v })} placeholder="Buscar etiqueta..." options={tags.map(t => ({ value: t, label: t }))} /></>}</>
 }
 function Media({ a, set, kind, tags }) {
-  const toast = useToast(); const L = { image: ['2MB', 'JPG preferible; también PNG, WebP, HEIC, HEIF', 'image/*', 2, 'Enviar imagen'], video: ['5MB', 'MP4 recomendado en WhatsApp; en la subida de archivo también: WebM, OGG, MOV, M4V', 'video/*', 5, 'Enviar vídeo'], audio: ['', 'Formatos admitidos: MP3 y OGG. Máximo 16MB', 'audio/*', 16, 'Enviar audio'], file: ['100MB', 'PDF, DOCX, XLSX, ZIP y otros', '*', 100, 'Enviar archivo'], sticker: ['100KB', 'WebP 512×512 recomendado', 'image/webp,image/png', .1, 'Enviar sticker'] }[kind]
+  const toast = useToast(); const L = { image: ['2MB', 'JPG preferible; también PNG, WebP, HEIC, HEIF', 'image/*', 2, 'Enviar imagen'], video: ['5MB', 'MP4 recomendado en WhatsApp; en la subida de archivo también: WebM, OGG, MOV, M4V', 'video/*', 5, 'Enviar vídeo'], audio: ['', 'Formatos admitidos: MP3 y OGG. Máximo 16MB', 'audio/*', 16, 'Enviar audio'], file: ['30MB', 'PDF, DOC, DOCX, TXT, XLS, XLSX', '.pdf,.doc,.docx,.txt,.xls,.xlsx', 30, 'Enviar archivo'], sticker: ['2MB', 'JPG, JPEG, PNG, WebP', 'image/jpeg,image/png,image/webp', 2, 'Enviar sticker'] }[kind]
   const Ic = ACT[kind][1]
-  const pick = () => { const i = document.createElement('input'); i.type = 'file'; i.accept = L[2]; i.onchange = () => { const f = i.files[0]; if (!f) return; if (f.size > L[3] * 1048576) return toast('El archivo supera el tamaño máximo', 'err'); set({ file: { name: f.name, size: f.size } }) }; i.click() }
+  const pick = () => { const i = document.createElement('input'); i.type = 'file'; i.accept = L[2]; i.onchange = () => { const f = i.files[0]; if (!f) return; if (f.size > L[3] * 1048576) return toast('El archivo supera el tamaño máximo', 'err'); set({ file: { name: f.name, size: f.size }, fname: a.fname || f.name }) }; i.click() }
   const tabs = [['file', 'Archivo', Upload], ['url', 'URL', Link2], ...(kind === 'audio' ? [['ai', 'IA', WandSparkles]] : [])]
   return <>
-    {!['sticker', 'file'].includes(kind) || true ? <div className="fe-seg">{tabs.map(([k, l, I]) => <button key={k} className={a.src === k ? 'on' : ''} onClick={() => set({ src: k })}><I size={15} />{l}</button>)}</div> : null}
+    {['file', 'sticker'].includes(kind) && <><div className="fe-lb">{kind === 'file' ? 'Nombre del archivo *' : 'Nombre del sticker *'}</div><input className="fe-gin" style={{ marginBottom: 15 }} value={a.fname} onChange={e => set({ fname: e.target.value })} placeholder={kind === 'file' ? 'Ej.: documento.pdf' : 'Ej.: emoji_feliz'} /></>}
+    <div className="fe-seg">{tabs.map(([k, l, I]) => <button key={k} className={a.src === k ? 'on' : ''} onClick={() => set({ src: k })}><I size={15} />{l}</button>)}</div>
     {kind === 'video' && <><div className="fe-seg sm" style={{ marginBottom: 10 }}>{[['normal', 'Normal', Video], ['auto', 'Autoplay', Repeat], ['msg', 'Video mensaje', MessageCircle]].map(([k, l, I]) => <button key={k} className={a.mode === k ? 'on' : ''} onClick={() => set({ mode: k })}><I size={13} />{l}</button>)}</div>
       <div className="fe-small" style={{ marginBottom: 14 }}>Normal: envío estándar. Autoplay: comportamiento visual de bucle/reproducción automática en WhatsApp. Vídeo msg.: formato de mensaje de vídeo de la app.</div></>}
-    {a.src === 'file' && <div className="fe-drop"><span className="ic"><Ic size={30} /></span>{a.file ? <><b style={{ color: 'var(--text)' }}>{a.file.name}</b><small>{(a.file.size / 1024).toFixed(0)} KB</small></> : <>{L[0] && <b>Tamaño máximo permitido: {L[0]}</b>}<small style={kind === 'audio' ? { fontSize: 13.3 } : null}>{L[1]}</small>
+    {a.src === 'file' && <div className={'fe-drop' + (kind === 'file' ? ' ind' : '')}><span className="ic"><Ic size={30} /></span>{a.file ? <><b style={{ color: 'var(--text)' }}>{a.file.name}</b><small>{(a.file.size / 1024).toFixed(0)} KB</small></> : <>{L[0] && <b>Tamaño máximo permitido: {L[0]}</b>}<small style={kind === 'audio' ? { fontSize: 13.3 } : null}>{L[1]}</small>
       {kind === 'audio' && <small style={{ color: '#fb923c' }}>Para enviar como grabado en la API oficial, el audio debe ser .ogg con codec Opus. <u>Convierte tu audio aquí</u></small>}</>}<button className="bt" onClick={pick}>{a.file ? 'Cambiar archivo' : L[4]}</button></div>}
-    {a.src === 'url' && <><div className="fe-lb">URL del medio *</div><Editor value={a.url} onChange={v => set({ url: v })} ph="https://ejemplo.com/imagen.jpg o {imagen_producto}" rows={90} />
+    {a.src === 'url' && <><div className="fe-lb">{kind === 'file' ? 'URL del documento *' : 'URL del medio *'}</div><Editor value={a.url} onChange={v => set({ url: v })} ph={kind === 'file' ? 'https://ejemplo.com/archivo.pdf o {documento_url}' : 'https://ejemplo.com/imagen.jpg o {imagen_producto}'} rows={90} />
       <div className="fe-small" style={{ marginTop: 8 }}>Pegue una URL pública o use variables del sistema (como <code>{'{nome_campo}'}</code>, <code>{'{nome}'}</code>). La URL se resuelve al ejecutar el flujo.</div>
       {['image', 'video'].includes(kind) && <><div className="fe-lb" style={{ marginTop: 16 }}>Leyenda</div><Editor value={a.caption} onChange={v => set({ caption: v })} ph="Leyenda (opcional)..." rows={90} /></>}</>}
     {a.src === 'ai' && <div style={{ border: '1.5px dashed var(--border2)', borderRadius: 9, padding: '16px 17px' }}>
@@ -108,8 +114,8 @@ function MessageModal({ node, onClose, onSave }) {
             <input type="range" className="fe-rng" min="0" max="120" value={a.min} onChange={e => set(i, { min: Math.min(+e.target.value, a.max) })} /><input type="range" className="fe-rng" min="0" max="120" value={a.max} onChange={e => set(i, { max: Math.max(+e.target.value, a.min) })} /></div>
           <div className="fe-small" style={{ marginTop: 9 }}>El retraso se elige al azar entre el mínimo y el máximo configurados</div></>}
         {a.type === 'contact' && <><div className="fe-help" style={{ marginTop: 0, marginBottom: 14 }}>Puedes usar variables como {'{instance_number}'}, {'{instance_name}'}, {'{full_name}'}, {'{phone_number}'} y campos del contacto. Las mismas que en el texto del mensaje. Se resuelven al enviar el flujo.</div>
-          <div className="fe-lb">Nombre del contacto *</div><input className="l-in" style={{ height: 40, background: '#374151' }} value={a.cname} onChange={e => set(i, { cname: e.target.value })} placeholder="Ej.: Juan Pérez" />
-          <div className="fe-lb" style={{ marginTop: 14 }}>Teléfono del contacto *</div><input className="l-in" style={{ height: 40, background: '#374151' }} value={a.cphone} onChange={e => set(i, { cphone: e.target.value })} placeholder="Ej.: +51999999999" /></>}
+          <div className="fe-lb">Nombre del contacto *</div><input className="fe-gin" value={a.cname} onChange={e => set(i, { cname: e.target.value })} placeholder="Ej.: Juan Pérez" />
+          <div className="fe-lb" style={{ marginTop: 17 }}>Teléfono *</div><input className="fe-gin" value={a.cphone} onChange={e => set(i, { cphone: e.target.value })} placeholder="Ej.: 34 612 345 678" /><DelTag a={a} set={p => set(i, p)} tags={tagNames} /></>}
       </div> })}
       <div style={{ fontSize: 15, fontWeight: 700, margin: acts.length ? '6px 0 14px' : '27px 0 14px' }}>Añadir contenido</div>
       <div className="fe-add">{Object.entries(ACT).map(([k, [l, I, c]]) => <button key={k} onClick={() => setActs(x => [...x, actBlank(k)])}><i style={{ background: c + '55', color: c }}><I size={17} /></i>{l}</button>)}</div>
@@ -155,25 +161,32 @@ function TranslateModal({ flow, onClose }) {
 function Simulator({ flow, onClose, onStep }) {
   const [msgs, setMsgs] = useState([]); const [txt, setTxt] = useState(''); const [state, setState] = useState(null); const end = useRef()
   useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth' }) }, [msgs.length])
-  const fill = s => s.replace(/\{(full_name|first_name|nome|nombre)\}/g, 'Cliente').replace(/\{phone_number\}/g, '+51999999999').replace(/\{saludo\}/g, 'Buenas noches')
+  const fill = s => (s || '').replace(/\{(full_name|first_name|nome|nombre)\}/g, 'Cliente').replace(/\{phone_number\}/g, '+51999999999').replace(/\{saludo\}/g, 'Buenas noches')
+  const say = (x, f = 'bot') => setMsgs(m => [...m, { f, x }])
+  const next = (id, port = 'main') => { const e = flow.edges.find(x => x.from === id && (x.port || 'main') === port); return e && flow.nodes.find(n => n.id === e.to) }
+  const wait = ms => new Promise(r => setTimeout(r, ms))
   const run = async start => {
     let cur = start; const seen = new Set()
     while (cur && !seen.has(cur.id)) {
       seen.add(cur.id); onStep(cur.id)
-      for (const a of cur.actions || []) {
-        await new Promise(r => setTimeout(r, 450))
-        const m = a.type === 'text' ? fill(a.text) : a.type === 'delay' ? null : `[${ACT[a.type][0]}${a.file ? ': ' + a.file.name : a.url ? ': ' + a.url : ''}]${a.caption ? '\n' + fill(a.caption) : ''}`
-        if (m) setMsgs(x => [...x, { f: 'bot', x: m }])
-      }
-      if (cur.type === 'esperar' || cur.type === 'menu') { setState(cur.id); setMsgs(x => [...x, { f: 'sys', x: 'Esperando respuesta…' }]); return }
-      if (!['inicio', 'mensaje'].includes(cur.type)) { await new Promise(r => setTimeout(r, 350)); setMsgs(x => [...x, { f: 'sys', x: `▸ ${cur.title}` }]) }
-      const e = flow.edges.find(x => x.from === cur.id); cur = e && flow.nodes.find(n => n.id === e.to)
+      for (const a of cur.actions || []) { await wait(450); const m = a.type === 'text' ? fill(a.text) : a.type === 'delay' ? null : a.type === 'contact' ? `👤 ${a.cname || 'Contacto'} · ${a.cphone}` : `[${ACT[a.type][0]}${a.fname ? ': ' + a.fname : a.file ? ': ' + a.file.name : a.url ? ': ' + a.url : ''}]${a.caption ? '\n' + fill(a.caption) : ''}`; if (m) say(m) }
+      await wait(300)
+      if (cur.type === 'menu') { const m = cur.menu || {}; const o = (m.mode === 'buttons' ? m.buttons : m.options) || []; say(fill(m.text || 'Menú') + '\n\n' + o.map((x, i) => `${i + 1}. ${x.title}`).join('\n') + (m.btn ? `\n[${m.btn}]` : '')); setState({ id: cur.id, kind: 'menu', o }); return }
+      if (cur.type === 'template') { say(`[Template: ${cur.tpl?.name || 'sin seleccionar'}]`); setState({ id: cur.id, kind: 'tpl' }); return }
+      if (cur.type === 'esperar') { say('Esperando respuesta…', 'sys'); setState({ id: cur.id, kind: 'wait' }); return }
+      if (cur.type === 'pix') say(`💳 PIX${cur.pix?.amount ? ' · R$ ' + cur.pix.amount : ''}\n${cur.pix?.key || 'Clave sin configurar'}${cur.pix?.text ? '\n' + fill(cur.pix.text) : ''}`)
+      else if (cur.type === 'etiquetas') say(`▸ ${cur.tagMode === 'remove' ? 'Etiquetas quitadas' : 'Etiquetas añadidas'}: ${(cur.tags || []).join(', ') || '—'}`, 'sys')
+      else if (!['inicio', 'mensaje'].includes(cur.type)) say(`▸ ${cur.title}`, 'sys')
+      cur = next(cur.id)
     }
-    onStep(null); setState('done'); setMsgs(x => [...x, { f: 'sys', x: 'Fin del flujo' }])
+    onStep(null); setState('done'); say('Fin del flujo', 'sys')
   }
   const send = () => {
-    if (!txt.trim()) return; setMsgs(x => [...x, { f: 'me', x: txt }]); setTxt('')
-    if (state && state !== 'done') { const e = flow.edges.find(x => x.from === state); setState(null); const n = e && flow.nodes.find(x => x.id === e.to); if (n) run(n); else setMsgs(x => [...x, { f: 'sys', x: 'Fin del flujo' }]) }
+    if (!txt.trim()) return; const t = txt.trim(); say(t, 'me'); setTxt('')
+    if (state && state !== 'done') { let port = 'main'
+      if (state.kind === 'menu') { const i = state.o.findIndex((x, i) => String(i + 1) === t || x.title.toLowerCase() === t.toLowerCase()); if (i < 0) { say('Opción no válida, responde con el número de una opción.', 'sys'); return } port = 'o' + state.o[i].id }
+      if (state.kind === 'tpl') port = 'reply'
+      const n = next(state.id, port); setState(null); if (n) run(n); else { setState('done'); onStep(null); say('Fin del flujo', 'sys') } }
     else if (!state) run(flow.nodes.find(n => n.type === 'inicio') || flow.nodes[0])
   }
   return <div className="fe-sim">
@@ -191,7 +204,10 @@ export default function FlowEditor() {
   const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false)
   const [panel, setPanel] = useState(null); const [pq, setPq] = useState(''); const [sel, setSel] = useState(null); const [run, setRun] = useState(null)
   const [link, setLink] = useState(null); const [edit, setEdit] = useState(null); const [rename, setRename] = useState(false); const [modal, setModal] = useState(null)
-  const box = useRef(); const act = useRef(null)
+  const box = useRef(); const act = useRef(null); const world = useRef(); const [ports, setPorts] = useState({}); const [del, setDel] = useState(null)
+  useLayoutEffect(() => { if (!world.current) return; const wr = world.current.getBoundingClientRect(); const k = view.k; const m = {}
+    world.current.querySelectorAll('[data-port]').forEach(el => { const r = el.getBoundingClientRect(); m[el.dataset.port] = { x: (r.left + r.width / 2 - wr.left) / k, y: (r.top + r.height / 2 - wr.top) / k } })
+    if (JSON.stringify(m) !== JSON.stringify(ports)) setPorts(m) })
   const setFlow = useCallback(fn => setFlows(fs => fs.map(f => f.id === id ? { ...fn(f), updated: nowStr() } : f)), [id, setFlows])
   const toWorld = (cx, cy) => { const r = box.current.getBoundingClientRect(); return { x: (cx - r.left - view.x) / view.k, y: (cy - r.top - view.y) / view.k } }
   const fit = () => { if (!flow?.nodes.length || !box.current) return; const r = box.current.getBoundingClientRect(); const xs = flow.nodes.map(n => n.x), ys = flow.nodes.map(n => n.y)
@@ -215,10 +231,11 @@ export default function FlowEditor() {
     const src = flow.nodes.find(n => n.id === sel) || [...flow.nodes].sort((a, b) => b.x - a.x)[0]
     let x = src ? src.x + NW + 80 : 0, y = src ? src.y : 0
     while (flow.nodes.some(n => Math.abs(n.x - x) < NW && Math.abs(n.y - y) < NH)) y += NH + 40
-    const n = newNode(type, x, y); const link = src && !flow.edges.some(e => e.from === src.id)
+    const n = newNode(type, x, y); const link = src && !nodeOuts(src) && !flow.edges.some(e => e.from === src.id)
     setFlow(f => ({ ...f, nodes: [...f.nodes, n], edges: link ? [...f.edges, { id: uid(), from: src.id, to: n.id }] : f.edges })); setSel(n.id); setPanel(null)
     const r = box.current.getBoundingClientRect(); setView(v => ({ ...v, x: r.width / 2 - (x + NW / 2) * v.k, y: r.height / 2 - (y + NH / 2) * v.k })); toast(B(type)[0] + ' agregado') }
-  function removeNode(nid) { if (flow.nodes.find(n => n.id === nid)?.type === 'inicio') return; setFlow(f => ({ ...f, nodes: f.nodes.filter(n => n.id !== nid), edges: f.edges.filter(e => e.from !== nid && e.to !== nid) })); setSel(null) }
+  function removeNode(nid) { const nn = flow.nodes.find(n => n.id === nid); if (!nn || nn.type === 'inicio') return; setDel(nn) }
+  function doRemove(nid) { setFlow(f => ({ ...f, nodes: f.nodes.filter(n => n.id !== nid), edges: f.edges.filter(e => e.from !== nid && e.to !== nid) })); setSel(null); setDel(null) }
   const nodeMap = Object.fromEntries(flow.nodes.map(n => [n.id, n]))
   const path = (a, b) => { const dx = Math.max(50, Math.abs(b.x - a.x) / 2); return `M${a.x},${a.y} C${a.x + dx},${a.y} ${b.x - dx},${b.y} ${b.x},${b.y}` }
   const st = flow.status
@@ -237,25 +254,30 @@ export default function FlowEditor() {
     <div className="fe-wrap">
       <div className="fe-cv" ref={box} style={{ backgroundSize: `${45 * view.k}px ${45 * view.k}px`, backgroundPosition: `${view.x}px ${view.y}px` }}
         onMouseDown={e => { if (e.target === box.current || e.target.tagName === 'svg') { act.current = { t: 'pan', sx: e.clientX, sy: e.clientY, vx: view.x, vy: view.y }; box.current.classList.add('panning'); setSel(null); if (panel === 'tools') setPanel(null) } }}>
-        <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`, transformOrigin: '0 0' }}>
+        <div ref={world} style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`, transformOrigin: '0 0' }}>
           <svg style={{ position: 'absolute', overflow: 'visible', left: 0, top: 0, width: 1, height: 1 }}>
-            {flow.edges.map(e => { const a = nodeMap[e.from], b = nodeMap[e.to]; if (!a || !b) return null; const d = path({ x: a.x + NW + 8, y: a.y + OUTY }, { x: b.x - 8, y: b.y + 34 })
+            {flow.edges.map(e => { const a = nodeMap[e.from], b = nodeMap[e.to]; if (!a || !b) return null; const pp = ports[e.from + '|' + (e.port || 'main')]; if (!pp) return null; const d = path(pp, { x: b.x - 8, y: b.y + 34 })
               return <g key={e.id} style={{ cursor: 'pointer' }} onClick={() => { setFlow(f => ({ ...f, edges: f.edges.filter(x => x.id !== e.id) })); toast('Conexión eliminada', 'info') }}>
-                <path d={d} stroke="transparent" strokeWidth="16" fill="none" /><path className={'fe-edge' + (st === 'activo' || run === e.from ? ' anim' : '')} d={d} /></g> })}
-            {link && <path className="fe-edge anim" d={path({ x: link.sx, y: link.sy }, link)} />}
+                <path d={d} stroke="transparent" strokeWidth="16" fill="none" /><path className={'fe-edge' + (st === 'activo' || run === e.from ? ' anim' : '')} style={{ stroke: e.port === 'fail' ? '#dc2626' : e.port === 'timeout' ? '#6b7280' : e.port === 'reply' ? '#d97706' : undefined }} d={d} /></g> })}
+            {link && <path className="fe-edge anim" d={path({ x: link.sx, y: link.sy }, { x: link.x, y: link.y })} />}
           </svg>
-          {flow.nodes.map(n => { const [, c, I, , g] = B(n.type); return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }}
+          {flow.nodes.map(n => { const [, c, I, dd, g] = B(n.type); const outs = nodeOuts(n); const tpl = n.type === 'template'
+            const startLink = (e, k) => { e.stopPropagation(); const pp = ports[n.id + '|' + k] || { x: n.x + NW, y: n.y + OUTY }; setLink({ from: n.id, port: k, sx: pp.x, sy: pp.y, x: pp.x, y: pp.y }); act.current = { t: 'link' } }
+            const desc = n.desc || (['inicio', 'mensaje', 'menu', 'template'].includes(n.type) ? '' : dd)
+            return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }}
             onMouseDown={e => { e.stopPropagation(); setSel(n.id) }} onDoubleClick={() => setEdit(n)}
-            onMouseUp={() => { if (link && link.from !== n.id && n.type !== 'inicio') { setFlow(f => ({ ...f, edges: [...f.edges.filter(x => !(x.from === link.from && x.to === n.id)), { id: uid(), from: link.from, to: n.id }] })); toast('Bloques conectados') } }}>
-            <div className="fe-nh" style={{ background: g ? `linear-gradient(90deg,${g[0]},${g[1]})` : `linear-gradient(90deg,${c},${c}cc)` }} onMouseDown={e => { e.stopPropagation(); setSel(n.id); act.current = { t: 'node', id: n.id, sx: e.clientX, sy: e.clientY, nx: n.x, ny: n.y } }}>
-              <span className="ic"><I size={20} /></span><b>{n.title}</b>
-              <span className="acts"><button title="Editar" onMouseDown={e => e.stopPropagation()} onClick={() => setEdit(n)}><Pencil size={12} /></button>
-                {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...n, id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={12} /></button>
-                  <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={12} /></button></>}</span></div>
+            onMouseUp={() => { if (link && link.from !== n.id && n.type !== 'inicio') { setFlow(f => ({ ...f, edges: [...f.edges.filter(x => !(x.from === link.from && (x.port || 'main') === (link.port || 'main'))), { id: uid(), from: link.from, port: link.port, to: n.id }] })); toast('Bloques conectados') } }}>
+            <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: g ? `linear-gradient(90deg,${g[0]},${g[1]})` : `linear-gradient(90deg,${c},${c}cc)` }} onMouseDown={e => { e.stopPropagation(); setSel(n.id); act.current = { t: 'node', id: n.id, sx: e.clientX, sy: e.clientY, nx: n.x, ny: n.y } }}>
+              {!tpl && <span className="ic"><I size={20} /></span>}<b>{n.title}</b>
+              <span className="acts"><button title="Editar" onMouseDown={e => e.stopPropagation()} onClick={() => setEdit(n)}><Pencil size={15} /></button>
+                {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={15} /></button>
+                  <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={15} /></button></>}</span></div>
             <div className="fe-ns"><div><span>ENTRADAS</span><b>{n.stats[0]}</b></div><div><span>AVANCES</span><b>{n.stats[1]}</b></div><div><span>TASA</span><b>{n.stats[2]}%</b></div></div>
-            <div className="fe-nd">{n.desc || (n.type === 'inicio' ? '' : 'Doble clic para configurar')}</div>
+            {tpl && <div className="fe-box"><b>{n.tpl?.name || 'Template não selecionado'}</b><span>Template Meta HSM · Quick Reply</span></div>}
+            {outs ? <div style={{ paddingTop: 4, minHeight: outs.length ? 0 : 34 }}>{outs.map(o => <div key={o.k} className={'fe-row ' + o.c}>{o.l}{o.s && <small>{o.s}</small>}<span className="fe-port out" data-port={n.id + '|' + o.k} style={{ background: o.pc }} onMouseDown={e => startLink(e, o.k)} /></div>)}</div>
+              : <><div className="fe-nd" style={{ fontSize: 13, minHeight: n.type === 'mensaje' ? 48 : 30, paddingTop: 6 }}>{desc}</div>
+                <span className="fe-port out" data-port={n.id + '|main'} style={{ bottom: 22 }} onMouseDown={e => startLink(e, 'main')} /></>}
             {n.type !== 'inicio' && <span className="fe-port in" />}
-            <span className="fe-port out" style={{ top: OUTY - 8 }} onMouseDown={e => { e.stopPropagation(); const s = { from: n.id, sx: n.x + NW + 8, sy: n.y + OUTY }; setLink({ ...s, x: s.sx, y: s.sy }); act.current = { t: 'link' } }} />
           </div> })}
         </div>
       </div>
@@ -270,7 +292,12 @@ export default function FlowEditor() {
         {box.current && <rect x={-view.x / view.k} y={-view.y / view.k} width={box.current.clientWidth / view.k} height={box.current.clientHeight / view.k} fill="rgba(139,92,246,.06)" stroke="#8b5cf6" strokeWidth={mmW / 140} />}
       </svg></div>
     </div>
-    {edit && (edit.type === 'mensaje' ? <MessageModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Mensaje guardado') }} />
+    {del && <LModal open onClose={() => setDel(null)} title="Eliminar nodo" icon={<TriangleAlert size={21} color="#ef4444" />} width={472} bodyStyle={{ padding: '22px 24px 0' }}>
+      <p style={{ fontSize: 14.3, lineHeight: 1.55, color: 'var(--soft)' }}>¿Seguro que desea eliminar el nodo "{del.title}"?</p>
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 22, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 12 }}><button className="lb2 g" onClick={() => setDel(null)}>Cancelar</button><button className="lb2 d" onClick={() => { doRemove(del.id); toast('Nodo eliminado') }}>Eliminar</button></div></LModal>}
+    {edit && ['template', 'etiquetas', 'pix', 'menu'].includes(edit.type) && (() => { const save = n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || !e.port || e.port === 'main' || (nodeOuts(n) || []).some(o => o.k === e.port)) })); setEdit(null); toast('Nodo guardado') }
+      const M = { template: TemplateModal, etiquetas: TagsModal, pix: PixModal, menu: MenuModal }[edit.type]; return <M node={edit} onClose={() => setEdit(null)} onSave={save} /> })()}
+    {edit && !['template', 'etiquetas', 'pix', 'menu'].includes(edit.type) && (edit.type === 'mensaje' ? <MessageModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Mensaje guardado') }} />
       : <NodeModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Nodo guardado') }} />)}
     {modal === 'tr' && <TranslateModal flow={flow} onClose={() => setModal(null)} />}
     {modal === 'ai' && <AiModal onClose={() => setModal(null)} onGen={types => { const base = flow.nodes.length ? Math.max(...flow.nodes.map(n => n.y)) + 220 : 100; const ns = types.map((t, i) => newNode(t, 80 + i * 330, base + (i % 2) * 60)); const last = flow.nodes.length ? flow.nodes[flow.nodes.length - 1] : null
@@ -285,4 +312,109 @@ function AiModal({ onClose, onGen }) {
     footer={<><button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" disabled={!t.trim()} onClick={gen}><Sparkles size={15} />Generar</button></>}>
     <textarea className="l-in" autoFocus style={{ height: 120, padding: 12, resize: 'vertical' }} value={t} onChange={e => setT(e.target.value)} placeholder="Ej.: Saluda al cliente, pregunta qué producto quiere, el agente de IA resuelve dudas y envía el link de pago." />
   </LModal>
+}
+
+/* ======================= Editores de nodos ======================= */
+function NModal({ title, icon, grad, width = 546, children, onClose, footer, tall }) {
+  useEffect(() => { const k = e => e.key === 'Escape' && onClose(); addEventListener('keydown', k); return () => removeEventListener('keydown', k) }, [])
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm" style={{ maxWidth: width, maxHeight: '94vh' }}>
+    <div className="fe-mh"><span className="ic" style={{ background: grad }}>{icon}</span><h2>{title}</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
+    <div className="lm-b" style={{ padding: '20px 24px 0', overflowY: 'auto' }}>{children}
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 18, padding: '14px 0 20px', display: 'flex', justifyContent: 'flex-end', gap: 11 }}>{footer}</div></div>
+  </div></div>
+}
+const Foot = ({ onClose, onOk, ok = true }) => <><button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" disabled={!ok} onClick={onOk}>Guardar</button></>
+
+function TemplateModal({ node, onClose, onSave }) {
+  const [tpls] = useStore('wa_templates', []); const ok = tpls.filter(t => t.status === 'APROBADO')
+  const [t, setT] = useState({ id: '', name: '', timeout: 60, unit: 'm', ...(node.tpl || {}) })
+  return <NModal title="Editar" icon={<MessageSquare size={20} />} grad="#2563eb" width={516} onClose={onClose} footer={<Foot onClose={onClose} onOk={() => onSave({ ...node, tpl: t, desc: '' })} />}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14, fontWeight: 600, marginBottom: 15 }}><FileText size={16} color="#34d399" />Template WhatsApp (Meta)</div>
+    <div className="fe-lb" style={{ fontSize: 12.5 }}>Template aprovado</div>
+    <LSelect className="l-in" bold value={t.id} onChange={v => setT({ ...t, id: v, name: ok.find(x => x.id === v)?.name || '' })} placeholder={ok.length ? 'Selecione um template' : 'Selecione um template'} options={ok.map(x => ({ value: x.id, label: x.name }))} style={{ background: 'var(--in2)' }} />
+    {!ok.length && <div className="fe-small" style={{ marginTop: 6 }}>Ningún template aprobado. Créelo en Configuración › Templates de WhatsApp.</div>}
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 11, marginTop: 15 }}>
+      <div><div className="fe-lb" style={{ fontSize: 12.5 }}>Timeout de resposta</div><input className="l-in" type="number" min="1" style={{ height: 41, background: 'var(--in2)', fontWeight: 700 }} value={t.timeout} onChange={e => setT({ ...t, timeout: Math.max(1, +e.target.value || 1) })} /></div>
+      <div><div className="fe-lb" style={{ fontSize: 12.5 }}>Unidade</div><LSelect className="l-in" bold value={t.unit} onChange={v => setT({ ...t, unit: v })} options={[['m', 'Minutos'], ['h', 'Horas'], ['d', 'Días']].map(([value, label]) => ({ value, label }))} /></div></div>
+  </NModal>
+}
+
+function TagsModal({ node, onClose, onSave }) {
+  const [store, setStore] = useStore('tags', []); const [contacts] = useStore('contacts', [])
+  const all = [...new Set([...store.map(t => t.name), ...contacts.flatMap(c => c.tags || [])])]
+  const [tags, setTags] = useState(node.tags || []); const [add, setAdd] = useState(node.tagMode !== 'remove'); const [q, setQ] = useState('')
+  const sug = all.filter(t => !tags.includes(t) && t.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
+  const pick = t => { t = t.trim(); if (!t) return; if (!all.includes(t)) setStore(x => [...x, { id: uid(), name: t, color: '#8b5cf6' }]); if (!tags.includes(t)) setTags([...tags, t]); setQ('') }
+  return <NModal title="Editar etiquetas" icon={<Tag size={20} />} grad="#6366f1" width={514} onClose={onClose}
+    footer={<Foot onClose={onClose} onOk={() => onSave({ ...node, tags, tagMode: add ? 'add' : 'remove', desc: tags.length ? `${add ? 'Añadir' : 'Quitar'} etiquetas: ${tags.join(', ')}` : '' })} />}>
+    <div className="fe-lb" style={{ fontWeight: 600 }}>Etiquetas</div>
+    <div style={{ position: 'relative' }}><div className="fe-vin" style={{ alignItems: 'center', flexWrap: 'wrap', gap: 6, padding: tags.length ? '6px 10px' : 0, minHeight: 41 }}>
+      {!tags.length && <Tag size={15} color="#8f8a9e" style={{ marginLeft: 14 }} />}
+      {tags.map(t => <span key={t} className="ct-tag" style={{ margin: 0 }}>{t}<button style={{ marginLeft: 5, display: 'grid', color: '#94a3b8', width: 'auto', border: 'none' }} onClick={() => setTags(tags.filter(x => x !== t))}><X size={11} /></button></span>)}
+      <input style={{ height: 38, paddingLeft: tags.length ? 4 : 10, fontSize: 13.3 }} value={q} onChange={e => setQ(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), pick(q))} placeholder={tags.length ? '' : 'Escriba para buscar o crear una etiqueta'} /></div>
+      {q && <div className="l-selm">{!all.includes(q.trim()) && <button className="l-opt" onClick={() => pick(q)}><Plus size={14} />Crear "{q.trim()}"</button>}{sug.map(t => <button key={t} className="l-opt" onClick={() => pick(t)}>{t}</button>)}</div>}</div>
+    <div className="fe-small" style={{ marginTop: 6 }}>Pulse Enter para crear una etiqueta nueva o elegir una existente</div>
+    <div style={{ display: 'flex', alignItems: 'center', margin: '18px 0 20px', fontSize: 13.3 }}><span style={{ color: add ? 'var(--soft)' : 'var(--text)', fontWeight: add ? 400 : 700, flex: 1 }}>Quitar etiquetas</span><Toggle on={add} onChange={setAdd} /><span style={{ color: add ? 'var(--text)' : 'var(--soft)', fontWeight: add ? 700 : 400, flex: 1, textAlign: 'right' }}>Añadir etiquetas</span></div>
+    <div className="fe-how"><Tag size={18} color="var(--soft)" style={{ flexShrink: 0, marginTop: 2 }} /><div><b>Cómo funciona</b><p>{add ? 'Este nodo añade las etiquetas seleccionadas a los clientes mientras se ejecuta el flujo.' : 'Este nodo quita las etiquetas seleccionadas de los clientes mientras se ejecuta el flujo.'}</p></div></div>
+  </NModal>
+}
+
+function VIn({ v, set, ph, area, max }) {
+  const El = area ? 'textarea' : 'input'
+  return <div className="fe-vin"><El value={v} maxLength={max} onChange={e => set(e.target.value)} placeholder={ph} /><button title="Insertar variable" onClick={() => set(v + '{full_name}')}><Code size={16} /></button></div>
+}
+function PixModal({ node, onClose, onSave }) {
+  const [p, setP] = useState({ type: 'random', key: '', name: '', amount: '', text: '', img: '', ...(node.pix || {}) }); const u = (k, v) => setP({ ...p, [k]: v })
+  const ph = { random: '123e4567-e89b-12d3-a456-426614174000', cpf: '000.000.000-00', cnpj: '00.000.000/0000-00', email: 'pagos@empresa.com', phone: '+5511999999999' }[p.type]
+  const upload = () => { const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; i.onchange = () => { const f = i.files[0]; if (f) u('img', f.name) }; i.click() }
+  return <NModal title="Editar PIX" icon={<CreditCard size={20} />} grad="#10b981" width={512} onClose={onClose}
+    footer={<Foot onClose={onClose} ok={!!p.key.trim()} onOk={() => onSave({ ...node, pix: p, desc: `PIX ${p.amount ? 'R$ ' + p.amount + ' · ' : ''}${p.key.slice(0, 22)}` })} />}>
+    <div className="fe-blk" style={{ padding: '17px 17px 20px' }}>
+      <div className="fe-lb">Tipo de clave PIX *</div><LSelect className="l-in" bold value={p.type} onChange={v => u('type', v)} options={[['random', 'Clave aleatoria'], ['cpf', 'CPF'], ['cnpj', 'CNPJ'], ['email', 'Correo'], ['phone', 'Teléfono']].map(([value, label]) => ({ value, label }))} />
+      <div className="fe-lb" style={{ marginTop: 17 }}>Clave PIX *</div><VIn v={p.key} set={v => u('key', v)} ph={ph} />
+      <div className="fe-small" style={{ marginTop: 6 }}>En la integración oficial, el código EMV del pedido usa esta misma clave. Como en el chat en vivo.</div>
+      <div className="fe-lb" style={{ marginTop: 17 }}>Destinatario del pago</div><VIn v={p.name} set={v => u('name', v)} ph="Ej.: Leona Solutions" />
+      <div className="fe-small" style={{ marginTop: 6 }}>Si está vacío, se usará "Pix" en conexiones estándar.</div><div className="fe-warn" style={{ marginTop: 13 }}>Obligatorio en la integración oficial (WhatsApp Cloud API / Meta).</div>
+      <div className="fe-lb" style={{ marginTop: 17 }}>Importe (BRL)</div><VIn v={p.amount} set={v => u('amount', v.replace(/[^\d,.{}a-z_]/gi, ''))} ph="Ej.: 49,90" />
+      <div className="fe-warn">Obligatorio cuando el flujo se ejecuta en la integración oficial (WhatsApp Cloud API / Meta).</div>
+      <div className="fe-lb" style={{ marginTop: 17 }}>Texto del mensaje (opcional)</div><VIn area v={p.text} set={v => u('text', v)} ph="Ej.: Paga R$ {valor} por Pix como acordamos 👇" max={1024} />
+      <div className="fe-warn">Integración oficial Meta: texto libre en la tarjeta Pix. Las conexiones estándar ignoran este campo.</div><div className="fe-small" style={{ textAlign: 'right' }}>{p.text.length}/1024</div>
+      <div className="fe-lb" style={{ marginTop: 10 }}>Imagen de la tarjeta (URL o variable)</div><VIn v={p.img} set={v => u('img', v)} ph="https://cdn.ejemplo.com/banner.jpg o {product_image}" />
+      <div className="fe-warn">Integración oficial Meta: imagen en la parte superior. Las conexiones estándar la ignoran.</div>
+      <button className="lb2 o" style={{ marginTop: 13, height: 39, fontSize: 14 }} onClick={upload}><Upload size={16} />Subir imagen</button>
+      <div className="fe-help" style={{ marginTop: 16 }}>Use variables como {'{full_name}'} o campos personalizados. Los valores se resuelven al ejecutar el flujo.</div>
+    </div>
+    <div className="fe-how"><CreditCard size={14} color="var(--soft)" style={{ flexShrink: 0, marginTop: 3 }} /><div><b>Cómo funciona</b><p>Este nodo envía un botón PIX para que el cliente copie la clave y pague en la app del banco. El mismo bloque sirve para conexiones estándar y para la integración oficial.</p>
+      <div className="fe-warn" style={{ fontWeight: 600, marginTop: 9 }}>En conexiones estándar bastan clave y tipo. En la integración oficial (Meta), el importe y el nombre del destinatario son obligatorios en tiempo de ejecución. Complételos arriba para que el envío funcione.</div></div></div>
+  </NModal>
+}
+
+function MenuModal({ node, onClose, onSave }) {
+  const [m, setM] = useState({ mode: 'list', text: '', btn: '', exp: 0, unit: 'd', options: [], buttons: [], footer: '', img: false, imgUrl: '', field: '', ...(node.menu || {}) }); const u = p => setM({ ...m, ...p })
+  const L = m.mode === 'list'; const key = L ? 'options' : 'buttons'; const list = m[key]
+  const maxExp = { m: 44640, h: 744, d: 31 }[m.unit]
+  const ok = m.text.trim() && (!L || m.btn.trim()) && list.length > 0 && list.every(o => o.title.trim())
+  return <NModal title="Menú" icon={<List size={20} />} grad="#a855f7" width={512} onClose={onClose}
+    footer={<Foot onClose={onClose} ok={ok} onOk={() => onSave({ ...node, menu: m, desc: m.text })} />}>
+    <div className="fe-seg" style={{ marginTop: 10 }}><button className={L ? 'on' : ''} onClick={() => u({ mode: 'list' })}><List size={15} />Lista</button><button className={!L ? 'on' : ''} onClick={() => u({ mode: 'buttons' })}><Square size={14} />Botones</button></div>
+    {!L && <div className="fe-blk" style={{ padding: '15px 15px', marginBottom: 14 }}><label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.3, cursor: 'pointer' }}><input type="checkbox" checked={m.img} onChange={e => u({ img: e.target.checked })} style={{ width: 15, height: 15 }} /><b>Imagen</b><span style={{ color: 'var(--soft)', marginLeft: -5 }}>(opcional)</span></label>
+      {m.img && <input className="l-in" style={{ height: 38, marginTop: 11, background: 'var(--in2)' }} value={m.imgUrl} onChange={e => u({ imgUrl: e.target.value })} placeholder="https://ejemplo.com/imagen.jpg o {imagen_producto}" />}</div>}
+    <div className="fe-lb">Mensaje *</div><Editor value={m.text} onChange={v => u({ text: v })} ph={L ? 'Ej.: Seleccione la mejor opción:' : 'Ej.: ¿Es esto lo que quiere?'} />
+    {L ? <><div className="fe-lb" style={{ marginTop: 15 }}>Texto del botón *</div><input className="l-in" style={{ height: 41, background: 'var(--in2)' }} maxLength={20} value={m.btn} onChange={e => u({ btn: e.target.value })} placeholder="Ej.: Abrir lista de opciones" /></>
+      : <><div className="fe-lb" style={{ marginTop: 15 }}>Pie <span style={{ fontWeight: 400, marginLeft: 4 }}>(opcional)</span></div><input className="l-in" style={{ height: 41, background: 'var(--in2)' }} maxLength={60} value={m.footer} onChange={e => u({ footer: e.target.value })} placeholder="Ej.: Mensaje con botón" /></>}
+    <div className="fe-lb" style={{ marginTop: 15, marginBottom: 3 }}>Tiempo de expiración del menú (salida por inactividad)</div>
+    <div className="fe-small" style={{ fontSize: 11.5 }}>Se 0, o padrão é 2 dias. Se definir um tempo, a saída por inatividade será exibida no fluxo. Limite máximo: 31 dias no total.</div>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 9 }}><input className="l-in" type="number" min="0" max={maxExp} style={{ height: 41, background: 'var(--in2)', textAlign: 'center', fontWeight: 700 }} value={m.exp} onChange={e => u({ exp: Math.min(maxExp, Math.max(0, +e.target.value || 0)) })} />
+      <LSelect className="l-in" bold value={m.unit} onChange={v => u({ unit: v, exp: Math.min(m.exp, { m: 44640, h: 744, d: 31 }[v]) })} options={[['m', 'Minutos'], ['h', 'Horas'], ['d', 'Días']].map(([value, label]) => ({ value, label }))} /></div>
+    <div style={{ display: 'flex', alignItems: 'center', margin: '17px 0 12px' }}><b style={{ fontSize: 13.3 }}>{L ? 'Opciones del menú' : 'Opciones de botones'}</b>
+      <button className="lb2 p sm" style={{ marginLeft: 'auto', height: 37 }} disabled={!L ? list.length >= 3 : list.length >= 10} onClick={() => u({ [key]: [...list, { id: uid(), title: '', desc: '' }] })}><Plus size={16} />{L ? 'Añadir opción' : 'Añadir botón'}</button></div>
+    {list.length === 0 ? <div style={{ border: '1.5px dashed var(--border2)', borderRadius: 7, padding: '22px 20px', textAlign: 'center', color: 'var(--soft)', fontSize: 13.3, lineHeight: 1.5 }}><List size={28} style={{ marginBottom: 6 }} /><br />{L ? 'Ninguna opción añadida. Haga clic en "Añadir opción" para empezar.' : 'Ningún botón añadido. Haga clic en "Añadir botón" para empezar.'}</div>
+      : list.map((o, i) => <div key={o.id} className="fe-opt"><span style={{ width: 22, fontSize: 13, color: 'var(--soft)', textAlign: 'center' }}>{i + 1}</span>
+        <input className="l-in" style={{ height: 38, background: 'var(--in2)', flex: 1 }} maxLength={L ? 24 : 20} value={o.title} onChange={e => u({ [key]: list.map(x => x.id === o.id ? { ...x, title: e.target.value } : x) })} placeholder={L ? 'Título de la opción' : 'Texto del botón'} />
+        {L && <input className="l-in" style={{ height: 38, background: 'var(--in2)', flex: 1 }} maxLength={72} value={o.desc} onChange={e => u({ [key]: list.map(x => x.id === o.id ? { ...x, desc: e.target.value } : x) })} placeholder="Descripción (opcional)" />}
+        <button className="ch-ib" onClick={() => u({ [key]: list.filter(x => x.id !== o.id) })}><Trash2 size={15} /></button></div>)}
+    {!L && <div className="fe-small" style={{ marginTop: 6 }}>Máximo 3 botones.</div>}
+    <div className="fe-lb" style={{ marginTop: 18 }}>Campo para guardar la respuesta del usuario</div><input className="l-in" style={{ height: 41, background: 'var(--in2)' }} value={m.field} onChange={e => u({ field: e.target.value.replace(/[^a-z0-9_]/gi, '_').toLowerCase() })} placeholder="Ej.: eleccion_menu" />
+    <div className="fe-small" style={{ marginTop: 6 }}>Deje en blanco para no guardar la respuesta.</div>
+  </NModal>
 }
