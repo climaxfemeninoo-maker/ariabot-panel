@@ -39,7 +39,7 @@ export function HuellaModal({ open, onClose }) {
           <Stat l="FACTURACIÓN ACUMULADA" ic={TrendingUp} c="#22c55e"><div style={{ fontSize: 19, fontWeight: 700, color: '#22c55e' }}>{brl(rev)}</div></Stat>
         </div>
         <div style={{ position: 'relative', border: '1px solid #4a2236', borderRadius: 7, padding: '22px 17px 14px', marginTop: 16, overflow: 'hidden' }}>
-          <span style={{ position: 'absolute', right: 12, top: 24, fontSize: 52, fontWeight: 900, color: 'rgba(255,255,255,.04)', letterSpacing: '.02em' }}>LEONA</span>
+          
           <div style={{ display: 'flex' }}><div><div style={{ fontSize: 11.5, color: 'var(--soft)', fontWeight: 500 }}>Sello Actual de Facturación</div><div style={{ fontSize: 13.3, color: cur ? 'var(--text)' : '#94a3b8', marginTop: 13, fontWeight: cur ? 700 : 400 }}>{cur ? cur[1] : 'Sin sello aún'}</div></div>
             {next && <div style={{ marginLeft: 'auto', textAlign: 'right' }}><div style={{ fontSize: 11.5, color: 'var(--soft)' }}>Próximo Hito</div><div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 8 }}>{next[1]}</div><div style={{ fontSize: 11.5, fontWeight: 700, color: '#22c55e', marginTop: 2 }}>{brl0(next[0])}</div></div>}</div>
           <div style={{ display: 'flex', fontSize: 11.5, marginTop: 14 }}><span style={{ color: 'var(--soft)' }}>Progreso hacia el próximo sello</span><b style={{ marginLeft: 'auto' }}>{Math.floor(pct)}%</b></div>
@@ -59,7 +59,7 @@ export function HuellaModal({ open, onClose }) {
 }
 
 const REWARDS = [
-  { min: 50000, lbl: '50 mil', title: 'Carta + Pulseira + Pin 50k', items: ['Carta comemorativa', 'Pulseira Leona', 'Pin 50k'], price: 29.9, extra: 67.5, img: '/rewards/r1.jpg' },
+  { min: 50000, lbl: '50 mil', title: 'Carta + Pulseira + Pin 50k', items: ['Carta comemorativa', 'Pulseira Nubify', 'Pin 50k'], price: 29.9, extra: 67.5, img: '/rewards/r1.jpg' },
   { min: 100000, lbl: '100 mil', title: 'Kit Placa Premium', items: ['Placa Premium', 'Pin 100k (para grudar na placa)', 'Carta comemorativa', ['Acesso ao Grupo VIP + Eventos privados futuros']], price: 297, extra: 346.5, img: '/rewards/r2.jpg' },
   { min: 250000, lbl: '250 mil', title: 'Pin 250k + Carta', items: ['Pin 250k', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r3.jpg' },
   { min: 500000, lbl: '500 mil', title: 'Pin 500k + Carta', items: ['Pin 500k', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r4.jpg' },
@@ -77,20 +77,20 @@ export function Rewards() {
   const unlocked = REWARDS.filter(r => rev >= r.min).length
   const ready = REWARDS.filter(r => rev >= r.min && months && !orders.some(o => o.min === r.min)).length
   const glass = { background: 'rgba(16,22,36,.75)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 18 }
-  return <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50, color: '#fff', background: 'radial-gradient(1200px 600px at 0% 0%,#1f2b46 0%,transparent 60%),radial-gradient(900px 500px at 100% 20%,#0d3a3a 0%,transparent 55%),radial-gradient(900px 500px at 50% 100%,#2b2208 0%,transparent 60%),#06080b' }}>
+  return <div style={{ position: 'fixed', inset: 0, overflowY: 'auto', zIndex: 50, color: '#fff', background: 'radial-gradient(700px 380px at 22% 12%,rgba(0,90,227,.55) 0%,transparent 70%),radial-gradient(620px 360px at 78% 22%,rgba(0,40,160,.6) 0%,transparent 70%),radial-gradient(900px 500px at 100% 0%,#0a1f6b 0%,transparent 60%),radial-gradient(900px 500px at 50% 100%,#0b1a4a 0%,transparent 60%),#050816' }}>
     <div style={{ maxWidth: 1040, margin: '0 auto', padding: '25px 0 80px' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <button onClick={() => nav(-1)} title="Volver" style={{ color: '#cbd5e1', display: 'grid', marginRight: 14 }}><ArrowLeft size={18} /></button>
-        <img src="/leona-white.png" alt="Leona" style={{ height: 33 }} />
+        <img src="/leona-white.png" alt="Nubify" style={{ height: 33 }} />
         <span style={{ marginLeft: 'auto', border: '1px solid rgba(255,255,255,.15)', borderRadius: 18, padding: '7px 13px', fontSize: 12.5, fontWeight: 700, color: '#cbd5e1', background: 'rgba(255,255,255,.04)' }}>Conta #13120</span></div>
-      <div style={{ ...glass, marginTop: 25, padding: '29px 29px', display: 'flex', alignItems: 'center', background: 'linear-gradient(110deg,#212d48,#121825 55%,#0c2a2c)' }}>
+      <div style={{ ...glass, marginTop: 25, padding: '29px 29px', display: 'flex', alignItems: 'center', background: 'linear-gradient(135deg,rgba(0,12,58,.55) 0%,rgba(0,34,140,.45) 50%,rgba(0,90,227,.5) 100%)', backdropFilter: 'blur(24px) saturate(180%)', WebkitBackdropFilter: 'blur(24px) saturate(180%)', border: '1px solid rgba(255,255,255,.16)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(255,255,255,.04), 0 24px 60px rgba(0,20,80,.45)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ flex: 1 }}><div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.14em', color: '#22d3ee' }}>SUA JORNADA</div>
           <div style={{ fontSize: 34, fontWeight: 800, marginTop: 5, letterSpacing: '-.01em' }}>Olá, {prof.name.split(' ')[0]}! 👋</div>
-          <p style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.6, color: '#a5a3c4', marginTop: 9, maxWidth: 470 }}>Acompanhe seu faturamento e monte um pedido só com os prêmios desbloqueados. Frete grátis na hora de fechar.</p></div>
-        <div style={{ ...glass, borderRadius: 16, width: 383, padding: '22px 20px 23px', background: 'rgba(8,14,22,.6)' }}>
+          <p style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.6, color: '#dbe4ff', marginTop: 9, maxWidth: 470 }}>Acompanhe seu faturamento e monte um pedido só com os prêmios desbloqueados. Frete grátis na hora de fechar.</p></div>
+        <div style={{ ...glass, borderRadius: 16, width: 383, padding: '22px 20px 23px', background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.18)', backdropFilter: 'blur(20px) saturate(180%)', WebkitBackdropFilter: 'blur(20px) saturate(180%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.25), 0 10px 30px rgba(0,0,0,.25)' }}>
           <div style={{ fontSize: 12.5, fontWeight: 700, color: '#cbd5e1' }}>Faturamento acumulado</div>
           <div style={{ fontSize: 48, fontWeight: 800, color: '#facc15', marginTop: 6, letterSpacing: '-.02em' }}>{brl(rev)}</div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#a5a3c4', marginTop: 4 }}>Atualizado pela Leona.</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#c7d2fe', marginTop: 4 }}>Atualizado pela Nubify.</div>
           {next && <><div style={{ display: 'flex', fontSize: 12.8, fontWeight: 700, color: '#cbd5e1', marginTop: 25 }}><span>Próxima meta: R$ {next[0] >= 1e6 ? next[0] / 1e6 + ' mi' : next[0] / 1000 + ' mil'}</span><span style={{ marginLeft: 'auto' }}>Faltam {brl(next[0] - rev)}</span></div>
             <div style={{ height: 8, borderRadius: 8, background: 'rgba(255,255,255,.08)', marginTop: 11, overflow: 'hidden' }}><div style={{ width: pct + '%', height: '100%', background: 'linear-gradient(90deg,#facc15,#22d3ee)' }} /></div></>}
         </div>
@@ -100,9 +100,9 @@ export function Rewards() {
         <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.55, color: '#fecaca', marginTop: 7 }}>Este primeiro lote está sendo produzido de uma vez, então o envio pode levar cerca de 30 dias úteis. Assim que as peças ficarem prontas, saem na hora. Agradecemos a paciência de todos.</div></div>
       <div style={{ ...glass, borderRadius: 14, marginTop: 22, padding: '19px 18px 17px', background: 'rgba(48,36,10,.45)', borderColor: 'rgba(234,179,8,.4)' }}>
         <div style={{ fontSize: 15, fontWeight: 700 }}>Requisitos para resgate</div>
-        {[['3 meses de Leona Flow', months], ['Faturamento atingido', unlocked > 0]].map(([t, ok]) => <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 15, fontWeight: 700, color: ok ? '#4ade80' : '#a5a3c4', marginTop: 14 }}><span style={{ width: 11, height: 11, borderRadius: '50%', border: '2px solid currentColor', background: ok ? 'currentColor' : 'none' }} />{t}</div>)}</div>
+        {[['3 meses de Nubify', months], ['Faturamento atingido', unlocked > 0]].map(([t, ok]) => <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 15, fontWeight: 700, color: ok ? '#4ade80' : '#a5a3c4', marginTop: 14 }}><span style={{ width: 11, height: 11, borderRadius: '50%', border: '2px solid currentColor', background: ok ? 'currentColor' : 'none' }} />{t}</div>)}</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 13, marginTop: 22 }}>
-        {[[ready, 'Prontos para resgatar'], [unlocked, 'Marcos desbloqueados'], [`${sub.instances || 0} instâncias`, 'Plano Leona']].map(([v, l]) => <div key={l} style={{ ...glass, borderRadius: 14, padding: '20px 17px 21px' }}><div style={{ fontSize: 24, fontWeight: 800 }}>{v}</div><div style={{ fontSize: 14, fontWeight: 700, color: '#a5a3c4', marginTop: 12 }}>{l}</div></div>)}</div>
+        {[[ready, 'Prontos para resgatar'], [unlocked, 'Marcos desbloqueados'], [`${sub.instances || 0} instâncias`, 'Plano Nubify']].map(([v, l]) => <div key={l} style={{ ...glass, borderRadius: 14, padding: '20px 17px 21px' }}><div style={{ fontSize: 24, fontWeight: 800 }}>{v}</div><div style={{ fontSize: 14, fontWeight: 700, color: '#a5a3c4', marginTop: 12 }}>{l}</div></div>)}</div>
       <div style={{ display: 'flex', gap: 9, marginTop: 32 }}>{[['prem', 'Premiações'], ['ped', 'Pedidos e rastreio']].map(([k, l]) => <button key={k} onClick={() => setTab(k)} style={{ height: 41, padding: '0 15px', borderRadius: 21, fontSize: 14.3, fontWeight: 700, color: tab === k ? '#fff' : '#a5a3c4', background: tab === k ? '#212e4a' : 'rgba(255,255,255,.03)', border: '1px solid ' + (tab === k ? '#004fc7' : 'rgba(255,255,255,.12)') }}>{l}</button>)}</div>
       {tab === 'ped' ? (orders.length ? <div style={{ marginTop: 26 }}>{orders.map(o => <div key={o.id} style={{ ...glass, borderRadius: 14, padding: '16px 19px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 14 }}><img src={o.img} alt="" style={{ width: 54, height: 54, borderRadius: 9, objectFit: 'cover' }} /><div><b>{o.title}</b><div style={{ fontSize: 13, color: '#a5a3c4', marginTop: 3 }}>{o.qty} unidade(s) · {o.date}</div></div><span style={{ marginLeft: 'auto', fontSize: 13, fontWeight: 700, color: '#facc15' }}>Em produção</span></div>)}</div>
         : <div style={{ fontSize: 17, fontWeight: 700, color: '#a5a3c4', marginTop: 50, marginLeft: 4 }}>Você ainda não tem pedidos nesta trilha.</div>)
