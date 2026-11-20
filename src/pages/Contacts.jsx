@@ -20,7 +20,8 @@ export default function Contacts() {
   const [modal, setModal] = useState(null); const [edit, setEdit] = useState(null); const [del, setDel] = useState(null)
   const [flt, setFlt] = useState({ tags: [], from: '', to: '' })
   const file = useRef()
-  const tagsAll = [...new Set(list.flatMap(c => c.tags || []))]
+  const [tagStore] = useStore('tags', [])
+  const tagsAll = [...new Set([...tagStore.map(t => t.name), ...list.flatMap(c => c.tags || [])])]
   const rows = useMemo(() => {
     let r = list.filter(c => [c.name, c.phone, c.email].join(' ').toLowerCase().includes(q.toLowerCase())
       && (st === 'all' || (c.status || 'Lead') === st) && (or === 'all' || c.origin === or)
