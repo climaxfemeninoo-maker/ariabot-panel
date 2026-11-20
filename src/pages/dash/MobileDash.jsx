@@ -31,7 +31,7 @@ function VBars({ data }) {
 }
 const Card = ({ t, s, children, style }) => <div className="md-c" style={style}><div className="md-ct"><i /><div><b>{t}</b>{s && <span>{s}</span>}</div></div>{children}</div>
 
-function Sheet({ onClose, children, alt, z = 200 }) {
+export function Sheet({ onClose, children, alt, z = 200 }) {
   return <div className="md-ov" style={{ zIndex: z }} onClick={e => e.target === e.currentTarget && onClose()}><div className={'md-sh' + (alt ? ' alt' : '')}><div className="md-hd" onClick={onClose} />{children}</div></div>
 }
 

@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, CircleHelp, PanelLeftClose, PanelLeftOpen, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, MessagesSquare, QrCode, Sparkles, Copy } from 'lucide-react'
+import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, CircleHelp, PanelLeftClose, PanelLeftOpen, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, IndentDecrease, MessagesSquare, QrCode, Sparkles, Copy } from 'lucide-react'
 import { SendIcon, MegaphoneIcon } from './icons'
 import { NewAccountModal } from './pages/SettingsParts'
 import { TokensModal } from './pages/Billing'
 import { Rewards } from './pages/Huella'
 import { NotifPanel } from './pages/Notifs'
+import { useMobile } from './pages/dash/MobileDash'
+import { MobileMenu, MobileChats, MobileConnections, MobileProfile, MobileCampaigns } from './pages/MobileViews'
 import { Logo, Modal, useStore, useOutside, useToast, uid } from './ui'
 import Dashboard from './pages/Dashboard'
 import Chats from './pages/Chats'
@@ -103,15 +105,15 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
   </aside>
 }
 
-function MobileNav({ onMenu }) {
-  const loc = useLocation(); const on = p => loc.pathname.startsWith(p)
-  return <nav className="mb-nav">
+function MobileNav({ onAll }) {
+  const loc = useLocation(); const on = p => loc.pathname.startsWith(p); const [menu, setMenu] = useState(false); const nav = useNavigate()
+  return <><nav className="mb-nav">
     <NavLink to="/welcome" title="Dashboard"><span className="sq" style={{ background: on('/welcome') ? 'linear-gradient(135deg,#a855f7,#7c3aed)' : 'transparent', color: on('/welcome') ? '#fff' : '#8f8a9e' }}><LayoutGrid size={15} fill="currentColor" /></span></NavLink>
     <NavLink to="/facebook/campaigns" title="Facebook"><span className="sq" style={{ background: '#1d4ed8', fontWeight: 800, fontSize: 15, fontFamily: 'Arial,sans-serif', opacity: on('/facebook') ? 1 : .85 }}>f</span></NavLink>
     <NavLink to="/chats" title="Chats"><MessagesSquare size={24} strokeWidth={1.7} color={on('/chats') ? '#fff' : '#8f8a9e'} /></NavLink>
     <NavLink to="/connections" title="Conexiones"><QrCode size={22} strokeWidth={1.7} color={on('/connections') ? '#fff' : '#8f8a9e'} /></NavLink>
-    <button onClick={onMenu} title="Menú"><MenuIcon size={23} strokeWidth={1.7} /></button>
-  </nav>
+    <button onClick={() => on('/profile') ? nav(-1) : setMenu(true)} title="Menú" style={{ color: on('/profile') ? '#fff' : undefined }}>{on('/profile') ? <IndentDecrease size={23} strokeWidth={1.8} /> : <MenuIcon size={23} strokeWidth={1.7} />}</button>
+  </nav>{menu && <MobileMenu onClose={() => setMenu(false)} onAll={onAll} />}</>
 }
 
 export default function App() {
@@ -119,6 +121,7 @@ export default function App() {
   const [mopen, setMopen] = useState(false)
   const [, toggle] = useTheme()
   const loc = useLocation()
+  const mobile = useMobile()
   useEffect(() => {
     const k = e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm') { e.preventDefault(); toggle() } }
     window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k)
@@ -129,30 +132,30 @@ export default function App() {
     <button className="mob-btn" onClick={() => setMopen(!mopen)}><MenuIcon size={18} /></button>
     <Sidebar col={col && !(typeof window !== 'undefined' && window.innerWidth <= 760)} setCol={setCol} mopen={mopen} setMopen={setMopen} />
     {mopen && <div onClick={() => setMopen(false)} style={{ position: 'fixed', inset: 0, zIndex: 85, background: 'rgba(0,0,0,.55)' }} />}
-    <main className="main" style={full ? { overflow: 'hidden' } : null}>
+    <main className="main" style={full && !mobile ? { overflow: 'hidden' } : null}>
       <Routes>
         <Route path="/" element={<Navigate to="/welcome" />} />
         <Route path="/welcome" element={<Dashboard />} />
-        <Route path="/chats" element={<Chats />} />
+        <Route path="/chats" element={mobile ? <MobileChats /> : <Chats />} />
         <Route path="/crms" element={<Kanban />} />
         <Route path="/crms/:id" element={<Kanban />} />
         <Route path="/customers" element={<Contacts />} />
         <Route path="/flows" element={<Flows />} />
         <Route path="/flows/:id/edit" element={<FlowEditor />} />
         <Route path="/agentes" element={<Agents />} />
-        <Route path="/connections" element={<Connections />} />
+        <Route path="/connections" element={mobile ? <MobileConnections /> : <Connections />} />
         <Route path="/settings/inbound-webhooks" element={<Webhooks />} />
         <Route path="/settings/inbound-webhooks/:id" element={<Webhooks />} />
         <Route path="/mass-dispatches" element={<Mass />} />
-        <Route path="/facebook/campaigns" element={<Facebook />} />
+        <Route path="/facebook/campaigns" element={mobile ? <MobileCampaigns /> : <Facebook />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing/:sub" element={<Billing />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={mobile ? <MobileProfile /> : <Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/tutoriales" element={<Tutorials />} />
         <Route path="*" element={<Navigate to="/welcome" />} />
       </Routes>
     </main>
-    <MobileNav onMenu={() => setMopen(true)} />
+    <MobileNav onAll={() => setMopen(true)} />
   </div>
 }
