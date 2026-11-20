@@ -4,6 +4,7 @@ import { Building2, Users, UserPlus, LifeBuoy, Languages, Sparkles, Workflow, Se
 import { useStore, Modal, Empty, useToast, uid, Switch, Confirm } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 import { SendIcon } from '../icons'
+import { NewAccountModal, InviteMemberModal, Team, Invites, SupportAccess, Translations, AiUsage, StdFlows, QuickReplies } from './SettingsParts'
 
 const NAV = [['CUENTA', [['accounts', 'Empresa', Building2], ['team', 'Equipo', Users], ['invites', 'Invitaciones a la plataforma', UserPlus], ['support', 'Acceso de soporte', Headphones], ['translations', 'Traducciones de flujo', Languages], ['ai', 'Uso de Leona AI', Sparkles]]],
 ['AUTOMATIZACIÓN', [['stdflows', 'Flujos estándar', Zap], ['mass', 'Envíos masivos', SendIcon], ['quick', 'Respuestas rápidas', MessageCircle], ['templates', 'Templates de WhatsApp', FileText], ['vars', 'Variables globales', AtSign], ['fields', 'Campos personalizados', Database], ['tags', 'Etiquetas', Tag]]],
@@ -117,11 +118,8 @@ function Company() {
       <p style={{ fontSize: 14.3, lineHeight: 1.55 }}>¿Eliminar el departamento "{dd?.name}"?</p>
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 19, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 13 }}><button className="lb2 g" onClick={() => setDd(null)}>Cancelar</button><button className="lb2 d" onClick={() => { setDeps(x => x.filter(d => d.id !== dd.id)); setDd(null); toast('Departamento eliminado') }}>Eliminar</button></div>
     </LModal>
-    <LModal open={!!mod} onClose={() => setMod(null)} title={mod === 'member' ? 'Invitar miembro' : 'Nueva cuenta'} desc={mod === 'member' ? 'Enviaremos una invitación por correo' : 'Cree otra empresa para separar conexiones, flujos y contactos'} icon={mod === 'member' ? <UserPlus size={19} /> : <Building2 size={19} />}
-      footer={<><button className="lb2 g" onClick={() => setMod(null)}>Cancelar</button><button className="lb2 p" disabled={!mv.trim() || (mod === 'member' && !/\S+@\S+\.\S+/.test(mv))} onClick={() => {
-        if (mod === 'member') { toast('Invitación enviada a ' + mv.trim()) } else { setCompanies(cs => [...cs, { id: uid(), name: mv.trim() }]); toast('Cuenta creada: ' + mv.trim()) } setMod(null) }}>{mod === 'member' ? 'Enviar invitación' : 'Crear cuenta'}</button></>}>
-      <label className="l-lbl">{mod === 'member' ? 'Correo del miembro' : 'Nombre de la empresa'}</label><input className="l-in ct-in" autoFocus value={mv} onChange={e => setMv(e.target.value)} placeholder={mod === 'member' ? 'nombre@correo.com' : 'Ej.: Mi tienda online'} />
-    </LModal>
+    <NewAccountModal open={mod === 'account'} onClose={() => setMod(null)} />
+    <InviteMemberModal open={mod === 'member'} onClose={() => setMod(null)} />
     <LModal open={leave} onClose={() => setLeave(false)} title="Salir de la empresa" width={482} bodyStyle={{ padding: '22px 24px 0' }}>
       <p style={{ fontSize: 14.3, lineHeight: 1.55 }}>Usted es el propietario de esta empresa. Transfiera la propiedad a otro miembro antes de salir.</p>
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 19, padding: '16px 0', display: 'flex', justifyContent: 'flex-end' }}><button className="lb2 g" onClick={() => setLeave(false)}>Entendido</button></div>
@@ -149,7 +147,9 @@ function Simple({ k }) {
 export default function Settings() {
   const [sp, setSp] = useSearchParams(); const tab = sp.get('tab') || 'accounts'; const [col, setCol] = useState(false)
   const cur = NAV.flatMap(n => n[1]).find(x => x[0] === tab) || NAV[0][1][0]
-  const SUB = { accounts: 'Datos de la empresa seleccionada en el menú lateral.' }
+  const SUB = { accounts: 'Datos de la empresa seleccionada en el menú lateral.', team: 'Administre los miembros, funciones y permisos de su equipo.', invites: 'Invite personas a la plataforma Leona.', support: 'Vea y revoque accesos temporales aprobados para el equipo de soporte.', translations: 'Solo el traductor de flujo: original, copia, reservado, usado y devuelto.', ai: 'Cargos de las conversaciones de Leona, agrupados por sesión. No se mezcla con el traductor.', stdflows: 'Defina los flujos estándar de cada conexión de WhatsApp.', quick: 'Administre y organice las respuestas rápidas de su empresa.' }
+  const PAGES = { team: Team, invites: Invites, support: SupportAccess, translations: Translations, ai: AiUsage, stdflows: StdFlows, quick: QuickReplies }
+  const P = PAGES[tab]
   return <div className="st-page">
     <div className="st-cap">CONFIGURACIÓN</div><h1 style={{ fontSize: 18.3, fontWeight: 700, marginTop: 9 }}>{cur[1]}</h1><p style={{ fontSize: 13.3, color: 'var(--soft)', marginTop: 6 }}>{SUB[tab] || 'Ajustes de ' + cur[1].toLowerCase() + ' de la empresa seleccionada.'}</p>
     <div className="st-wrap">
@@ -158,6 +158,6 @@ export default function Settings() {
         {NAV.map(([s, items], si) => <div key={s} style={{ marginTop: si ? 21 : 0 }}><div className="sec" style={{ opacity: col ? 0 : 1 }}>{s}</div>
           {items.map(([k, l, Ic]) => <button key={k} title={l} className={'it' + (tab === k ? ' on' : '')} onClick={() => setSp({ tab: k })}><Ic size={15} style={{ flexShrink: 0 }} />{!col && <span>{l}</span>}</button>)}</div>)}
       </div>
-      <div style={{ flex: 1, minWidth: 0 }} key={tab}>{tab === 'accounts' ? <Company /> : CRUD[tab] ? <Crud k={tab} /> : <Simple k={tab} />}</div></div>
+      <div style={{ flex: 1, minWidth: 0 }} key={tab}>{tab === 'accounts' ? <Company /> : P ? <P /> : CRUD[tab] ? <Crud k={tab} /> : <Simple k={tab} />}</div></div>
   </div>
 }

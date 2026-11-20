@@ -18,6 +18,7 @@ export default function Chats() {
   const [boards] = useStore('boards', [])
   const [deps] = useStore('departments', [])
   const [sched] = useStore('scheduled', [])
+  const [qrs] = useStore('quick_replies', [])
   const [tab, setTab] = useState('espera'); const [chip, setChip] = useState('Todo'); const [q, setQ] = useState('')
   const [sel, setSel] = useState(null); const [txt, setTxt] = useState(''); const [hide, setHide] = useState(false); const [quick, setQuick] = useState(false)
   const [modal, setModal] = useState(null)
@@ -95,7 +96,7 @@ export default function Chats() {
           {cur.msgs.length === 0 && <div style={{ margin: 'auto', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>Envía el primer mensaje para iniciar la conversación.</div>}
           {cur.msgs.map((m, i) => <div key={i} className={'ch-m ' + m.f}>{m.x}<div className="t">{m.t}{m.f === 'out' && <CheckCheck size={12} />}</div></div>)}
           <div ref={end} /></div>
-        <div style={{ position: 'relative' }}>{quick && <div className="l-selm" style={{ top: 'auto', bottom: 6, left: 14, right: 'auto', width: 320 }}>{QUICK.map(x => <button key={x} className="l-opt" style={{ fontWeight: 500 }} onClick={() => send(x)}><Zap size={13} color="#f59e0b" />{x}</button>)}</div>}</div>
+        <div style={{ position: 'relative' }}>{quick && <div className="l-selm" style={{ top: 'auto', bottom: 6, left: 14, right: 'auto', width: 340 }}>{(qrs.length ? qrs.map(r => ['#' + r.short, r.actions.filter(x => x.text).map(x => x.text).join('\n') || r.actions.map(x => x.file?.name).join(', ')]) : QUICK.map(x => [x, x])).map(([l, x]) => <button key={l} className="l-opt" style={{ fontWeight: 500 }} onClick={() => send(x)}><Zap size={13} color="#f59e0b" />{l}</button>)}</div>}</div>
         <div className="ch-comp">
           <button className="ch-ib" onClick={() => setTxt(x => x + '😊')}><Smile size={18} /></button>
           <button className="ch-ib" onClick={() => toast('Adjuntar archivo disponible al conectar WhatsApp', 'info')}><Paperclip size={18} /></button>
