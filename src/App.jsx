@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, CircleHelp, PanelLeftClose, PanelLeftOpen, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, Sparkles, Copy } from 'lucide-react'
+import { LayoutGrid, MessageSquare, Kanban as KanbanIc, Users, Workflow, Bot, Plug, Webhook, Send, Megaphone, CreditCard, Settings as Cog, CircleHelp, PanelLeftClose, PanelLeftOpen, ChevronsUpDown, ChevronDown, Sun, Moon, Bell, HelpCircle, UserPlus, Plus, Check, LogOut, User, Building2, Menu as MenuIcon, MessagesSquare, QrCode, Sparkles, Copy } from 'lucide-react'
 import { SendIcon, MegaphoneIcon } from './icons'
 import { NewAccountModal } from './pages/SettingsParts'
 import { TokensModal } from './pages/Billing'
 import { Rewards } from './pages/Huella'
+import { NotifPanel } from './pages/Notifs'
 import { Logo, Modal, useStore, useOutside, useToast, uid } from './ui'
 import Dashboard from './pages/Dashboard'
 import Chats from './pages/Chats'
@@ -48,7 +49,8 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
   const [notifs, setNotifs] = useStore('notifs', [
     { id: 1, t: 'Bienvenido a Leona', d: 'Configura tu primera conexión de WhatsApp para empezar.', r: false },
     { id: 2, t: 'Nuevo tutorial disponible', d: 'Aprende a crear flujos con IA en 5 minutos.', r: false }])
-  const unread = notifs.filter(n => !n.r).length
+  const [nl] = useStore('notif_list', [])
+  const unread = nl.filter(n => !n.r).length
   return <aside className={'side' + (col ? ' col' : '') + (mopen ? ' mopen' : '')}>
     <div className="side-top"><NavLink to="/welcome" className="logo"><img src={theme === 'dark' ? '/leona-white.png' : '/leona-color.png'} alt="Leona" /></NavLink>
       <button className="collapse" onClick={() => setCol(!col)} title="Contraer menú">{col ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button></div>
@@ -75,11 +77,7 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
         {theme === 'dark' ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} />}
         <div><div className="t">{theme === 'dark' ? 'Claro' : 'Oscuro'}</div><div className="k">Ctrl+M · ⌘M</div></div>
         <div className="bell" ref={nref} onClick={e => { e.stopPropagation(); setNotif(!notifOpen) }}><Bell size={16} />{unread > 0 && <span className="dot-badge" />}
-          {notifOpen && <div className="dd-menu notif card" style={{ position: 'absolute', left: -150, bottom: 26, top: 'auto', width: 290, cursor: 'default' }} onClick={e => e.stopPropagation()}>
-            <div className="row" style={{ padding: '6px 8px' }}><b style={{ color: 'var(--text)' }}>Notificaciones</b><button className="sp" /><button className="small" style={{ color: 'var(--p)' }} onClick={() => setNotifs(n => n.map(x => ({ ...x, r: true })))}>Marcar todo leído</button></div>
-            {notifs.map(n => <div key={n.id} className="dd-item" style={{ alignItems: 'flex-start', whiteSpace: 'normal', color: 'var(--text)' }} onClick={() => setNotifs(l => l.map(x => x.id === n.id ? { ...x, r: true } : x))}>
-              <span style={{ width: 7, height: 7, borderRadius: 9, marginTop: 5, flexShrink: 0, background: n.r ? 'transparent' : 'var(--p)' }} /><div><div className="bold" style={{ fontSize: 12 }}>{n.t}</div><div className="small muted">{n.d}</div></div></div>)}
-          </div>}</div>
+          {notifOpen && <NotifPanel />}</div>
       </div>
       <div className="user" ref={uref} onClick={() => setUser(!userOpen)}>
         <div className="avatar">PM</div><div className="info" style={{ minWidth: 0 }}><div className="n">Pablo Monja Suclupe</div><div className="e">k4el.ux@gmail.com</div></div><ChevronDown size={15} className="chev" style={{ marginLeft: 'auto', color: 'var(--muted)' }} />
@@ -105,6 +103,17 @@ function Sidebar({ col, setCol, mopen, setMopen }) {
   </aside>
 }
 
+function MobileNav({ onMenu }) {
+  const loc = useLocation(); const on = p => loc.pathname.startsWith(p)
+  return <nav className="mb-nav">
+    <NavLink to="/welcome" title="Dashboard"><span className="sq" style={{ background: on('/welcome') ? 'linear-gradient(135deg,#a855f7,#7c3aed)' : 'transparent', color: on('/welcome') ? '#fff' : '#8f8a9e' }}><LayoutGrid size={15} fill="currentColor" /></span></NavLink>
+    <NavLink to="/facebook/campaigns" title="Facebook"><span className="sq" style={{ background: '#1d4ed8', fontWeight: 800, fontSize: 15, fontFamily: 'Arial,sans-serif', opacity: on('/facebook') ? 1 : .85 }}>f</span></NavLink>
+    <NavLink to="/chats" title="Chats"><MessagesSquare size={24} strokeWidth={1.7} color={on('/chats') ? '#fff' : '#8f8a9e'} /></NavLink>
+    <NavLink to="/connections" title="Conexiones"><QrCode size={22} strokeWidth={1.7} color={on('/connections') ? '#fff' : '#8f8a9e'} /></NavLink>
+    <button onClick={onMenu} title="Menú"><MenuIcon size={23} strokeWidth={1.7} /></button>
+  </nav>
+}
+
 export default function App() {
   const [col, setCol] = useStore('sidecol', false)
   const [mopen, setMopen] = useState(false)
@@ -118,7 +127,8 @@ export default function App() {
   if (loc.pathname === '/rewards') return <Rewards />
   return <div className="app">
     <button className="mob-btn" onClick={() => setMopen(!mopen)}><MenuIcon size={18} /></button>
-    <Sidebar col={col} setCol={setCol} mopen={mopen} setMopen={setMopen} />
+    <Sidebar col={col && !(typeof window !== 'undefined' && window.innerWidth <= 760)} setCol={setCol} mopen={mopen} setMopen={setMopen} />
+    {mopen && <div onClick={() => setMopen(false)} style={{ position: 'fixed', inset: 0, zIndex: 85, background: 'rgba(0,0,0,.55)' }} />}
     <main className="main" style={full ? { overflow: 'hidden' } : null}>
       <Routes>
         <Route path="/" element={<Navigate to="/welcome" />} />
@@ -143,5 +153,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/welcome" />} />
       </Routes>
     </main>
+    <MobileNav onMenu={() => setMopen(true)} />
   </div>
 }

@@ -62,8 +62,8 @@ const REWARDS = [
   { min: 100000, lbl: '100 mil', title: 'Kit Placa Premium', items: ['Placa Premium', 'Pin 100k (para grudar na placa)', 'Carta comemorativa', ['Acesso ao Grupo VIP + Eventos privados futuros']], price: 297, extra: 346.5, img: '/rewards/r2.jpg' },
   { min: 250000, lbl: '250 mil', title: 'Pin 250k + Carta', items: ['Pin 250k', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r3.jpg' },
   { min: 500000, lbl: '500 mil', title: 'Pin 500k + Carta', items: ['Pin 500k', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r4.jpg' },
-  { min: 1000000, lbl: '1 milhão', title: 'Pin 1M + Carta', items: ['Pin 1M', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r4.jpg', hue: 30 },
-  { min: 2000000, lbl: '2 milhões', title: 'Pin 2M + Carta', items: ['Pin 2M', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r4.jpg', hue: -40 },
+  { min: 1000000, lbl: '1 milhão', title: 'Pin 1M + Carta', items: ['Pin 1M', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r5.jpg' },
+  { min: 2000000, lbl: '2 milhões', title: 'Pin 2M + Carta', items: ['Pin 2M', 'Carta comemorativa'], price: 29.9, extra: 54.5, img: '/rewards/r6.jpg' },
 ]
 
 export function Rewards() {

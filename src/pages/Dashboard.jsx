@@ -4,6 +4,7 @@ import { Users, DollarSign, ShoppingBag, Trophy, CircleCheck, ShoppingCart, Gem,
 import { useStore, Modal, useToast, uid, downloadCSV, Confirm } from '../ui'
 import { AssinarModal } from './Billing'
 import { HuellaModal } from './Huella'
+import MobileDash, { useMobile } from './dash/MobileDash'
 import { Seg, Kpi, Section, EmptyBox, PeriodSelect, MultiSelect, CurrencySelect, IconGroup, LineChart, BarChart, Heatmap, InfoTip, fmtMoney, ddmm } from './dash/parts'
 
 const pad = n => String(n).padStart(2, '0')
@@ -41,6 +42,7 @@ export default function Dashboard() {
   const [modal, setModal] = useState(null); const [del, setDel] = useState(null)
   const [, setTick] = useState(0)
   const P = usePeriod(period, range)
+  const mobile = useMobile()
 
   const connNames = useMemo(() => [...new Set([...conns.map(c => c.name).filter(Boolean), ...sales.map(s => s.instance).filter(Boolean)])], [conns, sales])
   const prodNames = useMemo(() => [...new Set(sales.map(s => s.product).filter(Boolean))], [sales])
@@ -55,6 +57,7 @@ export default function Dashboard() {
   const h = new Date().getHours()
   const greet = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches'
 
+  if (mobile) return <MobileDash {...{ P, period, setPeriod, range, setRange, selConn, setSelConn, selProd, setSelProd, connNames, prodNames, fs, contacts, chats, cur, inP, setSaved }} />
   return <div className="db">
     <div className="db-card db-hero">
       <div style={{ minWidth: 0 }}>
