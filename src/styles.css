@@ -1712,3 +1712,15 @@ html.dark .lm .fe-seg{background:#101727;border-color:#374151}
 html:not(.dark) .lm .fe-lb{color:#6b7280}
 .lm .pv-l code,.lm .vp-l code{color:#a78bfa}
 .db-mi.on,.dd-menu button.on,.sel-menu .on,.opt.on{background:#005ae3!important;color:#fff}
+/* ===== Botones principales en azul #005ae3 ===== */
+:root{--btnb:#005ae3;--btnbh:#004fc7}
+.btn-p,.db-btn.v,.lb2.p,.kb-btn.p,.lp-btn.p,.lp-btn.on,.fbx-btn:not(.g),.fbm-b2.p,.ai-f .r .snd,.fe-drop .bt,.md-btn,.tr-go,
+.seg button.on,.db-seg button.on,.fe-seg button.on,.fl-chip.on,.st-tabs button.on,.fe-tb.p,.fbx-sc{background:var(--btnb)!important;border-color:var(--btnb)!important;color:#fff!important;box-shadow:none}
+.btn-p:hover,.db-btn.v:hover,.lb2.p:hover:not(:disabled),.kb-btn.p:hover,.lp-btn.p:hover,.fbx-btn:not(.g):hover,.fbm-b2.p:hover,.md-btn:hover{background:var(--btnbh)!important;border-color:var(--btnbh)!important}
+/* ===== Opciones de menús de filo a filo ===== */
+.db-menu,.l-selm,.fbx-menu{padding:0!important;overflow-x:hidden}
+.db-mi,.l-opt,.fbx-menu button{border-radius:0!important;height:40px;padding:0 14px!important;font-size:13.3px}
+.db-mi.on,.l-opt.on,.fbx-menu button.on{background:#005ae3!important;color:#fff}
+.db-mi:hover:not(.on),.l-opt:hover:not(.on),.fbx-menu button:hover:not(.on){background:var(--btn2h)}
+.db-btn:not(:disabled),.bg-purple{background:var(--btnb)!important;color:#fff}
+.db-btn:not(:disabled):hover,.bg-purple:hover{background:var(--btnbh)!important;box-shadow:0 6px 18px rgba(0,90,227,.35)}
