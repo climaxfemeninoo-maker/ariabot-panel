@@ -32,9 +32,9 @@ export const BLOCKS = {
   llamar: ['Llamar', '#0d9488', Phone, 'Realiza una llamada de voz'],
   kie: ['Integración Kie.ai', '#be185d', Sparkles, 'Genera imágenes o videos con IA'],
 }
-const N = (type, x, y) => ({ id: uid(), type, x, y, title: BLOCKS[type][0], desc: BLOCKS[type][3], stats: [0, 0, 0] })
+const N = (type, x, y) => ({ id: uid(), type, x, y, title: type === 'inicio' ? 'Início' : BLOCKS[type][0], desc: '', actions: [], stats: [0, 0, 0] })
 const seedFlow = (name, status, blocks, date) => {
-  const nodes = [N('inicio', 80, 200), ...blocks.map((b, i) => N(b, 330 + Math.floor(i / 2) * 240, 90 + (i % 2) * 220))]
+  const nodes = [N('inicio', 80, 200), ...blocks.map((b, i) => N(b, 420 + Math.floor(i / 2) * 340, 60 + (i % 2) * 230))]
   return { id: uid(), name, status, folder: null, updated: date, nodes, edges: nodes.slice(1).map((n, i) => ({ id: uid(), from: nodes[i].id, to: n.id })) }
 }
 export const SEED_FLOWS = () => [
