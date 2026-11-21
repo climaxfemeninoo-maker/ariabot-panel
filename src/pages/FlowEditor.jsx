@@ -247,7 +247,7 @@ export default function FlowEditor() {
   const [flows, setFlows] = useStore('flows', [])
   const flow = flows.find(f => f.id === id)
   const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false); const [boot, setBoot] = useState(true); const clickRef = useRef(null); const [hovE, setHovE] = useState(null)
-  useEffect(() => { const t = setTimeout(() => setBoot(false), 560); return () => clearTimeout(t) }, [])
+  useEffect(() => { const t = setTimeout(() => setBoot(false), 950); return () => clearTimeout(t) }, [])
   const [panel, setPanel] = useState(null); const [pq, setPq] = useState(''); const [sel, setSel] = useState(null); const [run, setRun] = useState(null)
   const [link, setLink] = useState(null); const [edit, setEdit] = useState(null); const [rename, setRename] = useState(false); const [modal, setModal] = useState(null)
   const box = useRef(); const act = useRef(null); const world = useRef(); const [ports, setPorts] = useState({}); const [del, setDel] = useState(null)
@@ -302,10 +302,20 @@ export default function FlowEditor() {
       <button className="fe-hb" onClick={() => { setFlow(f => ({ ...f, status: 'archivado' })); toast('Flujo archivado'); nav('/flows') }}><Archive size={14} />Archivar</button>
     </div>
     <div className="fe-wrap">
-      {boot && <div className="fe-skel"><svg viewBox="0 0 900 420" preserveAspectRatio="xMidYMid meet">
-        <path className="sk-e" d="M190 210 C 270 210, 280 120, 360 120" /><path className="sk-e" d="M190 210 C 270 210, 280 300, 360 300" /><path className="sk-e" d="M540 120 C 610 120, 620 210, 690 210" /><path className="sk-e" d="M540 300 C 610 300, 620 210, 690 210" />
-        {[[40, 170, 150, 80, 0], [360, 70, 180, 100, .12], [360, 250, 180, 100, .24], [690, 160, 170, 100, .36]].map(([x, y, w, h, d], i) => <g key={i} className="sk-n" style={{ animationDelay: d + 's' }}><rect x={x} y={y} width={w} height={h} rx="12" /><rect className="sk-l" x={x + 14} y={y + 16} width={w * .5} height="9" rx="4.5" /><rect className="sk-l" x={x + 14} y={y + 36} width={w - 28} height="7" rx="3.5" /><rect className="sk-l" x={x + 14} y={y + 52} width={w * .62} height="7" rx="3.5" /></g>)}
-      </svg></div>}
+      {boot && <div className="fe-skel">{(() => { const W = 120, H = 54, cx = c => c * 180, ry = r => [45, 180, 315][r]
+        const N = [[0, 1, '#22a35a'], [1, 1, '#2f5fc4'], [2, 1, '#2a6f9e'], [3, 0, '#28468c'], [4, 0, '#6366f1'], [5, 0, '#14b8a6'], [6, 0, '#10b981'], [3, 1, '#f97316'], [4, 1, '#f43f5e'], [5, 1, '#06b6d4'], [6, 1, '#4ade80'], [3, 2, '#f97316'], [4, 2, '#a855f7'], [5, 2, '#3b82f6'], [6, 2, '#94a3b8']]
+        const out = (c, r) => [cx(c) + W, ry(r)], inn = (c, r) => [cx(c), ry(r)]
+        const cv = ([x1, y1], [x2, y2]) => { const d = Math.max(30, (x2 - x1) / 2); return `M${x1},${y1} C${x1 + d},${y1} ${x2 - d},${y2} ${x2},${y2}` }
+        const E = [[0, 1, 1, 1], [1, 1, 2, 1], [2, 1, 3, 0], [2, 1, 3, 1], [2, 1, 3, 2], ...[0, 1, 2].flatMap(r => [[3, r, 4, r], [4, r, 5, r], [5, r, 6, r]])]
+        const D = [[4, 0, 4, 1], [5, 0, 5, 1], [6, 0, 6, 1], [5, 1, 5, 2], [6, 1, 6, 2]]
+        return <svg viewBox="-20 0 1260 370" preserveAspectRatio="xMidYMid meet">
+          {E.map(([a, b, c, d], k) => <path key={'e' + k} className="sk-e" style={{ animationDelay: k * .03 + 's' }} d={cv(out(a, b), inn(c, d))} />)}
+          {D.map(([a, b, c, d], k) => <path key={'d' + k} className="sk-e" d={`M${out(a, b)[0]},${out(a, b)[1]} L${inn(c, d)[0]},${inn(c, d)[1]}`} />)}
+          {N.map(([c, r, col], k) => <g key={k} className="sk-n" style={{ animationDelay: (c * .07 + r * .03) + 's' }} transform={`translate(${cx(c)},${ry(r) - H / 2})`}>
+            <rect width={W} height={H} rx="7" className="bx" /><path d={`M0,7 a7,7 0 0 1 7,-7 h${W - 14} a7,7 0 0 1 7,7 v2 h-${W} z`} fill={col} />
+            <rect x="14" y="20" width="74" height="6" rx="3" className="ln" /><rect x="14" y="33" width="48" height="6" rx="3" className="ln" />
+            <circle cx="0" cy={H / 2} r="3.5" className="pt" /><circle cx={W} cy={H / 2} r="3.5" className="pt" /></g>)}
+        </svg> })()}</div>}
       <div className="fe-cv" ref={box} style={{ backgroundSize: `${45 * view.k}px ${45 * view.k}px`, backgroundPosition: `${view.x}px ${view.y}px` }}
         onMouseDown={e => { if (e.target === box.current || e.target.tagName === 'svg') { act.current = { t: 'pan', sx: e.clientX, sy: e.clientY, vx: view.x, vy: view.y }; box.current.classList.add('panning'); setSel(null); if (panel === 'tools') setPanel(null) } }}>
         <div ref={world} className={'fe-world' + (boot ? ' boot' : ' in')} style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`, transformOrigin: '0 0' }}>
@@ -339,7 +349,7 @@ export default function FlowEditor() {
               const Out = (k = 'main', st) => P(k, undefined, { top: '50%', marginTop: -14, right: -16, ...st })
               if (n.type === 'agente') { const paths = (cf.act || 'give') === 'give' ? (cf.paths || '').split(',').map(x => x.trim()).filter(Boolean) : []
                 return <div key={n.id} className={'nv-ag' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
-                  <div className="circ" onMouseDown={drag}><MI n="spark" size={48} /><b>Agente IA</b><span className="fe-port in2" />{In()}{(cf.act || 'give') === 'take' && Out()}</div>
+                  <div className="circ" onMouseDown={drag}><span className="halo" /><span className="core"><MI n="spark" size={44} /><b>Agente IA</b></span><span className="fe-port in2" />{In()}{(cf.act || 'give') === 'take' && Out()}</div>
                   {A}
                   <div className="cap">IA responde consultas o avanza por un camino</div>
                   {paths.length > 0 && <div className="outs">{paths.map((p, i) => { const pay = /pago|\$|pay|cobro/i.test(p); return <div key={i} className={'op' + (pay ? ' pay' : '')}><i />{pay && <span className="cd">💳</span>}{p}{pay && <MI n="clip" size={20} color="#9ca3af" />}{Out('p' + i, { right: -17 })}</div> })}</div>}

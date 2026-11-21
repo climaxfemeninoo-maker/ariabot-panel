@@ -314,7 +314,7 @@ export function GenericNodeModal({ node, def, color, icon, onClose, onSave, flow
   const set = p => setC(x => ({ ...x, ...p }))
   const fs = def.fields.filter(f => !f.when || f.when(c))
   const req = fs.filter(f => f.req).every(f => f.t === 'phone' ? (c[f.k]?.n || '').replace(/\D/g, '').length >= 6 : (c[f.k] || '').toString().trim())
-  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm" style={{ maxWidth: 540, maxHeight: '94vh' }}>
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm" style={{ maxWidth: 540, maxHeight: '94vh', '--nc': color }}>
     <div className="fe-mh"><span className="ic" style={{ background: color }}>{icon}</span><h2>{def.title}</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
     <div className="lm-b" style={{ padding: '20px 24px 0', overflowY: 'auto' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>{fs.map((f, i) => <div key={f.k || i} style={f.half ? { display: 'inline-block' } : null}><Field f={f} c={c} set={set} s={s} flowId={flowId} /></div>)}</div>
