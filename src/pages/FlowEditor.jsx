@@ -142,7 +142,7 @@ function MessageModal({ node, onClose, onSave }) {
         <div className="fe-bh"><I size={16} color={c} />{t2 || l}<span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}><button style={{ cursor: 'grab' }} title="Arrastrar"><GripVertical size={16} /></button><button onClick={() => setActs(x => x.filter((_, j) => j !== i))}><Trash2 size={16} /></button></span></div>
         {a.type === 'text' && <><div className="fe-lb">Contenido del mensaje *</div><Editor value={a.text} onChange={v => set(i, { text: v })} ph="Escriba el contenido del mensaje..." magic={() => set(i, { showAi: !a.showAi })} />
           {a.showAi && <><div className="fe-lb" style={{ marginTop: 14 }}>IA<span style={{ marginLeft: 'auto', fontSize: 12, color: '#60a5fa' }}>Administrar claves</span></div><LSelect className="l-in" bold value={a.aiKey || ''} onChange={v => set(i, { aiKey: v })} placeholder="Selecciona una IA..." options={[]} /></>}
-          <Range label='Retraso de "escribiendo"' v={a.typing} max={60} set={v => set(i, { typing: v })} /><div className="fe-help">Tiempo que WhatsApp mostrará "escribiendo" antes de enviar este mensaje.</div><DelTag a={a} set={p => set(i, p)} tags={tagNames} /></>}
+          <Range label='Retraso de "escribiendo"' v={a.typing ?? 3} max={60} set={v => set(i, { typing: v })} /><div className="fe-help">Tiempo que WhatsApp mostrará "escribiendo" antes de enviar este mensaje.</div><DelTag a={a} set={p => set(i, p)} tags={tagNames} /></>}
         {['image', 'video', 'audio', 'file', 'sticker'].includes(a.type) && <Media a={a} set={p => set(i, p)} kind={a.type} tags={tagNames} />}
         {a.type === 'delay' && <><div className="fe-lb" style={{ color: 'var(--text)' }}>Retraso entre mensajes</div>
           <div style={{ display: 'flex', fontSize: 13.3, color: 'var(--soft)' }}><span>0 s</span><b style={{ margin: '0 auto', color: 'var(--text)' }}>{a.min} - {a.max} s</b><span>120 s</span></div>
@@ -385,7 +385,7 @@ export default function FlowEditor() {
                 {hasOut && (n.type === 'seguimiento' ? P('main', undefined, { top: 'auto', bottom: -16, right: 'auto', left: '50%', marginLeft: -14, marginTop: 0, background: 'linear-gradient(145deg,#10b981,#059669)' }) : Out())}</div> }
             if (ROUND[n.type]) { const [cc, lbl] = ROUND[n.type]; const cf = n.cfg || {}
               return <div key={n.id} className={'fe-rn' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': cc }} {...nodeEv}>
-                <div className={'circ ' + n.type} onMouseDown={drag}>{n.type === 'agente' ? <img src="/leona-mark.png" alt="" /> : <I size={30} strokeWidth={2.2} />}<small>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</small>
+                <div className={'circ ' + n.type} onMouseDown={drag}><I size={30} strokeWidth={2.2} /><small>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</small>
                   <span className="fe-port in" data-port={n.id + '|in'} />{outs && outs.length === 0 ? null : P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}{acts}</div>{stats}</div> }
             const rows = outs || []; const pp = rows.filter(o => o.k === 'success' || o.k === 'failure'); const lr = rows.filter(o => !pp.includes(o))
             let body
@@ -416,7 +416,7 @@ export default function FlowEditor() {
               body = <><div className="fe-nd lc" style={{ minHeight: 30 }}>{inner || desc}</div>{P('main', undefined, { bottom: 22 })}</> }
             else body = <><div className="fe-items">{n.type === 'mensaje' ? ((n.actions || []).length ? n.actions.slice(0, 4).map(a => { const [l, AI, ac] = ACT[a.type] || ACT.text; return <div key={a.id} className="fe-it"><AI size={18} color={ac} /><span>{a.type === 'text' ? (a.text || 'Mensaje vacío') : a.type === 'delay' ? `Esperar ${a.sec || a.time || 3}s` : (a.file?.name || a.name || '')}</span></div> }) : <div className="fe-it em"><MessageSquare size={18} color="#3b82f6" /><span>Sin mensajes · clic para editar</span></div>)
               : <div className="fe-chip" style={{ '--c': c }}><I size={16} /><span>{desc || 'Clic para configurar'}</span></div>}{(n.actions || []).length > 4 && <small className="fe-more">+{n.actions.length - 4} más</small>}</div>{P('main', undefined, {})}</>
-            return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }} {...nodeEv}>
+            return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: g ? g[1] : c }} {...nodeEv}>
             <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: g ? `linear-gradient(90deg,${g[0]},${g[1]})` : `linear-gradient(90deg,${c},${c}cc)` }} onMouseDown={drag}>
               {!tpl && <span className="ic">{n.type === 'ariapay' ? <img src="/leona-mark.png" alt="" style={{ width: 26, height: 26 }} /> : <I size={20} />}</span>}<b>{n.type === 'inicio' ? 'Inicio' : n.title || B(n.type)[0]}</b>{acts}</div>
             {stats}

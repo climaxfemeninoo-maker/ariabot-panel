@@ -2918,3 +2918,13 @@ html:not(.dark) .mo-card{background:#fff;border-color:#e5e7eb}html:not(.dark) .m
 .fe-rn .fe-ns span{font-size:11px!important}.fe-rn .fe-ns b{font-size:16px!important}
 .fe-rn .fe-port.in{left:-8px!important}
 .fe-rn .circ.agente{background:radial-gradient(circle at 40% 30%,#1fc48f,#0b7a55)!important;border:2.5px solid #34d399!important;box-shadow:0 0 18px rgba(52,211,153,.55)!important;overflow:hidden}.fe-rn .circ.agente img{inset:14px!important;width:calc(100% - 28px)!important;height:calc(100% - 44px)!important;object-fit:contain!important;border-radius:0!important;filter:brightness(0) invert(1)!important}
+/* Limpieza final nodos (igual Leona) */
+html.dark .fe-node,.fe-node{background:#15112d!important}
+.fe-node .fe-ns,.fe-node .fe-nd{background:transparent!important}
+.fe-nh .ic svg,.fe-nh .ic{color:#fff!important;opacity:1!important}
+.fe-nh .ic svg{stroke-width:2.2}
+.fe-nh .acts button{color:#fff!important;opacity:.95}
+html.dark .fe-cv{background-color:#1b1833!important;background-image:radial-gradient(circle,#3b3760 1.2px,transparent 1.3px)!important}
+html.dark .fe-wrap,html.dark .fe{background:#1b1833!important}
+.lc-chip{background:#1d2a5c!important;border-color:#2c3f86!important}
+.fe-rn .circ.agente{color:#fff!important}.fe-rn .circ.agente svg{width:36px;height:36px}
