@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, ListFilter, SlidersHorizontal, X, Check, ArrowLeft, Send, Smartphone, Plus, ChevronRight, ChevronDown, ChevronLeft, Lock, Copy, LogOut, Award, Archive, FolderPlus, LayoutGrid, RefreshCw, ArrowUpDown, BarChart3, QrCode, ShieldCheck, CheckCheck, UserCheck, CircleCheck, RotateCcw } from 'lucide-react'
+import { Search, ListFilter, SlidersHorizontal, X, Check, ArrowLeft, Send, Smartphone, Plus, ChevronRight, ChevronDown, ChevronLeft, Lock, Copy, LogOut, Award, Archive, FolderPlus, LayoutGrid, RefreshCw, ArrowUpDown, BarChart3, QrCode, ShieldCheck, CheckCheck, UserCheck, CircleCheck, RotateCcw, Info } from 'lucide-react'
+import { ChatInfo, ChatActions } from './ChatInfo'
 import { useStore, useToast, uid, nowStr } from '../ui'
 import { Sheet } from './dash/MobileDash'
 import { HuellaModal } from './Huella'
@@ -34,7 +35,7 @@ export function MobileChats() {
   const [openId, setOpenId] = useStore('chat_open', null)
   const [tab, setTab] = useState('espera'); const [q, setQ] = useState(''); const [quick, setQuick] = useState('Todos'); const [sheet, setSheet] = useState(null)
   const blank = { q: '', agent: '', conns: [], deps: [], tags: [], crm: '' }; const [f, setF] = useState(blank); const [d, setD] = useState(blank); const [tq, setTq] = useState('')
-  const [sel, setSel] = useState(null); const [txt, setTxt] = useState(''); const end = useRef()
+  const [sel, setSel] = useState(null); const [txt, setTxt] = useState(''); const end = useRef(); const [mInfo, setMInfo] = useState(false)
   useEffect(() => { if (openId) { const c = chats.find(x => x.id === openId); if (c) { setTab(c.status); setSel(c.id) } setOpenId(null) } }, [openId])
   const cur = chats.find(c => c.id === sel)
   useEffect(() => { end.current?.scrollIntoView() }, [cur?.msgs.length])
@@ -51,9 +52,9 @@ export function MobileChats() {
   if (cur) return <div style={{ position: 'fixed', inset: 0, zIndex: 95, background: '#0a0d13', color: '#fff', display: 'flex', flexDirection: 'column' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 12px', borderBottom: '1px solid #1b1f27' }}><button onClick={() => setSel(null)} style={{ color: '#fff', display: 'grid' }}><ArrowLeft size={22} /></button>
       <span className="mv-av" style={{ width: 36, height: 36, background: COLORS[cur.name.length % 6] }}>{cur.name[0]?.toUpperCase()}</span><div style={{ minWidth: 0, flex: 1 }}><div style={{ fontSize: 14.5, fontWeight: 600 }}>{cur.name}</div><div style={{ fontSize: 11.5, color: '#8f8a9e' }}>{cur.phone}</div></div>
-      {cur.status === 'espera' && <button className="mv-rb" title="Atender" onClick={() => move('atencion', 'Chat asignado a ti')}><UserCheck size={18} /></button>}
-      {cur.status !== 'resueltos' ? <button className="mv-rb" title="Resolver" style={{ background: '#14532d' }} onClick={() => move('resueltos', 'Chat resuelto')}><CircleCheck size={18} /></button> : <button className="mv-rb" title="Reabrir" onClick={() => move('espera', 'Chat reabierto')}><RotateCcw size={17} /></button>}</div>
-    <div style={{ flex: 1, overflowY: 'auto', padding: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <ChatActions compact c={cur} upd={fn => upd(cur.id, fn)} move={move} /><button className="mv-rb" title="Información" onClick={() => setMInfo(true)}><Info size={18} /></button></div>
+    {mInfo && <div className="ci-mob"><ChatInfo c={cur} upd={fn => upd(cur.id, fn)} onClose={() => setMInfo(false)} /></div>}
+    <div className="wa-bg" style={{ flex: 1, overflowY: 'auto', padding: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
       {cur.msgs.length === 0 && <div style={{ margin: 'auto', fontSize: 13, color: '#8f8a9e' }}>Envía el primer mensaje.</div>}
       {cur.msgs.map((m, i) => <div key={i} className={'ch-m ' + m.f} style={{ maxWidth: '82%' }}>{m.x}<div className="t">{m.t}{m.f === 'out' && <CheckCheck size={12} />}</div></div>)}<div ref={end} /></div>
     {qrs.length > 0 && <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px 8px' }}>{qrs.map(r => <button key={r.id} className="mv-chip" style={{ height: 28, fontSize: 12, whiteSpace: 'nowrap', color: '#93c5fd' }} onClick={() => send(r.actions.filter(a => a.text).map(a => a.text).join('\n') || r.short)}>#{r.short}</button>)}</div>}

@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { MessageCircle, MessageSquare, Search, Plus, Filter, CalendarDays, Calendar, Send, Paperclip, Smile, CheckCheck, MoreVertical, UserCheck, CircleCheck, Trash2, ChevronLeft, ChevronRight, RotateCcw, X, User, ArrowLeft, Save, Zap, ChevronDown, Check } from 'lucide-react'
+import { MessageCircle, MessageSquare, Search, Plus, Filter, CalendarDays, Calendar, Send, Paperclip, Smile, CheckCheck, MoreVertical, UserCheck, CircleCheck, Trash2, ChevronLeft, ChevronRight, RotateCcw, X, User, ArrowLeft, Save, Zap, ChevronDown, Check, PanelRight, Ban } from 'lucide-react'
 import { useStore, useToast, uid, useOutside, Menu } from '../ui'
 import { LModal, LSelect } from './leona'
+import { ChatInfo, ChatActions } from './ChatInfo'
 
 const COLORS = ['#005ae3', '#22c55e', '#f59e0b', '#ec4899', '#06b6d4', '#ef4444']
 const hhmm = () => new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
@@ -21,7 +22,7 @@ export default function Chats() {
   const [qrs] = useStore('quick_replies', [])
   const [tab, setTab] = useState('espera'); const [chip, setChip] = useState('Todo'); const [q, setQ] = useState('')
   const [sel, setSel] = useState(null); const [txt, setTxt] = useState(''); const [hide, setHide] = useState(false); const [quick, setQuick] = useState(false)
-  const [modal, setModal] = useState(null)
+  const [modal, setModal] = useState(null); const [info, setInfo] = useStore('chat_info_open', true)
   const blankF = { resp: '', from: '', to: '', crm: 'all', tags: [], conns: [], deps: [] }
   const [flt, setFlt] = useState(blankF)
   const end = useRef()
@@ -87,25 +88,25 @@ export default function Chats() {
           <div className="ch-av" style={{ background: COLORS[cur.name.length % 6] }}>{cur.name[0]?.toUpperCase()}</div>
           <div style={{ minWidth: 0 }}><div style={{ fontSize: 14, fontWeight: 700 }}>{cur.name}</div><div style={{ fontSize: 11.5, color: 'var(--muted)' }}>{cur.phone}{cur.agent ? ' · ' + cur.agent : ''}</div></div>
           <span style={{ marginLeft: 'auto' }} />
-          {cur.status !== 'atencion' && cur.status !== 'resueltos' && <button className="lb2 g sm" onClick={() => move('atencion', 'Chat asignado a ti')}><UserCheck size={14} />Atender</button>}
-          {cur.status !== 'resueltos' ? <button className="lb2 sm" style={{ background: '#16a34a', color: '#fff' }} onClick={() => move('resueltos', 'Chat resuelto')}><CircleCheck size={14} />Resolver</button>
-            : <button className="lb2 g sm" onClick={() => move('espera', 'Chat reabierto')}><RotateCcw size={14} />Reabrir</button>}
+          <ChatActions c={cur} upd={fn => upd(cur.id, fn)} move={move} />
+          <button className={'ch-ib' + (info ? ' on' : '')} title={info ? 'Ocultar información' : 'Ver información'} onClick={() => setInfo(!info)}><PanelRight size={17} /></button>
           <Menu right trigger={<button className="ch-ib"><MoreVertical size={17} /></button>} items={[{ icon: <Trash2 size={14} />, label: 'Eliminar chat', danger: true, onClick: () => { setChats(c => c.filter(x => x.id !== cur.id)); setSel(null); toast('Chat eliminado') } }]} />
         </div>
-        <div className="ch-msgs">
+        <div className="ch-msgs wa-bg">
           {cur.msgs.length === 0 && <div style={{ margin: 'auto', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>Envía el primer mensaje para iniciar la conversación.</div>}
           {cur.msgs.map((m, i) => <div key={i} className={'ch-m ' + m.f}>{m.x}<div className="t">{m.t}{m.f === 'out' && <CheckCheck size={12} />}</div></div>)}
           <div ref={end} /></div>
         <div style={{ position: 'relative' }}>{quick && <div className="l-selm" style={{ top: 'auto', bottom: 6, left: 14, right: 'auto', width: 340 }}>{(qrs.length ? qrs.map(r => ['#' + r.short, r.actions.filter(x => x.text).map(x => x.text).join('\n') || r.actions.map(x => x.file?.name).join(', ')]) : QUICK.map(x => [x, x])).map(([l, x]) => <button key={l} className="l-opt" style={{ fontWeight: 500 }} onClick={() => send(x)}><Zap size={13} color="#f59e0b" />{l}</button>)}</div>}</div>
-        <div className="ch-comp">
+        {cur.blocked ? <div className="ch-blk"><Ban size={15} />Este contacto está bloqueado. Desbloquéalo para enviar mensajes.</div> : <div className="ch-comp">
           <button className="ch-ib" onClick={() => setTxt(x => x + '😊')}><Smile size={18} /></button>
           <button className="ch-ib" onClick={() => toast('Adjuntar archivo disponible al conectar WhatsApp', 'info')}><Paperclip size={18} /></button>
           <button className="ch-ib" style={{ color: '#f59e0b' }} title="Respuestas rápidas" onClick={() => setQuick(!quick)}><Zap size={18} /></button>
           <input className="l-in" value={txt} onChange={e => setTxt(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Escribe un mensaje…" />
           <button className="lb2 p" style={{ minWidth: 0, padding: '0 13px' }} onClick={() => send()}><Send size={15} /></button>
-        </div>
+        </div>}
       </> : <div className="ch-sel"><div className="bx"><MessageSquare size={36} strokeWidth={1.8} /></div><h3>Seleccione un chat</h3><p>Elija una conversación de la lista para empezar a atender</p></div>}
     </div>
+    {cur && info && <ChatInfo key={cur.id} c={cur} upd={fn => upd(cur.id, fn)} />}
 
     <LModal open={modal === 'sched'} onClose={() => setModal(null)} title="Mensajes programados" icon={<Calendar size={19} />} footerBg
       footer={<button className="lb2 g" style={{ minWidth: 135 }} onClick={() => setModal(null)}>Cerrar</button>} bodyStyle={{ padding: '28px 24px 29px' }}>

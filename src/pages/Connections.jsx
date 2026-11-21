@@ -37,7 +37,6 @@ export default function Connections() {
   return <div className="lp">
     <div className="lp-hd" style={{ alignItems: 'center' }}><Plug size={21} strokeWidth={2} style={{ marginTop: 0, marginLeft: 4 }} /><h1 style={{ marginTop: 0, fontSize: 19.5 }}>Conexiones</h1>
       <div className="r" style={{ gap: 10 }}>
-        <button className="lp-btn" onClick={() => setMod({ t: 'cloud' })}><Cloud size={15} />API Oficial</button>
         <button className="cn-btn" onClick={() => setMod({ t: 'new', name: '', type: 'qr', cur: 'auto' })}><Plus size={14} />Nueva conexión</button></div></div>
     <div className="cn-stats">
       <div className="cn-st"><div><span>Conectadas</span><b>{on}</b></div><span className="cn-dot" style={{ background: 'rgba(34,197,94,.14)' }}><i style={{ background: '#22c55e' }} /></span></div>
@@ -55,17 +54,19 @@ export default function Connections() {
     </div>
 
     {/* Nueva conexión */}
-    {mod?.t === 'new' && <LModal open onClose={() => setMod(null)} title="Nueva conexión" desc="Conecte un número de WhatsApp" icon={<Plug size={19} />}
+    {mod?.t === 'new' && <LModal open onClose={() => setMod(null)} title="Nueva conexión" desc="Conecte un número de WhatsApp" icon={<Plug size={19} />} width={540} bodyStyle={{ overflow: 'visible' }}
       footer={<><button className="lb2 g" onClick={() => setMod(null)}>Cancelar</button><button className="lb2 p" disabled={!mod.name.trim() || (mod.type === 'api' && apis.length >= MAX_API)} onClick={() => {
         const c = mod.type === 'qr' ? { id: uid(), type: 'qr', name: mod.name.trim(), phone: '', status: 'off', verified: true, cur: mod.cur, created: nowStr() }
           : { id: uid(), type: 'api', name: mod.name.trim(), phone: '+51 9' + String(Math.floor(Math.random() * 1e8)).padStart(8, '0'), status: 'on', waba: 'APPROVED', tier: 'TIER_250', calls: false, free: true, reg: true, cur: mod.cur, days: 0, created: nowStr() }
         setConns(x => [...x, c]); toast(mod.type === 'qr' ? 'Conexión creada · genera el QR para vincular' : 'API Oficial conectada'); setMod(mod.type === 'qr' ? { t: 'qr', id: c.id, step: 1 } : null) }}>Continuar</button></>}>
-      <div className="wc-fl"><label>Nombre de la conexión</label><input autoFocus value={mod.name} onChange={e => setMod({ ...mod, name: e.target.value })} placeholder="Ej.: Ventas Colombia" /></div>
+      <div className="wc-types">{[['qr', 'WhatsApp Directo', 'Vincula tu celular escaneando un QR', Smartphone, '#22c55e', ['Listo en 1 minuto', 'Usa tu número actual', 'Proxy opcional por número']], ['api', 'Meta Cloud API', 'API oficial en servidores de Meta', Cloud, '#1d8cf8', ['Sin riesgo de desconexión', 'Plantillas aprobadas', `${apis.length}/${MAX_API} cupos usados`]]].map(([k, t, d, Ic, col, feats]) =>
+        <button key={k} className={mod.type === k ? 'on' : ''} disabled={k === 'api' && apis.length >= MAX_API} onClick={() => setMod({ ...mod, type: k })} style={{ '--c': col }}><span className="ic"><Ic size={20} fill={k === 'api' ? '#fff' : 'none'} /></span><b>{t}</b><small>{d}</small>
+          <ul>{feats.map(f => <li key={f}><Check size={12} strokeWidth={3} />{f}</li>)}</ul>{mod.type === k && <i><Check size={12} strokeWidth={3} /></i>}</button>)}</div>
+      {apis.length >= MAX_API && <div className="wc-warn"><CircleAlert size={15} />Alcanzaste el límite de {MAX_API} APIs principales. Archiva una para liberar cupo.</div>}
+      <div className="wc-fl" style={{ marginTop: 20 }}><label>Nombre de la conexión</label><input autoFocus value={mod.name} onChange={e => setMod({ ...mod, name: e.target.value })} placeholder="Ej.: Ventas Colombia" /></div>
       <div className="wc-hint">Ejemplo: Ventas Colombia, Soporte o Tienda principal</div>
-      <div className="wc-types">{[['qr', 'WhatsApp Directo', 'Sesión por QR desde tu celular', Smartphone, '#22c55e'], ['api', 'Meta Cloud API', `API oficial · ${apis.length}/${MAX_API} cupos usados`, Cloud, '#1d8cf8']].map(([k, t, d, Ic, col]) =>
-        <button key={k} className={mod.type === k ? 'on' : ''} onClick={() => setMod({ ...mod, type: k })} style={{ '--c': col }}><span className="ic"><Ic size={19} /></span><b>{t}</b><small>{d}</small>{mod.type === k && <i><Check size={12} strokeWidth={3} /></i>}</button>)}</div>
-      {mod.type === 'api' && apis.length >= MAX_API && <div className="wc-warn"><CircleAlert size={15} />Alcanzaste el límite de {MAX_API} APIs principales. Archiva una para liberar cupo.</div>}
       <div className="wc-fl" style={{ marginTop: 16 }}><label>Moneda de las ventas</label><LSelect className="l-in ct-in" value={mod.cur} onChange={v => setMod({ ...mod, cur: v })} options={CUR.map(([value, label]) => ({ value, label }))} /></div>
+      <div className="wc-hint">{mod.cur === 'auto' ? 'La IA detectará la moneda de cada comprobante automáticamente.' : 'Todas las ventas de esta conexión se registrarán en ' + mod.cur + '.'}</div>
     </LModal>}
 
     {/* QR */}
@@ -78,7 +79,7 @@ export default function Connections() {
     </LModal>}
 
     {/* Editar */}
-    {mod?.t === 'edit' && <LModal open onClose={() => setMod(null)} title={mod.qr ? 'Editar conexión' : 'Editar API Oficial'} icon={<Pencil size={18} />} width={470}
+    {mod?.t === 'edit' && <LModal open onClose={() => setMod(null)} title={mod.qr ? 'Editar conexión' : 'Editar API Oficial'} icon={<Pencil size={18} />} width={470} bodyStyle={{ overflow: 'visible' }}
       footer={<><button className="lb2 g" onClick={() => setMod(null)}>Cancelar</button><button className="lb2 p" disabled={!mod.name.trim()} onClick={() => { upd(mod.id, { name: mod.name.trim(), cur: mod.cur }); setMod(null); toast('Cambios guardados') }}>Guardar cambios</button></>}>
       <div className="wc-fl"><label>{mod.qr ? 'Nombre de la conexión' : 'Nombre de la API'}</label><input autoFocus value={mod.name} onChange={e => setMod({ ...mod, name: e.target.value })} /></div>
       <div className="wc-hint">Ejemplo: Ventas Colombia, Soporte o Tienda principal</div>
@@ -102,13 +103,13 @@ export default function Connections() {
     </LModal>}
 
     {/* Cloud API */}
-    {mod?.t === 'cloud' && <LModal open onClose={() => setMod(null)} title={<span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Cloud size={20} color="#1d8cf8" fill="#1d8cf8" />WhatsApp Cloud API (Oficial)</span>} width={640} bodyStyle={{ padding: '18px 22px 6px', maxHeight: '72vh', overflowY: 'auto' }}
+    {mod?.t === 'cloud' && <LModal open onClose={() => setMod(null)} title={<span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Cloud size={20} color="#1d8cf8" fill="#1d8cf8" />{mod.focus ? (conns.find(c => c.id === mod.focus)?.name || 'API Oficial') : 'WhatsApp Cloud API (Oficial)'}</span>} desc={mod.focus ? 'Estado de este número en Meta Cloud API' : undefined} width={640} bodyStyle={{ padding: '18px 22px 6px', maxHeight: '72vh', overflowY: 'auto' }}
       footer={<button className="wc-close" onClick={() => setMod(null)}>Cerrar</button>}>
       <div className="wc-cap"><b>Capacidad de Cloud API</b><div><Cloud size={18} color="#1d8cf8" fill="#1d8cf8" /><span><b>{apis.length}/{MAX_API}</b><small>APIs principales</small></span></div><div className="bar"><i style={{ width: apis.length / MAX_API * 100 + '%' }} /></div></div>
-      {apis.map(c => <ApiPanel key={c.id} c={c} focus={mod.focus === c.id} upd={p => upd(c.id, p)} toast={toast} onArchive={() => { upd(c.id, { archived: true }); toast('API archivada · cupo liberado') }} />)}
+      {apis.filter(c => !mod.focus || c.id === mod.focus).map(c => <ApiPanel key={c.id} c={c} focus={false} upd={p => upd(c.id, p)} toast={toast} onArchive={() => { upd(c.id, { archived: true }); toast('API archivada · cupo liberado'); if (mod.focus) setMod(null) }} />)}
       <p className="wc-foot">Los mensajes de los clientes llegarán automáticamente a tus chats. Puedes enviar mensajes usando plantillas aprobadas o responder dentro de la ventana de 24 horas.</p>
-      <div style={{ textAlign: 'center', margin: '18px 0 14px' }}><button className="wc-cta" disabled={apis.length >= MAX_API} onClick={() => setMod({ t: 'new', name: '', type: 'api', cur: 'auto' })}><Cloud size={17} fill="#fff" />Conectar API principal</button>
-        {apis.length >= MAX_API && <div className="wc-hint" style={{ textAlign: 'center' }}>Cupo completo · archiva una API para conectar otra</div>}</div>
+      {!mod.focus && <div style={{ textAlign: 'center', margin: '18px 0 14px' }}><button className="wc-cta" disabled={apis.length >= MAX_API} onClick={() => setMod({ t: 'new', name: '', type: 'api', cur: 'auto' })}><Cloud size={17} fill="#fff" />Conectar API principal</button>
+        {apis.length >= MAX_API && <div className="wc-hint" style={{ textAlign: 'center' }}>Cupo completo · archiva una API para conectar otra</div>}</div>}
     </LModal>}
 
     <LModal open={!!del} onClose={() => setDel(null)} title="Eliminar conexión" icon={<TriangleAlert size={21} color="#ef4444" />} width={482} bodyStyle={{ padding: '22px 24px 0' }}>
@@ -127,7 +128,8 @@ function QrCard({ c, onQR, onProxy, onEdit, onDel, onOff }) {
     <div className="wc-id"><span className="wc-av g">{on ? <SignalHigh size={24} /> : <span className="sig"><SignalHigh size={24} /><b>!</b></span>}</span>
       <div className="nm"><b>{c.name}{c.verified && <span className="vf"><Check size={11} strokeWidth={3.5} /></span>}</b>{on && <small>{c.phone}</small>}</div>
       <div className="wc-acts"><button title={c.proxy ? 'Proxy activo' : 'Configurar proxy'} className={c.proxy ? 'px' : ''} onClick={onProxy}><Globe size={18} /><Lock size={9} className="lk" /></button><button title="Editar" onClick={onEdit}><Pencil size={17} /></button><button title="Eliminar" onClick={onDel}><Trash2 size={17} /></button></div></div>
-    <div className="wc-line"><Smartphone size={17} />{on ? 'Sesión activa · vinculada ' + (c.connected || '') : 'Sesión por QR · depende de la conexión del dispositivo'}</div>
+    <div className="wc-line"><Smartphone size={16} /><span>{on ? 'Sesión activa · ' + (c.phone || '') : 'Sesión por QR · depende del dispositivo'}</span></div>
+    <div className="wc-meta">{c.proxy ? <span className="ok"><Globe size={12} />Proxy activo</span> : <span><Globe size={12} />Sin proxy</span>}<span>{curLbl(c.cur || 'auto')}</span></div>
     {on ? <button className="wc-big gray" onClick={onOff}><Unplug size={18} />Desconectar sesión</button> : <button className="wc-big green" onClick={onQR}><ScanLine size={20} />Generar QR</button>}
   </div>
 }
@@ -135,12 +137,13 @@ function QrCard({ c, onQR, onProxy, onEdit, onDel, onOff }) {
 function ApiCard({ c, onEdit, onManage }) {
   const ban = c.status === 'banned'
   return <div className={'wc-card' + (ban ? ' ban' : '')}>
-    <div className="wc-top"><span className="wc-pill b"><Cloud size={15} fill="currentColor" />META CLOUD API</span><span className={'wc-st ' + (ban ? 'off' : 'on')}><i />{ban ? 'BANEADO POR META' : 'CONECTADO'}</span></div>
+    <div className="wc-top"><span className="wc-pill b"><Cloud size={15} fill="currentColor" />META CLOUD API</span><span className={'wc-st ' + (ban ? 'off' : 'on')}><i />{ban ? 'BANEADO' : 'CONECTADO'}</span></div>
     <div className="wc-id"><span className="wc-av b"><Cloud size={24} fill="#fff" /></span>
       <div className="nm"><b>{c.name}</b><small>{c.phone} · {curLbl(c.cur || 'auto')}</small></div>
       <div className="wc-acts"><button title="Editar" onClick={onEdit}><Pencil size={17} /></button></div></div>
-    {ban ? <div className="wc-line red"><ShieldAlert size={17} />Meta desactivó este WABA · envíos detenidos</div>
-      : <><div className="wc-line"><ShieldCheck size={17} />WABA aprobado · opera en servidores de Meta</div><div className="wc-line grn"><CircleCheck size={17} />Sin límite diario de chats automatizados</div></>}
+    {ban ? <div className="wc-line red"><ShieldAlert size={16} /><span>Meta desactivó este WABA · envíos detenidos</span></div>
+      : <div className="wc-line"><ShieldCheck size={16} /><span>WABA aprobado · opera en servidores de Meta</span></div>}
+    <div className="wc-meta">{ban ? <span className="bad">WABA: {c.waba}</span> : <span className="ok"><CircleCheck size={12} />Sin límite diario</span>}<span className={ban ? 'bad' : 'tier'}>{c.tier}</span></div>
     {ban ? <button className="wc-big red" onClick={onManage}>Ver baneo y cómo apelar</button> : <button className="wc-big blue" onClick={onManage}>Administrar API Oficial</button>}
   </div>
 }
