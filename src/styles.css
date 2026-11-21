@@ -3030,3 +3030,10 @@ html.dark .fe-gm.nt-manipulador .l-selb{background:#7c2d12!important;border-colo
 /* Bloque de IA: campos dentro de un recuadro */
 html.dark .fe-gm.nt-ia .lm-b>div:first-child{border:1px solid #374151;border-radius:6px;padding:16px}
 html.dark .fe-gm.nt-manipulador .l-in.l-selb.l-selb.l-selb.l-selb.l-selb{background:#7c2d12!important;border-color:#9a3412!important;color:#fff!important}
+/* Editor de texto: un solo borde, sin líneas dobles */
+html.dark .fe-gm .fe-ed textarea.l-in,html.dark .fe-gm .fe-ed textarea,html.dark .fe-gm .fe-ed textarea[class]{border:none!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;min-height:96px!important}
+html.dark .fe-gm .fe-ed{overflow:hidden;padding:0!important}
+html.dark .fe-gm .fe-ed .tb{border-top:1px solid #374151!important;background:transparent}
+html.dark .fe-gm .fe-ed:focus-within{border-color:#8b5cf6!important}
+html.dark .fe-gm .fe-ed textarea:not(#z),html.dark .ne .fe-ed textarea:not(#z){border:none!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}
+html.dark .fe-vin :is(input,textarea):not(#z){border:none!important;background:transparent!important;box-shadow:none!important}

@@ -45,7 +45,7 @@ export const SEED_FLOWS = () => [
   seedFlow('Flujo nuevo', 'pausado', [], '20/10/2026, 10:39 p.m.'),
   seedFlow('Flujo nuevo 1', 'archivado', [], '20/10/2026, 10:39 p.m.'),
   seedFlow('Flujo nuevo 2', 'activo', ['mensaje', 'intervalo', 'copiar', 'conexion'], '20/10/2026, 10:39 p.m.'),
-  seedFlow('TEMPLATE MÉXICO - SPEI e OXXO', 'activo', ['mensaje', 'botones', 'agente', 'seguimiento', 'notificacion', 'ticket'], '18/11/2026, 11:43 a.m.'),
+  seedFlow('TEMPLATE MÉXICO - SPEI e OXXO', 'activo', ['mensaje', 'esperar', 'menu', 'condicional', 'notificacion'], '18/11/2026, 11:43 a.m.'),
   seedFlow('Flujo nuevo 3', 'activo', ['mensaje', 'agente', 'ticket'], '19/11/2026, 11:04 a.m.'),
 ]
 const STAT = { activo: ['#22c55e', 'ACTIVO', 'rgba(34,197,94,.1)', 'rgba(34,197,94,.35)'], pausado: ['#f59e0b', 'PAUSADO', 'rgba(245,158,11,.1)', 'rgba(245,158,11,.4)'], archivado: ['#ef4444', 'ARCHIVADO', 'rgba(239,68,68,.1)', 'rgba(239,68,68,.35)'] }

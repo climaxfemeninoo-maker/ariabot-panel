@@ -246,7 +246,8 @@ export default function FlowEditor() {
   const { id } = useParams(); const nav = useNavigate(); const toast = useToast()
   const [flows, setFlows] = useStore('flows', [])
   const flow = flows.find(f => f.id === id)
-  const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false); const [boot, setBoot] = useState(true); const clickRef = useRef(null); const [hovE, setHovE] = useState(null)
+  const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false); const [boot, setBoot] = useState(true);
+  useEffect(() => { if (flow && flow.nodes.some(n => n.type === 'seguimiento')) { const rm = new Set(flow.nodes.filter(n => n.type === 'seguimiento').map(n => n.id)); setFlow(f => ({ ...f, nodes: f.nodes.filter(n => !rm.has(n.id)), edges: f.edges.filter(e => !rm.has(e.from) && !rm.has(e.to)) })) } }, [flow?.id]); const clickRef = useRef(null); const [hovE, setHovE] = useState(null)
   useEffect(() => { const t = setTimeout(() => setBoot(false), 950); return () => clearTimeout(t) }, [])
   const [panel, setPanel] = useState(null); const [pq, setPq] = useState(''); const [sel, setSel] = useState(null); const [run, setRun] = useState(null)
   const [link, setLink] = useState(null); const [edit, setEdit] = useState(null); const [rename, setRename] = useState(false); const [modal, setModal] = useState(null)
