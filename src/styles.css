@@ -2992,3 +2992,4 @@ html.dark .fe-gm .lb2.p:hover:not(:disabled),html.dark .ne .ne-ok:hover:not(:dis
 html.dark .fe-gm .lb2.g,html.dark .ne .ne-cancel{background:transparent!important;border:1px solid #4b5563!important;color:#e5e7eb!important;border-radius:8px!important;height:40px!important;font-weight:500!important;font-size:15px!important}
 html.dark .fe-gm .lb2.g:hover,html.dark .ne .ne-cancel:hover{background:rgba(255,255,255,.04)!important}
 html.dark .fe-gm .l-tg.on,html.dark .ne .l-tg.on{background:#8b5cf6!important}
+html.dark .fe-gm,html.dark .ne,.fe-gm,.ne{border-radius:6px!important}html.dark .fe-gm .fe-mh .ic,html.dark .ne .ne-ic{border-radius:8px!important}
