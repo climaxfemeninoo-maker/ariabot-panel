@@ -19,7 +19,9 @@ export function NotifPanel({ style }) {
     }
     setCfg({ ...cfg, device: v }); toast(v ? 'Notificaciones del dispositivo activadas' : 'Notificaciones del dispositivo desactivadas')
   }
-  return <div className="nt-pop" style={style} onClick={e => e.stopPropagation()}>
+  const a = typeof document !== 'undefined' && document.querySelector('aside.side')?.getBoundingClientRect()
+  const W = Math.min(345, innerWidth - 16); const left = Math.max(8, Math.min((a ? a.right : 240) + 10, innerWidth - W - 8))
+  return <div className="nt-pop" style={{ position: 'fixed', left, bottom: 14, width: W, ...style }} onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
     <div className="nt-h"><Bell size={16} color="#4d94ff" />Notificaciones
       {list.length > 0 && <><button title="Marcar todo leído" onClick={() => setList(l => l.map(x => ({ ...x, r: true })))}><Check size={15} /></button><button title="Borrar todo" onClick={() => setList([])}><Trash2 size={14} /></button></>}</div>
     <div className="nt-body">{list.length === 0 ? <div className="nt-empty"><Bell size={30} strokeWidth={1.8} /><span>Sin notificaciones</span></div>

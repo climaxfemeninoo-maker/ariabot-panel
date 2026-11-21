@@ -37,7 +37,7 @@ export const FB = {
 }
 const B = t => FB[t] || FB.mensaje
 const PAL = ['mensaje', 'template', 'etiquetas', 'carrusel', 'notificacion', 'conexion', 'intervalo', 'departamento', 'ia', 'kanban']
-const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#f59e0b', 'Agente de IA'] }
+const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#10b981', 'Agente IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
   if (n.type === 'template') { const t = n.tpl || {}; return [{ k: 'reply', l: 'Resposta livre', c: 'or', pc: '#d97706' }, { k: 'timeout', l: 'Timeout sem clique', s: `${t.timeout || 60} ${({ m: 'minutes', h: 'hours', d: 'days' })[t.unit || 'm']}`, c: 'gr', pc: '#6b7280' }, { k: 'fail', l: 'Falha de entrega', c: 'rd', pc: '#dc2626' }] }
@@ -228,7 +228,7 @@ export default function FlowEditor() {
   const { id } = useParams(); const nav = useNavigate(); const toast = useToast()
   const [flows, setFlows] = useStore('flows', [])
   const flow = flows.find(f => f.id === id)
-  const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false); const [boot, setBoot] = useState(true)
+  const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false); const [boot, setBoot] = useState(true); const clickRef = useRef(null); const [hovE, setHovE] = useState(null)
   useEffect(() => { const t = setTimeout(() => setBoot(false), 560); return () => clearTimeout(t) }, [])
   const [panel, setPanel] = useState(null); const [pq, setPq] = useState(''); const [sel, setSel] = useState(null); const [run, setRun] = useState(null)
   const [link, setLink] = useState(null); const [edit, setEdit] = useState(null); const [rename, setRename] = useState(false); const [modal, setModal] = useState(null)
@@ -293,25 +293,30 @@ export default function FlowEditor() {
         <div ref={world} className={'fe-world' + (boot ? ' boot' : ' in')} style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`, transformOrigin: '0 0' }}>
           <svg style={{ position: 'absolute', overflow: 'visible', left: 0, top: 0, width: 1, height: 1 }}>
             {flow.edges.map(e => { const a = nodeMap[e.from], b = nodeMap[e.to]; if (!a || !b) return null; const pp = ports[e.from + '|' + (e.port || 'main')]; if (!pp) return null; const d = path(pp, ports[b.id + '|in'] || { x: b.x - 8, y: b.y + 34 })
-              return <g key={e.id} style={{ cursor: 'pointer' }} onClick={() => { setFlow(f => ({ ...f, edges: f.edges.filter(x => x.id !== e.id) })); toast('Conexión eliminada', 'info') }}>
-                <path d={d} stroke="transparent" strokeWidth="16" fill="none" /><path className={'fe-edge' + (st === 'activo' || run === e.from ? ' anim' : '')} style={{ stroke: e.port === 'fail' ? '#dc2626' : e.port === 'timeout' ? '#6b7280' : e.port === 'reply' ? '#d97706' : undefined }} d={d} /></g> })}
+              const b2 = ports[b.id + '|in'] || { x: b.x - 8, y: b.y + 34 }; const mx = (pp.x + b2.x) / 2, my = (pp.y + b2.y) / 2
+              return <g key={e.id} className={'fe-eg' + (hovE === e.id ? ' hov' : '')} onMouseEnter={() => setHovE(e.id)} onMouseLeave={() => setHovE(h => h === e.id ? null : h)}>
+                <path d={d} stroke="transparent" strokeWidth="22" fill="none" style={{ pointerEvents: 'stroke' }} /><path className={'fe-edge' + (st === 'activo' || run === e.from ? ' anim' : '')} style={{ stroke: e.port === 'fail' ? '#dc2626' : e.port === 'timeout' ? '#6b7280' : e.port === 'reply' ? '#d97706' : undefined }} d={d} />
+                {hovE === e.id && <g className="fe-ex" transform={`translate(${mx},${my})`} onMouseDown={ev => ev.stopPropagation()} onClick={ev => { ev.stopPropagation(); setFlow(f => ({ ...f, edges: f.edges.filter(x => x.id !== e.id) })); setHovE(null); toast('Conexión eliminada', 'info') }}><circle r="26" className="gl" /><circle r="17" className="bt" /><path d="M-6,-6 L6,6 M6,-6 L-6,6" /></g>}</g> })}
             {link && <path className="fe-edge anim" d={path({ x: link.sx, y: link.sy }, { x: link.x, y: link.y })} />}
           </svg>
           {flow.nodes.map(n => { const [, c, I, dd, g] = B(n.type); const outs = nodeOuts(n); const tpl = n.type === 'template'
             const startLink = (e, k) => { e.stopPropagation(); const pp = ports[n.id + '|' + k] || { x: n.x + NW, y: n.y + OUTY }; setLink({ from: n.id, port: k, sx: pp.x, sy: pp.y, x: pp.x, y: pp.y }); act.current = { t: 'link' } }
             const desc = n.desc || (['inicio', 'mensaje', 'menu', 'template'].includes(n.type) ? '' : n.type === 'carrusel' ? '📝 Elige una opción abajo' : dd)
             const P = (k, pc, st) => <span className="fe-port out" data-port={n.id + '|' + k} style={{ background: pc, ...st }} onMouseDown={e => startLink(e, k)} />
-            const nodeEv = { onMouseDown: e => { e.stopPropagation(); setSel(n.id) }, onDoubleClick: () => setEdit(n),
+            const nodeEv = { onMouseDown: e => { e.stopPropagation(); setSel(n.id); clickRef.current = { x: e.clientX, y: e.clientY } }, onDoubleClick: () => setEdit(n), onClick: e => { const c0 = clickRef.current; if (!c0 || Math.hypot(e.clientX - c0.x, e.clientY - c0.y) > 4 || e.target.closest('.fe-port,.acts,button')) return; setEdit(n) },
               onMouseUp: () => { if (link && link.from !== n.id && n.type !== 'inicio') { setFlow(f => ({ ...f, edges: [...f.edges.filter(x => !(x.from === link.from && (x.port || 'main') === (link.port || 'main'))), { id: uid(), from: link.from, port: link.port, to: n.id }] })); toast('Bloques conectados') } } }
             const drag = e => { e.stopPropagation(); setSel(n.id); act.current = { t: 'node', id: n.id, sx: e.clientX, sy: e.clientY, nx: n.x, ny: n.y } }
-            const acts = <span className="acts"><button title="Editar" onMouseDown={e => e.stopPropagation()} onClick={() => setEdit(n)}><Pencil size={15} /></button>
-              {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={15} /></button>
-                <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={15} /></button></>}</span>
+            const acts = <span className="acts">
+              {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={17} /></button>
+                <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={17} /></button></>}</span>
             const stats = <div className="fe-ns"><div><span>ENTRADAS</span><b>{n.stats[0]}</b></div><div><span>AVANCES</span><b>{n.stats[1]}</b></div><div><span>TASA</span><b>{n.stats[2]}%</b></div></div>
+            if (n.type === 'inicio') return <div key={n.id} className={'fe-start' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
+              <div className="h" onMouseDown={drag}><Play size={18} fill="#fff" />{n.title && n.title !== 'Início' ? n.title : 'Inicio del Flujo'}</div>
+              <div className="b">{n.desc || 'Aquí comienza tu flujo de conversación'}</div>{P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}</div>
             if (ROUND[n.type]) { const [cc, lbl] = ROUND[n.type]; const cf = n.cfg || {}
               return <div key={n.id} className={'fe-rn' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': cc }} {...nodeEv}>
-                <div className={'circ ' + n.type} onMouseDown={drag}>{n.type === 'agente' ? <img src="/leona-mark.png" alt="" /> : <I size={30} strokeWidth={2.2} />}<small>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</small>
-                  <span className="fe-port in" data-port={n.id + '|in'} />{outs && outs.length === 0 ? null : P('main', undefined, { top: '50%', marginTop: -8.5, right: -10 })}{acts}</div>{stats}</div> }
+                <div className={'circ ' + n.type} onMouseDown={drag}><I size={34} strokeWidth={2} /><b>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</b>
+                  <span className="fe-port in" data-port={n.id + '|in'} />{outs && outs.length === 0 ? null : P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}{acts}</div><div className="cap">{n.desc || ({ agente: 'IA responde consultas o avanza por un camino', venta: 'Registra la venta en el dashboard', llamar: 'Realiza una llamada de voz' })[n.type]}</div></div> }
             const rows = outs || []; const pp = rows.filter(o => o.k === 'success' || o.k === 'failure'); const lr = rows.filter(o => !pp.includes(o))
             let body
             if (n.type === 'esperar') { const [m, to] = rows
@@ -327,11 +332,11 @@ export default function FlowEditor() {
             else if (outs) body = <><div className="fe-nd" style={{ fontSize: 13, paddingTop: 6, minHeight: 34 }}>{desc}</div>
               {lr.map(o => <div key={o.k} className={'fe-row ' + o.c}>{o.l}{P(o.k, o.pc)}</div>)}
               <div className="fe-pp">{pp.map(o => P(o.k, o.pc, { position: 'relative', right: 'auto' }))}</div></>
-            else body = <><div className="fe-nd" style={{ fontSize: 13, minHeight: n.type === 'mensaje' ? 48 : 30, paddingTop: 6 }}>{desc}</div>{P('main', undefined, { bottom: 22 })}</>
+            else body = <><div className="fe-items">{n.type === 'mensaje' ? ((n.actions || []).length ? n.actions.slice(0, 4).map(a => { const [l, AI, ac] = ACT[a.type] || ACT.text; return <div key={a.id} className="fe-it"><AI size={18} color={ac} /><span>{a.type === 'text' ? (a.text || 'Mensaje vacío') : a.type === 'delay' ? `Esperar ${a.sec || a.time || 3}s` : (a.file?.name || a.name || '')}</span></div> }) : <div className="fe-it em"><MessageSquare size={18} color="#3b82f6" /><span>Sin mensajes · clic para editar</span></div>)
+              : <div className="fe-chip" style={{ '--c': c }}><I size={16} /><span>{desc || 'Clic para configurar'}</span></div>}{(n.actions || []).length > 4 && <small className="fe-more">+{n.actions.length - 4} más</small>}</div>{P('main', undefined, {})}</>
             return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }} {...nodeEv}>
-            <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: g ? `linear-gradient(90deg,${g[0]},${g[1]})` : `linear-gradient(90deg,${c},${c}cc)` }} onMouseDown={drag}>
+            <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: `linear-gradient(120deg,${g ? g[1] : c} 0%,${c} 45%,color-mix(in srgb,${g ? g[0] : c} 62%,#fff) 100%)` }} onMouseDown={drag}>
               {!tpl && <span className="ic">{n.type === 'ariapay' ? <img src="/leona-mark.png" alt="" style={{ width: 26, height: 26 }} /> : <I size={20} />}</span>}<b>{n.title}</b>{acts}</div>
-            {stats}
             {tpl && <div className="fe-box"><b>{n.tpl?.name || 'Template não selecionado'}</b><span>Template Meta HSM · Quick Reply</span></div>}
             {body}
             {n.type !== 'inicio' && <span className="fe-port in" data-port={n.id + '|in'} />}

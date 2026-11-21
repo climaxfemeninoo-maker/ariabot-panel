@@ -80,12 +80,12 @@ export function ChatInfo({ c, upd, onClose }) {
           <b>Registrar venta manual</b>
           <p>Ingresa el monto real de la venta. Al confirmar, se registrará en las métricas y se enviará a Meta. El comprobante es opcional.</p>
           <div style={{ display: 'flex', gap: 8 }}>
-            <div className="ci-fl" style={{ flex: 1 }}><input autoFocus inputMode="decimal" className="ci-in" value={form.value} onChange={e => setForm({ ...form, value: e.target.value.replace(/[^\d.,]/g, '') })} placeholder="Monto real" /></div>
-            <div className="ci-fl" style={{ width: 92 }}><label>Moneda</label><LSelect className="l-in ct-in" value={form.cur} onChange={v => setForm({ ...form, cur: v })} options={CURS.map(x => ({ value: x, label: x }))} /></div>
+            <div className="ci-fl" style={{ flex: 1, minWidth: 0 }}><label className="ci-lb">Monto real</label><input autoFocus inputMode="decimal" className="ci-in" value={form.value} onChange={e => setForm({ ...form, value: e.target.value.replace(/[^\d.,]/g, '') })} placeholder="0.00" /></div>
+            <div className="ci-fl" style={{ width: 88 }}><label className="ci-lb">Moneda</label><LSelect className="l-in ct-in" value={form.cur} onChange={v => setForm({ ...form, cur: v })} options={CURS.map(x => ({ value: x, label: x }))} /></div>
           </div>
-          <input className="ci-in" value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} placeholder="Método de pago" />
-          <input className="ci-in" value={form.op} onChange={e => setForm({ ...form, op: e.target.value })} placeholder="Número de operación (opcional)" />
-          <LSelect className="l-in ct-in ci-in" value={form.proof} onChange={v => setForm({ ...form, proof: v })} placeholder="Comprobante del chat (opcional)" options={[{ value: '', label: 'Comprobante del chat (opcional)' }, ...imgs.map((m, i) => ({ value: m.img, label: 'Imagen ' + (i + 1) + ' · ' + m.t }))]} />
+          <div><label className="ci-lb">Método de pago</label><input className="ci-in" value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} placeholder="Yape, Plin, transferencia…" /></div>
+          <div><label className="ci-lb">N° de operación <i style={{ textTransform: 'none', fontStyle: 'normal', letterSpacing: 0 }}>(opcional)</i></label><input className="ci-in" value={form.op} onChange={e => setForm({ ...form, op: e.target.value })} placeholder="Ej.: 00123456" /></div>
+          <div><label className="ci-lb">Comprobante <i style={{ textTransform: 'none', fontStyle: 'normal', letterSpacing: 0 }}>(opcional)</i></label><LSelect className="l-in ct-in ci-in" value={form.proof} onChange={v => setForm({ ...form, proof: v })} options={[{ value: '', label: 'Sin comprobante' }, ...imgs.map((m, i) => ({ value: m.img, label: 'Imagen ' + (i + 1) + ' · ' + m.t }))]} /></div>
           {!imgs.length && <small className="ci-hint">Puedes registrar esta venta sin adjuntar un comprobante.</small>}
           <div className="ci-fa"><button onClick={() => setForm(null)}>Cancelar</button><button className="go" onClick={save}><span className="fb">f</span>Registrar y enviar a Meta</button></div>
         </div> : <button className="ci-reg" onClick={() => setForm({ value: '', cur: 'PEN', method: '', op: '', proof: '' })}><CirclePlus size={17} />Registrar venta manual</button>}
