@@ -476,50 +476,46 @@ export const startMatches = (c, msg, isFirst) => { const t = c.trig || 'phrase';
 export const startDesc = c => { const t = c.trig || 'phrase'; if (c.on === false) return '⏸ Activador pausado'; if (t === 'any') return '💬 Cualquier mensaje'; if (t === 'first') return '👋 Primer contacto'; if (t === 'ad') return '📣 Clic en anuncio'
   const p = c.phrases || []; return p.length ? '🔑 ' + p.slice(0, 3).map(x => '"' + x + '"').join(', ') + (p.length > 3 ? ` +${p.length - 3}` : '') : 'Sin frase activadora' }
 export function StartModal({ node, flowName, onClose, onSave }) {
-  const toast = useToast(); const [conns] = useStore('connections', [])
+  const toast = useToast(); const [c1] = useStore('wa_conns', []); const [c2] = useStore('connections', [])
   const [c, setC] = useState({ trig: 'phrase', match: 'contains', phrases: [], conns: [], on: true, rep: true, cool: 0, coolU: 'minutes', cs: false, ...(node.cfg || {}) })
   const [name, setName] = useState(node.title === 'Início' ? 'Inicio' : node.title); const [ph, setPh] = useState(''); const [test, setTest] = useState('')
   const set = p => setC(x => ({ ...x, ...p }))
   const add = v => { v = v.trim(); if (!v) return; if (c.phrases.some(x => norm(x) === norm(v))) return toast('Esa frase ya está agregada', 'info'); set({ phrases: [...c.phrases, v] }); setPh('') }
-  const list = Array.isArray(conns) ? conns : []
+  const list = [...(Array.isArray(c1) ? c1 : []), ...(Array.isArray(c2) ? c2 : [])].filter(x => !x.archived)
   const ok = name.trim() && (c.trig !== 'phrase' || c.phrases.length)
   const hit = test.trim() ? startMatches({ ...c, on: true }, test, true) : null
+  const O = (a) => a.map(([value, label]) => ({ value, label }))
   useEffect(() => { const k = e => e.key === 'Escape' && onClose(); addEventListener('keydown', k); return () => removeEventListener('keydown', k) }, [])
-  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm ini" style={{ maxWidth: 600, maxHeight: '94vh' }}>
-    <div className="ini-hd"><span className="ini-ic"><Zap size={20} /></span><div><h2>Activador del flujo</h2><p>Define cuándo un contacto entra a <b>{flowName}</b>.</p></div><button className="ini-x" onClick={onClose}><X size={19} /></button></div>
-    <div className="lm-b ini-b">
-      <div className="ini-sec"><span className="ini-si" style={{ '--c': '#3b82f6' }}><Pencil size={15} /></span><b>Nombre del activador</b></div>
-      <input className="l-in" style={IN} value={name} onChange={e => setName(e.target.value)} placeholder="Ej.: Menú principal" autoFocus />
-
-      <div className="ini-sec"><span className="ini-si" style={{ '--c': '#a855f7' }}><Zap size={15} /></span><b>¿Qué lo dispara?</b></div>
-      <div className="ini-trig">{TRIG.map(([k, l, d, I]) => <button key={k} className={(c.trig || 'phrase') === k ? 'on' : ''} onClick={() => set({ trig: k })}><I size={18} /><b>{l}</b><small>{d}</small>{(c.trig || 'phrase') === k && <i><Check size={12} strokeWidth={3} /></i>}</button>)}</div>
-
-      {c.trig === 'phrase' && <>
-        <div className="ini-sec"><span className="ini-si" style={{ '--c': '#f43f5e' }}><Hash size={15} /></span><b>Frases activadoras</b><span className="ini-cnt">{c.phrases.length}</span></div>
-        <div className="ini-chips" onClick={e => e.currentTarget.querySelector('input')?.focus()}>{c.phrases.map(p => <span key={p}>{p}<button onClick={() => set({ phrases: c.phrases.filter(x => x !== p) })}><X size={12} /></button></span>)}
-          <input value={ph} onChange={e => setPh(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(ph) } if (e.key === 'Backspace' && !ph && c.phrases.length) set({ phrases: c.phrases.slice(0, -1) }) }} onBlur={() => add(ph)} placeholder={c.phrases.length ? 'Agregar otra…' : 'Ej.: hola, menú, información…  (Enter para agregar)'} /></div>
-        <div className="ini-row"><div className="fe-seg" style={{ flex: 1 }}>{MATCH.map(([k, l]) => <button key={k} className={(c.match || 'contains') === k ? 'on' : ''} onClick={() => set({ match: k })}>{l}</button>)}</div>
-          <label className="ini-cs"><input type="checkbox" checked={!!c.cs} onChange={e => set({ cs: e.target.checked })} />Distinguir mayúsculas</label></div>
-        <Help>Se ignoran tildes y espacios extra. "Contiene" activa con "hola" también en "hola, quiero info".</Help></>}
-
-      <div className="ini-sec"><span className="ini-si" style={{ '--c': '#22c55e' }}><MessageCircle size={15} /></span><b>Canal de atención</b></div>
-      {list.length ? <div className="ini-conns">{[{ id: '*', name: 'Todas las conexiones' }, ...list].map(x => { const on = x.id === '*' ? !c.conns.length : c.conns.includes(x.id)
-        return <button key={x.id} className={on ? 'on' : ''} onClick={() => set({ conns: x.id === '*' ? [] : on ? c.conns.filter(y => y !== x.id) : [...c.conns, x.id] })}><span className="dot" style={{ background: x.status === 'connected' || x.id === '*' ? '#22c55e' : '#64748b' }} />{x.name}{x.phone && <small>{x.phone}</small>}</button> })}</div>
-        : <div className="cd-empty">Aún no hay conexiones. El activador escuchará en todas las que crees.</div>}
-
-      <div className="ini-tg">
-        <div className={'ini-card' + (c.on ? ' g' : '')}><span className="ini-si" style={{ '--c': c.on ? '#22c55e' : '#64748b' }}><Power size={15} /></span><div><b>Estado</b><small>{c.on ? 'Activo' : 'Pausado'}</small></div><Toggle on={c.on} onChange={v => set({ on: v })} /></div>
-        <div className={'ini-card' + (c.rep ? ' b' : '')}><span className="ini-si" style={{ '--c': c.rep ? '#3b82f6' : '#64748b' }}><Repeat size={15} /></span><div><b>Repetible</b><small>{c.rep ? 'Sí, repetir' : 'Solo una vez'}</small></div><Toggle on={c.rep} onChange={v => set({ rep: v })} /></div></div>
-      {c.rep && <div className="ini-cool"><Clock3 size={15} /><span>Esperar antes de volver a activarse</span><input type="number" min="0" className="l-in" value={c.cool} onChange={e => set({ cool: Math.max(0, +e.target.value || 0) })} />
-        <select className="l-in" value={c.coolU} onChange={e => set({ coolU: e.target.value })}>{U3.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></div>}
-
-      <div className="ini-test"><div className="h"><FlaskConical size={15} /><b>Probar activador</b></div>
-        <input className="l-in" style={IN} value={test} onChange={e => setTest(e.target.value)} placeholder="Escribe un mensaje de prueba…" />
-        {hit != null && <div className={'r ' + (hit ? 'ok' : 'no')}>{hit ? '✓ Este mensaje iniciaría el flujo' : '✗ Este mensaje no activa el flujo'}</div>}</div>
-
-      <div className="ini-ft"><button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" disabled={!ok} onClick={() => onSave({ ...node, title: name.trim(), cfg: c, desc: startDesc(c) })}><Zap size={15} />Guardar activador</button></div>
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm nt-inicio" style={{ maxWidth: 480, maxHeight: '94vh', '--nc': '#22c55e' }}>
+    <div className="fe-mh"><span className="ic"><Zap size={19} /></span><div style={{ minWidth: 0 }}><h2>Activador del flujo</h2><div className="fe-small" style={{ marginTop: 2 }}>Define cuándo un contacto entra a <b>{flowName}</b>.</div></div><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
+    <div className="lm-b" style={{ overflowY: 'auto' }}>
+      <div className="fe-lb">Nombre del activador</div>
+      <input className="l-in" value={name} onChange={e => setName(e.target.value)} placeholder="Ej.: Menú principal" autoFocus />
+      <div className="fe-lb" style={{ marginTop: 16 }}>¿Qué lo dispara?</div>
+      <LSelect className="l-in" value={c.trig || 'phrase'} onChange={v => set({ trig: v })} options={O(TRIG.map(t => [t[0], t[1]]))} />
+      <Help>{(TRIG.find(t => t[0] === (c.trig || 'phrase')) || [])[2]}</Help>
+      {(c.trig || 'phrase') === 'phrase' && <>
+        <div className="fe-lb" style={{ marginTop: 16 }}>Frases activadoras ({c.phrases.length})</div>
+        <div className="ini-chips sm" onClick={e => e.currentTarget.querySelector('input')?.focus()}>{c.phrases.map(p => <span key={p}>{p}<button onClick={() => set({ phrases: c.phrases.filter(x => x !== p) })}><X size={12} /></button></span>)}
+          <input value={ph} onChange={e => setPh(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(ph) } if (e.key === 'Backspace' && !ph && c.phrases.length) set({ phrases: c.phrases.slice(0, -1) }) }} onBlur={() => add(ph)} placeholder={c.phrases.length ? '' : 'Ej.: hola, menú… (Enter para agregar)'} /></div>
+        <div className="fe-lb" style={{ marginTop: 16 }}>Tipo de coincidencia</div>
+        <LSelect className="l-in" value={c.match || 'contains'} onChange={v => set({ match: v })} options={O(MATCH)} />
+        <label className="ini-cs" style={{ marginTop: 10 }}><input type="checkbox" checked={!!c.cs} onChange={e => set({ cs: e.target.checked })} />Distinguir mayúsculas</label></>}
+      <div className="fe-lb" style={{ marginTop: 16 }}>Canal de atención</div>
+      <LSelect className="l-in" value={c.conns[0] || '*'} onChange={v => set({ conns: v === '*' ? [] : [v] })} options={[{ value: '*', label: 'Todas las conexiones' }, ...list.map(x => ({ value: x.id, label: x.name + (x.phone ? ' · ' + x.phone : '') }))]} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 16 }}>
+        <div><div className="fe-lb">Estado</div><LSelect className="l-in" value={c.on ? 'on' : 'off'} onChange={v => set({ on: v === 'on' })} options={O([['on', 'Activo'], ['off', 'Pausado']])} /></div>
+        <div><div className="fe-lb">Repetible</div><LSelect className="l-in" value={c.rep ? 'y' : 'n'} onChange={v => set({ rep: v === 'y' })} options={O([['y', 'Sí, repetir'], ['n', 'Solo una vez']])} /></div></div>
+      {c.rep && <><div className="fe-lb" style={{ marginTop: 16 }}>Esperar antes de volver a activarse</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}><input type="number" min="0" className="l-in" value={c.cool} onChange={e => set({ cool: Math.max(0, +e.target.value || 0) })} />
+          <LSelect className="l-in" value={c.coolU} onChange={v => set({ coolU: v })} options={O(U3)} /></div></>}
+      <div className="fe-lb" style={{ marginTop: 16 }}>Probar activador</div>
+      <input className="l-in" value={test} onChange={e => setTest(e.target.value)} placeholder="Escribe un mensaje de prueba…" />
+      {hit != null && <div style={{ fontSize: 12.5, marginTop: 6, color: hit ? '#22c55e' : '#f87171' }}>{hit ? '✓ Este mensaje iniciaría el flujo' : '✗ Este mensaje no activa el flujo'}</div>}
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 20, padding: '16px 0 22px', display: 'flex', justifyContent: 'flex-end', gap: 10 }}><button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" disabled={!ok} onClick={() => onSave({ ...node, title: name.trim(), cfg: c, desc: startDesc(c) })}>Guardar</button></div>
     </div></div></div>
 }
+
 
 function FlowCombo({ flows, v, onPick, ph }) {
   const [q, setQ] = useState(''); const [open, setOpen] = useState(false); const [pos, setPos] = useState(null); const ref = useRef(); const lref = useRef()
