@@ -46,7 +46,7 @@ Object.assign(FB, {
   copiar: ['Botón Copiar', '#0d9488', Copy, 'Envía un botón para copiar un texto', ['#2dd4bf', '#0f766e']],
   intervalo: ['Espera', '#06b6d4', Hourglass, 'Espera un tiempo antes de continuar', ['#67e8f9', '#0891b2']],
   notificacion: ['Notificación', '#f59e0b', Bell, 'Avisa al equipo cuando un cliente llega aquí', ['#fcd34d', '#f59e0b']],
-  ticket: ['Ticket', '#6366f1', Ticket, 'Asigna el chat a un agente del equipo', ['#f8fafc', '#eef2f7']],
+  ticket: ['Ticket', '#64748b', Ticket, 'Asigna el chat a un agente del equipo', ['#64748b', '#475569']],
   pais: ['Código de país', '#0891b2', Globe, 'Divide el flujo según el país del número', ['#0284c7', '#06b6d4']],
 })
 FB.botones[0] = 'Mensajes API'; FB.botones[1] = '#0f8f6e'; FB.etiquetas = ['Etiquetas', '#6366f1', Tag, 'Agrega o quita etiquetas del ticket', ['#818cf8', '#4f46e5']]
@@ -334,14 +334,14 @@ export default function FlowEditor() {
             const nodeEv = { onMouseDown: e => { e.stopPropagation(); setSel(n.id); clickRef.current = { x: e.clientX, y: e.clientY } }, onDoubleClick: () => setEdit(n), onClick: e => { const c0 = clickRef.current; if (!c0 || Math.hypot(e.clientX - c0.x, e.clientY - c0.y) > 4 || e.target.closest('.fe-port,.acts,button')) return; setEdit(n) },
               onMouseUp: () => { if (link && link.from !== n.id && n.type !== 'inicio') { setFlow(f => ({ ...f, edges: [...f.edges.filter(x => !(x.from === link.from && (x.port || 'main') === (link.port || 'main'))), { id: uid(), from: link.from, port: link.port, to: n.id }] })); toast('Bloques conectados') } } }
             const drag = e => { e.stopPropagation(); setSel(n.id); act.current = { t: 'node', id: n.id, sx: e.clientX, sy: e.clientY, nx: n.x, ny: n.y } }
-            const acts = <span className="acts">
-              {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={17} /></button>
-                <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={17} /></button></>}</span>
+            const acts = <span className="acts"><button title="Editar" onMouseDown={e => e.stopPropagation()} onClick={() => setEdit(n)}><Pencil size={15} /></button>
+              {n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><Copy size={15} /></button>
+                <button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><Trash2 size={15} /></button></>}</span>
             const stats = <div className="fe-ns"><div><span>ENTRADAS</span><b>{n.stats[0]}</b></div><div><span>AVANCES</span><b>{n.stats[1]}</b></div><div><span>TASA</span><b>{n.stats[2]}%</b></div></div>
-            if (n.type === 'inicio') return <div key={n.id} className={'fe-start' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
+            if (false) return <div key={n.id} className={'fe-start' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
               <div className="h" onMouseDown={drag}><Play size={18} fill="#fff" />{n.title && n.title !== 'Início' ? n.title : 'Inicio del Flujo'}</div>
               <div className="b">{n.desc || 'Aquí comienza tu flujo de conversación'}</div>{P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}</div>
-            if (n.type !== 'inicio') { const cf = n.cfg || {}; const gen = !NV[n.type]; const cls = 'nv nv-' + n.type + (gen ? ' nv-gen' : '') + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')
+            if (false) { const cf = n.cfg || {}; const gen = !NV[n.type]; const cls = 'nv nv-' + n.type + (gen ? ' nv-gen' : '') + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')
               const ic = NVI[n.type]
               const A = <span className="acts">{n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><MI n="copy" size={22} /></button><button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><MI n="del" size={22} /></button></>}</span>
               const Hd = () => <div className="nv-h" onMouseDown={drag}>{ic ? <MI n={ic} size={26} /> : <I size={24} strokeWidth={2.3} />}<b>{gen ? n.title || B(n.type)[0] : FB[n.type][0]}</b>{A}</div>
@@ -385,8 +385,8 @@ export default function FlowEditor() {
                 {hasOut && (n.type === 'seguimiento' ? P('main', undefined, { top: 'auto', bottom: -16, right: 'auto', left: '50%', marginLeft: -14, marginTop: 0, background: 'linear-gradient(145deg,#10b981,#059669)' }) : Out())}</div> }
             if (ROUND[n.type]) { const [cc, lbl] = ROUND[n.type]; const cf = n.cfg || {}
               return <div key={n.id} className={'fe-rn' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': cc }} {...nodeEv}>
-                <div className={'circ ' + n.type} onMouseDown={drag}><I size={34} strokeWidth={2} /><b>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</b>
-                  <span className="fe-port in" data-port={n.id + '|in'} />{outs && outs.length === 0 ? null : P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}{acts}</div><div className="cap">{n.desc || ({ agente: 'IA responde consultas o avanza por un camino', venta: 'Registra la venta en el dashboard', llamar: 'Realiza una llamada de voz' })[n.type]}</div></div> }
+                <div className={'circ ' + n.type} onMouseDown={drag}>{n.type === 'agente' ? <img src="/leona-mark.png" alt="" /> : <I size={30} strokeWidth={2.2} />}<small>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</small>
+                  <span className="fe-port in" data-port={n.id + '|in'} />{outs && outs.length === 0 ? null : P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}{acts}</div>{stats}</div> }
             const rows = outs || []; const pp = rows.filter(o => o.k === 'success' || o.k === 'failure'); const lr = rows.filter(o => !pp.includes(o))
             let body
             if (n.type === 'esperar') { const [m, to] = rows
@@ -402,11 +402,13 @@ export default function FlowEditor() {
             else if (outs) body = <><div className="fe-nd" style={{ fontSize: 13, paddingTop: 6, minHeight: 34 }}>{desc}</div>
               {lr.map(o => <div key={o.k} className={'fe-row ' + o.c}>{o.l}{P(o.k, o.pc)}</div>)}
               <div className="fe-pp">{pp.map(o => P(o.k, o.pc, { position: 'relative', right: 'auto' }))}</div></>
+            else if (true) body = <><div className="fe-nd" style={{ fontSize: 13, minHeight: n.type === 'mensaje' ? 48 : 30, paddingTop: 6 }}>{desc}</div>{P('main', undefined, { bottom: 22 })}</>
             else body = <><div className="fe-items">{n.type === 'mensaje' ? ((n.actions || []).length ? n.actions.slice(0, 4).map(a => { const [l, AI, ac] = ACT[a.type] || ACT.text; return <div key={a.id} className="fe-it"><AI size={18} color={ac} /><span>{a.type === 'text' ? (a.text || 'Mensaje vacío') : a.type === 'delay' ? `Esperar ${a.sec || a.time || 3}s` : (a.file?.name || a.name || '')}</span></div> }) : <div className="fe-it em"><MessageSquare size={18} color="#3b82f6" /><span>Sin mensajes · clic para editar</span></div>)
               : <div className="fe-chip" style={{ '--c': c }}><I size={16} /><span>{desc || 'Clic para configurar'}</span></div>}{(n.actions || []).length > 4 && <small className="fe-more">+{n.actions.length - 4} más</small>}</div>{P('main', undefined, {})}</>
             return <div key={n.id} className={'fe-node' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, borderColor: c }} {...nodeEv}>
-            <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: `linear-gradient(120deg,${g ? g[1] : c} 0%,${c} 45%,color-mix(in srgb,${g ? g[0] : c} 62%,#fff) 100%)` }} onMouseDown={drag}>
-              {!tpl && <span className="ic">{n.type === 'ariapay' ? <img src="/leona-mark.png" alt="" style={{ width: 26, height: 26 }} /> : <I size={20} />}</span>}<b>{n.title}</b>{acts}</div>
+            <div className={'fe-nh' + (tpl ? ' sm' : '')} style={{ background: g ? `linear-gradient(90deg,${g[0]},${g[1]})` : `linear-gradient(90deg,${c},${c}cc)` }} onMouseDown={drag}>
+              {!tpl && <span className="ic">{n.type === 'ariapay' ? <img src="/leona-mark.png" alt="" style={{ width: 26, height: 26 }} /> : <I size={20} />}</span>}<b>{n.type === 'inicio' ? 'Inicio' : n.title || B(n.type)[0]}</b>{acts}</div>
+            {stats}
             {tpl && <div className="fe-box"><b>{n.tpl?.name || 'Template não selecionado'}</b><span>Template Meta HSM · Quick Reply</span></div>}
             {body}
             {n.type !== 'inicio' && <span className="fe-port in" data-port={n.id + '|in'} />}
