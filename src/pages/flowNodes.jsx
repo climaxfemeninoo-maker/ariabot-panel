@@ -335,7 +335,7 @@ export function CarouselModal({ node, onClose, onSave }) {
   const pick = id => { const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/jpeg,image/png,image/webp'; i.onchange = () => { const f = i.files[0]; if (!f) return; if (f.size > 20 * 1048576) return toast('Máx. 20MB', 'err'); const r = new FileReader(); r.onload = () => card(id, { img: f.size < 1.5 * 1048576 ? r.result : '', fname: f.name }); r.readAsDataURL(f) }; i.click() }
   const ok = c.cards.length && c.cards.every(k => k.text.trim())
   const nb = c.cards.reduce((a, k) => a + (k.buttons || []).filter(b => (b.type || 'reply') === 'reply').length, 0)
-  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm" style={{ maxWidth: 560, maxHeight: '94vh' }}>
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm" style={{ maxWidth: 560, maxHeight: '94vh' }}>
     <div className="fe-mh"><span className="ic" style={{ background: '#0ea5e9' }}><LayoutGridI /></span><h2>Editar carrusel</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
     <div className="lm-b" style={{ padding: '20px 24px 0', overflowY: 'auto' }}>
       <Lb>Tiempo de expiración</Lb><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 11 }}><input className="l-in" type="number" min="0" style={{ ...IN, fontWeight: 700 }} value={c.exp} onChange={e => set({ exp: Math.max(0, +e.target.value || 0) })} /><LSelect className="l-in" bold value={c.unit} onChange={v => set({ unit: v })} options={U4.map(([value, label]) => ({ value, label }))} /></div>

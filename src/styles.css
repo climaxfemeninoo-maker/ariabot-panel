@@ -2838,3 +2838,39 @@ html:not(.dark) .ne-seg{background:#f3f4f6;border-color:#e5e7eb}
 /* ventanas antiguas con el mismo estilo */
 .fe-gm .fe-mh h2{font-size:20px;font-weight:600}
 .fe-gm .lm-b label,.fe-gm .l-lbl{color:#9ca3af}
+/* ===== Ventanas de nodos: colores exactos de Leona ===== */
+html.dark .fe-gm,html.dark .ne{background:#13111c!important;border:1px solid #262236!important;border-radius:12px!important;box-shadow:0 30px 80px rgba(0,0,0,.6)!important}
+html.dark .fe-gm .fe-mh,html.dark .ne .ne-h{border-bottom:1px solid #262236!important;background:none!important}
+html.dark .fe-gm .fe-mh h2,html.dark .ne .ne-h h2{font-size:21px!important;font-weight:700!important;color:#f3f4f6!important}
+html.dark .fe-gm .fe-mh .ic,html.dark .ne .ne-ic{width:40px!important;height:40px!important;border-radius:9px!important;box-shadow:none!important}
+html.dark .ne .ne-f,html.dark .fe-gm .lm-f{background:#13111c!important;border-top:1px solid #262236!important}
+/* etiquetas de campos: blancas, sin mayúsculas */
+html.dark .fe-gm :is(.l-lbl,.fe-lb),html.dark .ne .ne-lb,html.dark .ne .ne-st{color:#e5e7eb!important;text-transform:none!important;letter-spacing:0!important;font-size:14.5px!important;font-weight:600!important}
+html.dark .ne .ne-st>i{display:none}
+html.dark .ne :is(.ne-cnt,.ne-p,.ne-hint),html.dark .fe-gm :is(.fe-help,.fe-small){color:#9ca3af!important}
+/* campos */
+html.dark .ne :is(input.ne-in,textarea.ne-in,.l-in,.l-selb,.ne-inw,.ne-mtb),html.dark .fe-gm :is(input[class],textarea,.l-in,.l-selb,.fe-ed,.fe-vin){
+  background:#1e1a2e!important;background-color:#1e1a2e!important;border:1px solid #2d2842!important;border-radius:8px!important;color:#f3f4f6!important;font-weight:600}
+html.dark .fe-gm .fe-ed textarea,html.dark .fe-gm .fe-vin :is(input,textarea){background:transparent!important;border:none!important}
+html.dark .ne :is(input.ne-in,textarea.ne-in,.l-in,.ne-mtb):focus,html.dark .ne .ne-inw:focus-within,html.dark .fe-gm :is(input[class],textarea,.l-in):focus{border-color:#8b5cf6!important;box-shadow:0 0 0 3px rgba(139,92,246,.2)!important}
+html.dark .ne ::placeholder,html.dark .fe-gm ::placeholder{color:#6b7280!important;font-weight:500}
+/* bloques y secciones */
+html.dark .fe-gm .fe-blk,html.dark .ne :is(.ne-sec,.ne-item,.ne-route,.ne-sw,.ne-other){background:#15121f!important;border:1px solid #2a2540!important;border-radius:8px!important}
+html.dark .ne .ne-item{border-left:1px solid #2a2540!important}
+html.dark .ne .ne-sw.on{border-color:#2a2540!important}
+/* interruptores, enlaces y acentos morados */
+html.dark .ne .l-tg.on,html.dark .fe-gm .l-tg.on{background:#8b5cf6!important}
+html.dark .ne :is(.ne-link,.ne-add2),html.dark .fe-gm a{color:#a78bfa!important}
+html.dark .ne .ne-add2{border-color:rgba(139,92,246,.45)!important;background:rgba(139,92,246,.1)!important}
+html.dark .ne :is(.ne-vi button.on,.ne-qk button.on,.ne-seg button.on){background:#8b5cf6!important;border-color:#8b5cf6!important}
+html.dark .ne :is(.ne-sq.on,.ne-fl button.on,.ne-cards button.on){border-color:#8b5cf6!important;background:rgba(139,92,246,.12)!important}
+html.dark .ne .ne-vars button{color:#c4b5fd!important;border-color:rgba(139,92,246,.4)!important;background:rgba(139,92,246,.1)!important}
+html.dark .ne .ne-n,html.dark .ne .ne-sq .n{background:#4c3a8a!important}
+html.dark .ne .ne-seg{background:#1e1a2e!important;border-color:#2d2842!important}
+/* botones de abajo */
+html.dark .ne .ne-ok,html.dark .fe-gm .lb2.p{background:#8b5cf6!important;color:#fff!important;border:none!important;border-radius:8px!important;box-shadow:none!important;height:42px!important;padding:0 24px!important;font-weight:600!important}
+html.dark .ne .ne-ok:hover:not(:disabled),html.dark .fe-gm .lb2.p:hover:not(:disabled){background:#7c3aed!important}
+html.dark .ne .ne-cancel,html.dark .fe-gm .lb2.g{background:#2a2540!important;color:#f3f4f6!important;border:none!important;border-radius:8px!important;height:42px!important;padding:0 20px!important;font-weight:600!important}
+html.dark .ne .ne-cancel:hover,html.dark .fe-gm .lb2.g:hover{background:#352f50!important}
+html.dark .ne .ne-pv{border-color:#2a2540!important}html.dark .ne .ne-pvh{background:#1e1a2e!important}
+html.dark .fe-gm .fe-mh .ic{background:linear-gradient(145deg,color-mix(in srgb,var(--nc,#8b5cf6) 70%,#fff),var(--nc,#8b5cf6))!important;color:#fff!important}

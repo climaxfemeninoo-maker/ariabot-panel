@@ -318,4 +318,4 @@ export function TagsEditor({ node, onClose, onSave, isNew }) {
   </Shell>
 }
 
-export const CUSTOM_ED = { mensaje: ContentEditor, botones: ButtonsEditor, agente: AgentEditor, seguimiento: FollowEditor, conexion: ActivateEditor, pais: CountryEditor, intervalo: WaitEditor, etiquetas: TagsEditor }
+export const CUSTOM_ED = { botones: ButtonsEditor, agente: AgentEditor, seguimiento: FollowEditor, pais: CountryEditor }
