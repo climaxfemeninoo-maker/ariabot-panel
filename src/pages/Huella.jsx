@@ -23,12 +23,12 @@ export function HuellaModal({ open, onClose }) {
   if (!open) return null
   const cur = [...LEVELS].reverse().find(l => rev >= l[0]); const next = LEVELS.find(l => rev < l[0])
   const prev = cur ? cur[0] : 0; const pct = next ? Math.min(100, (rev - prev) / (next[0] - prev) * 100) : 100
-  const Stat = ({ l, ic: Ic, c, children }) => <div style={{ border: '1px solid var(--border)', borderRadius: 7, padding: '20px 17px 18px', minWidth: 0 }}><div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '.05em', color: '#94a3b8', lineHeight: 1.4 }}>{l}</span><Ic size={14} color={c} style={{ marginLeft: 'auto', flexShrink: 0 }} /></div><div style={{ marginTop: 12 }}>{children}</div></div>
+  const Stat = ({ l, ic: Ic, c, children }) => <div className="hm-stat" style={{ border: '1px solid var(--border)', borderRadius: 7, padding: '20px 17px 18px', minWidth: 0 }}><div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}><span style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '.05em', color: '#94a3b8', lineHeight: 1.4 }}>{l}</span><Ic size={14} color={c} style={{ marginLeft: 'auto', flexShrink: 0 }} /></div><div style={{ marginTop: 12 }}>{children}</div></div>
   return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}>
     <div className="lm" style={{ maxWidth: 630 }}>
       <div className="lm-h"><div><h2 style={{ fontSize: 18.5 }}>Huella del Depredador: el viaje de escala</h2><p style={{ fontSize: 13.3 }}>Logros operativos y facturación acumulada</p></div><button className="x" onClick={onClose}><X size={18} /></button></div>
       <div className="lm-b" style={{ padding: '22px 23px 26px' }}>
-        <div style={{ border: '1px solid #2a344a', borderRadius: 9, padding: '20px 20px 20px', background: 'linear-gradient(120deg,#151e30,#1a243a 60%,#1d273e)' }}>
+        <div className="hm-hero" style={{ border: '1px solid #2a344a', borderRadius: 9, padding: '20px 20px 20px', background: 'linear-gradient(120deg,#151e30,#1a243a 60%,#1d273e)' }}>
           <div style={{ fontSize: 14.5, fontWeight: 700 }}>🐆 El mercado es una selva.</div>
           <p style={{ fontSize: 12.4, lineHeight: 1.6, color: 'var(--text)', marginTop: 8 }}>La Huella del Depredador reconoce a socios que dejaron de solo reaccionar al mercado y pasaron a avanzar sobre él con más inteligencia, ritmo y potencia operativa. Cada hito representa escala, fuerza y dominio en la selva competitiva.</p>
           <button className="lb2 p" style={{ marginTop: 14, height: 33, fontSize: 12.5 }} onClick={() => { onClose(); nav('/rewards') }}><Gift size={15} />Canjear premios</button>
@@ -38,20 +38,20 @@ export function HuellaModal({ open, onClose }) {
           <Stat l="LEADS ACUMULADOS" ic={Users} c="#60a5fa"><span style={{ fontSize: 17, fontWeight: 700 }}>{contacts.length}</span> <span style={{ fontSize: 11.5, color: 'var(--soft)' }}>leads acumulados</span></Stat>
           <Stat l="FACTURACIÓN ACUMULADA" ic={TrendingUp} c="#22c55e"><div style={{ fontSize: 19, fontWeight: 700, color: '#22c55e' }}>{brl(rev)}</div></Stat>
         </div>
-        <div style={{ position: 'relative', border: '1px solid #4a2236', borderRadius: 7, padding: '22px 17px 14px', marginTop: 16, overflow: 'hidden' }}>
+        <div className="hm-seal" style={{ position: 'relative', border: '1px solid #4a2236', borderRadius: 7, padding: '22px 17px 14px', marginTop: 16, overflow: 'hidden' }}>
           
           <div style={{ display: 'flex' }}><div><div style={{ fontSize: 11.5, color: 'var(--soft)', fontWeight: 500 }}>Sello Actual de Facturación</div><div style={{ fontSize: 13.3, color: cur ? 'var(--text)' : '#94a3b8', marginTop: 13, fontWeight: cur ? 700 : 400 }}>{cur ? cur[1] : 'Sin sello aún'}</div></div>
             {next && <div style={{ marginLeft: 'auto', textAlign: 'right' }}><div style={{ fontSize: 11.5, color: 'var(--soft)' }}>Próximo Hito</div><div style={{ fontSize: 13.3, fontWeight: 700, marginTop: 8 }}>{next[1]}</div><div style={{ fontSize: 11.5, fontWeight: 700, color: '#22c55e', marginTop: 2 }}>{brl0(next[0])}</div></div>}</div>
           <div style={{ display: 'flex', fontSize: 11.5, marginTop: 14 }}><span style={{ color: 'var(--soft)' }}>Progreso hacia el próximo sello</span><b style={{ marginLeft: 'auto' }}>{Math.floor(pct)}%</b></div>
-          <div style={{ height: 7, borderRadius: 7, background: '#151e30', border: '1px solid var(--border)', marginTop: 6, overflow: 'hidden' }}><div style={{ width: pct + '%', height: '100%', background: 'linear-gradient(90deg,#005ae3,#22c55e)' }} /></div>
+          <div className="hm-trk" style={{ height: 7, borderRadius: 7, background: '#151e30', border: '1px solid var(--border)', marginTop: 6, overflow: 'hidden' }}><div style={{ width: pct + '%', height: '100%', background: 'linear-gradient(90deg,#005ae3,#22c55e)' }} /></div>
           {next && <div style={{ fontSize: 10.5, color: 'var(--soft)', textAlign: 'right', marginTop: 7 }}>Faltan {brl(next[0] - rev)} para {next[1]}</div>}
         </div>
         <div style={{ fontSize: 13.3, fontWeight: 700, letterSpacing: '.02em', marginTop: 24 }}>NIVELES DE LA HUELLA DEL DEPREDADOR</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 13 }}>
-          {LEVELS.map(([v, t, Ic, d]) => { const ok = rev >= v; return <div key={v} style={{ border: '1px solid ' + (ok ? '#22c55e' : 'rgba(255,255,255,.75)'), borderRadius: 6, padding: '15px 15px 14px', background: ok ? 'rgba(34,197,94,.06)' : 'transparent' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}><span style={{ width: 30, height: 30, border: '1px solid rgba(255,255,255,.7)', borderRadius: 6, display: 'grid', placeItems: 'center', flexShrink: 0 }}><Ic size={15} /></span>
+          {LEVELS.map(([v, t, Ic, d]) => { const ok = rev >= v; return <div key={v} className={'hm-lv' + (ok ? ' ok' : '')} style={{ border: '1px solid ' + (ok ? '#22c55e' : 'rgba(255,255,255,.75)'), borderRadius: 6, padding: '15px 15px 14px', background: ok ? 'rgba(34,197,94,.06)' : 'transparent' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}><span className="hm-lvi" style={{ width: 30, height: 30, border: '1px solid rgba(255,255,255,.7)', borderRadius: 6, display: 'grid', placeItems: 'center', flexShrink: 0 }}><Ic size={15} /></span>
               <div><div style={{ fontSize: 12.5, fontWeight: 700 }}>{t}</div><div style={{ fontSize: 11.5, fontWeight: 700, color: '#22c55e', marginTop: 2 }}>{brl0(v)}</div></div>
-              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid rgba(255,255,255,.6)', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700, color: ok ? '#22c55e' : '#cbd5e1', whiteSpace: 'nowrap' }}>{ok ? '✓' : <Lock size={10} />}{brl(v)}</span></div>
+              <span className="hm-pill" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid rgba(255,255,255,.6)', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700, color: ok ? '#22c55e' : '#cbd5e1', whiteSpace: 'nowrap' }}>{ok ? '✓' : <Lock size={10} />}{brl(v)}</span></div>
             <p style={{ fontSize: 11.5, lineHeight: 1.55, color: 'var(--text)', marginTop: 10 }}>{d}</p></div> })}
         </div>
       </div>

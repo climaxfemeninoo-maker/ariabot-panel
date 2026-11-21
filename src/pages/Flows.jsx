@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Workflow, Plus, FolderPlus, MoreVertical, Share2, ChevronLeft, TriangleAlert, Save, Download, Search, Folder, FolderOpen, Home, MoreHorizontal, Trash2, Copy, Pause, Play, Archive, ArrowLeft, Pencil, LayoutGrid, Languages, ZoomIn, ZoomOut, Maximize, RotateCcw, MessageSquare, FileText, Tags, QrCode, List, GalleryHorizontal, Hourglass, MessageCircle, Bell, GitBranch, Shuffle, Link2, Activity, Timer, Building, Puzzle, Brain, Bot, Columns3, Wrench, BadgeCheck, CreditCard, Wallet, Phone, Sparkles, PlayCircle, Zap, X, Diamond } from 'lucide-react'
+import { Workflow, Plus, FolderPlus, MoreVertical, Share2, ChevronLeft, TriangleAlert, Save, Download, Search, Folder, FolderOpen, Home, MoreHorizontal, Trash2, Copy, Pause, Play, Archive, ArrowLeft, Pencil, LayoutGrid, Languages, ZoomIn, ZoomOut, Maximize, RotateCcw, MessageSquare, FileText, Tags, QrCode, List, GalleryHorizontal, Hourglass, MessageCircle, Bell, GitBranch, Shuffle, Link2, Activity, Timer, Building, Puzzle, Brain, Bot, Columns3, Wrench, BadgeCheck, CreditCard, Wallet, Phone, Sparkles, PlayCircle, Zap, X, Diamond, Check } from 'lucide-react'
 import { useStore, Modal, Menu, Empty, PageHead, useToast, uid, Confirm, nowStr, useOutside } from '../ui'
 import { LModal, LSelect } from './leona'
 
@@ -64,13 +64,16 @@ export default function Flows() {
   const [folders, setFolders] = useStore('folders', [])
   const [folder, setFolder] = useState(null); const [q, setQ] = useState(''); const [st, setSt] = useState('Todos')
   const [mod, setMod] = useState(null); const [del, setDel] = useState(null); const file = useRef()
+  const [shares, setShares] = useStore('flow_shares', {})
+  const share = f => { let code = Object.keys(shares).find(k => shares[k].id === f.id); if (!code) code = crypto.randomUUID ? crypto.randomUUID() : uid() + '-' + uid() + '-' + uid(); setShares(x => ({ ...x, [code]: JSON.parse(JSON.stringify(f)) })); setMod({ t: 'share', code }) }
+  const importCode = code => { const f = shares[code.trim()]; if (!f) return toast('Código no encontrado', 'err'); setFlows(x => [...x, { ...JSON.parse(JSON.stringify(f)), id: uid(), name: f.name + ' (importado)', folder, updated: nowStr() }]); setMod(null); toast('Flujo importado') }
   const rows = flows.filter(f => (f.folder || null) === folder && f.name.toLowerCase().includes(q.toLowerCase()) && (st === 'Todos' || (st === 'Activos' ? f.status === 'activo' : f.status === 'pausado')))
   const create = () => {
     const base = 'Flujo nuevo'; let n = base, i = 1; while (flows.some(f => f.name === n)) n = base + ' ' + i++
     const f = { ...seedFlow(n, 'pausado', [], nowStr()), folder }; setFlows(x => [...x, f]); toast('Flujo creado'); nav(`/flows/${f.id}/edit`)
   }
   const upd = (id, p) => setFlows(fs => fs.map(f => f.id === id ? { ...f, ...p, updated: nowStr() } : f))
-  const importFlow = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { const j = JSON.parse(t); if (!Array.isArray(j.nodes)) throw 0; setFlows(x => [...x, { ...j, id: uid(), folder, updated: nowStr() }]); toast('Flujo importado') } catch { toast('Archivo inválido', 'err') } }); e.target.value = '' }
+  const importFlow = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { const j = JSON.parse(t); if (!Array.isArray(j.nodes)) throw 0; setFlows(x => [...x, { ...j, id: uid(), folder, updated: nowStr() }]); setMod(null); toast('Flujo importado') } catch { toast('Archivo inválido', 'err') } }); e.target.value = '' }
   const cur = folders.find(f => f.id === folder)
   return <div className="lp">
     <div className="lp-hd"><Workflow size={22} strokeWidth={1.9} style={{ marginLeft: 2, marginTop: 9 }} />
@@ -78,7 +81,7 @@ export default function Flows() {
       <div className="r" style={{ marginTop: 4 }}>
         <button className="lp-btn p" onClick={create}><Plus size={17} />Flujo nuevo</button>
         <button className="lp-btn" onClick={() => setMod({ t: 'folder', name: '', color: FCOL[0][0] })}><FolderPlus size={16} />Carpeta</button>
-        <button className="lp-btn" onClick={() => file.current.click()}><Download size={16} />Importar</button><input ref={file} type="file" accept=".json" hidden onChange={importFlow} />
+        <button className="lp-btn" onClick={() => setMod({ t: 'import', code: '' })}><Download size={16} />Importar</button><input ref={file} type="file" accept=".json" hidden onChange={importFlow} />
       </div></div>
     <div className="lp-srch" style={{ marginTop: 18 }}><Search size={15} /><input value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar flujos..." /></div>
     <div className="fl-chips">{[['Todos'], ['Activos', '#22c55e'], ['Pausados', '#ef4444']].map(([s, c]) => <button key={s} className={'fl-chip' + (st === s ? ' on' : '')} onClick={() => setSt(s)}>{c && <i style={{ background: c }} />}{s}</button>)}</div>
@@ -102,12 +105,12 @@ export default function Flows() {
           {rows.map(f => { const S = STAT[f.status] || STAT.pausado; return <div key={f.id} className="fl-row fl-tr" style={{ borderLeftColor: S[0] }} onClick={() => nav(`/flows/${f.id}/edit`)}>
             <span className="nm"><i style={{ background: S[0] }} />{f.name}</span>
             <span><span className="fl-bd" style={{ color: S[0], background: S[2], borderColor: S[3] }}><i />{S[1]}</span></span>
-            <span className="bl"><Zap size={13} color="#005ae3" />{f.nodes.length}</span>
+            <span className="bl"><Zap size={14} strokeWidth={1.7} color="#4d8ff5" />{f.nodes.length}</span>
             <span className="dt">{f.updated}</span>
             <PopMenu btnClass="mn" width={207} items={[
               { icon: <Pencil size={17} />, label: 'Editar nombre del flujo', onClick: () => setMod({ t: 'rename', id: f.id, name: f.name }) },
               { icon: <Copy size={17} />, label: 'Duplicar', onClick: () => { setFlows(x => [...x, { ...f, id: uid(), name: f.name + ' (copia)', updated: nowStr() }]); toast('Flujo duplicado') } },
-              { icon: <Share2 size={17} />, label: 'Compartir', onClick: () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(f, null, 2)], { type: 'application/json' })); a.download = f.name + '.json'; a.click(); toast('Flujo exportado para compartir') } },
+              { icon: <Share2 size={17} />, label: 'Compartir', onClick: () => share(f) },
               { icon: <Languages size={17} />, label: 'Traducir', onClick: () => setMod({ t: 'translate', id: f.id, lang: f.lang || 'es' }) },
               f.status === 'activo' ? { icon: <Pause size={17} />, label: 'Pausar', onClick: () => { upd(f.id, { status: 'pausado' }); toast('Flujo pausado') } } : { icon: <Play size={17} />, label: 'Reactivar', onClick: () => { upd(f.id, { status: 'activo' }); toast('Flujo reactivado') } },
               ...folders.filter(x => x.id !== f.folder).map(x => ({ icon: <Folder size={17} color={x.color || '#3b82f6'} />, label: 'Mover a ' + x.name, onClick: () => { upd(f.id, { folder: x.id }); toast('Movido a ' + x.name) } })),
@@ -129,6 +132,16 @@ export default function Flows() {
         <button className="lb2 g" onClick={() => setMod(null)}>Cancelar</button>
         <button className="lb2 p" disabled={!mod.name.trim()} onClick={() => { if (mod.id) setFolders(fs => fs.map(x => x.id === mod.id ? { ...x, name: mod.name.trim(), color: mod.color } : x)); else setFolders(fs => [...fs, { id: uid(), name: mod.name.trim(), color: mod.color }]); toast(mod.id ? 'Carpeta actualizada' : 'Carpeta creada'); setMod(null) }}><Save size={15} />{mod.id ? 'Guardar' : 'Crear'}</button>
       </div>
+    </LModal>}
+    {mod?.t === 'share' && <LModal open onClose={() => setMod(null)} title="Compartir flujo" icon={<Share2 size={19} color="#4d8ff5" />} width={500} bodyStyle={{ padding: '18px 22px 20px' }}>
+      <p style={{ fontSize: 14, color: 'var(--text)' }}>Comparta este código con otra cuenta para importar el flujo:</p>
+      <div style={{ display: 'flex', gap: 10, marginTop: 12 }}><input className="l-in ct-in fl-code" readOnly value={mod.code} onFocus={e => e.target.select()} />
+        <button className="fl-cp" title="Copiar" onClick={() => { navigator.clipboard?.writeText(mod.code); setMod({ ...mod, ok: true }); toast('Código copiado') }}>{mod.ok ? <Check size={17} /> : <Copy size={17} />}</button></div>
+      <p style={{ fontSize: 12, color: 'var(--soft)', marginTop: 12 }}>El flujo importado será una copia completa e independiente del original.</p>
+    </LModal>}
+    {mod?.t === 'import' && <LModal open onClose={() => setMod(null)} title="Importar flujo" desc="Pega el código que te compartieron" icon={<Download size={19} />} width={500}
+      footer={<><button className="lb2 g" onClick={() => file.current.click()}>Subir archivo .json</button><button className="lb2 p" disabled={!mod.code.trim()} onClick={() => importCode(mod.code)}>Importar</button></>}>
+      <label className="l-lbl">Código del flujo</label><input className="l-in ct-in fl-code" autoFocus value={mod.code} onChange={e => setMod({ ...mod, code: e.target.value })} onKeyDown={e => e.key === 'Enter' && mod.code.trim() && importCode(mod.code)} placeholder="Ej.: 71a546b4-0ece-4105-8fef-7b85d1eac..." />
     </LModal>}
     {mod?.t === 'rename' && <LModal open onClose={() => setMod(null)} title="Editar nombre del flujo" icon={<Pencil size={18} />}
       footer={<><button className="lb2 g" onClick={() => setMod(null)}>Cancelar</button><button className="lb2 p" disabled={!mod.name.trim()} onClick={() => { upd(mod.id, { name: mod.name.trim() }); setMod(null); toast('Nombre actualizado') }}>Guardar</button></>}>
