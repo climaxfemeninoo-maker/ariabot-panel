@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { useState, useEffect, useRef } from 'react'
 import { Zap, Pencil, Workflow, MessageCircle, Power, Repeat, Hash, MousePointerClick, UserPlus, MessagesSquare, Check, FlaskConical, Clock3 } from 'lucide-react'
 import { PhoneCall, X, Plus, Trash2, Info, Upload, Link2, Code, Mic, Image, Music, Video, ChevronDown, Search, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useStore, useToast, uid } from '../ui'
@@ -185,9 +186,7 @@ function Field({ f, c, set, s, flowId }) {
       {/^[A-Z]{3}$/.test(v || '') && <div style={{ fontSize: 12, color: curName(v) ? '#4ade80' : '#f87171', marginTop: 6 }}>{curName(v) ? `OK · ${v} · ${curName(v)}` : 'Moneda no reconocida'}</div>}{help && <Help>{help}</Help>}</>
     case 'phone': { const p = v || { cc: '+55', n: '' }; return <><Lb>{f.l}</Lb><div style={{ display: 'flex', gap: 8 }}><LSelect className="l-in" bold value={p.cc} onChange={cc => u({ ...p, cc })} options={[['+55', '+55 Brasil'], ['+51', '+51 Perú'], ['+52', '+52 México'], ['+57', '+57 Colombia'], ['+54', '+54 Argentina'], ['+56', '+56 Chile'], ['+1', '+1 EE. UU.'], ['+34', '+34 España']].map(([value, label]) => ({ value, label }))} style={{ width: 150, flexShrink: 0 }} />
       <input className="l-in" style={IN} inputMode="tel" value={p.n} onChange={e => u({ ...p, n: e.target.value.replace(/[^\d ]/g, '') })} placeholder={'número sin ' + p.cc} /></div></> }
-    case 'flowpick': { const [q, setQ] = useState(''); const list = s.flows.filter(x => x.id !== flowId && x.name.toLowerCase().includes(q.toLowerCase())); const cur = s.flows.find(x => x.id === v)
-      return <><Lb>{f.l}</Lb><div className="fe-vin" style={{ alignItems: 'center' }}><Search size={15} color="#8f8a9e" style={{ marginLeft: 13 }} /><input value={q} onChange={e => setQ(e.target.value)} placeholder={cur ? cur.name : f.ph} style={{ height: 41 }} /></div>
-        <div style={{ marginTop: 8, maxHeight: 220, overflowY: 'auto' }}>{list.map(x => <button key={x.id} className={'l-opt' + (x.id === v ? ' on' : '')} onClick={() => u(x.id)}>{x.name}</button>)}{!list.length && <div className="fe-small" style={{ padding: 8 }}>Ningún flujo encontrado.</div>}</div></> }
+    case 'flowpick': return <><Lb>{f.l}</Lb><FlowCombo flows={s.flows.filter(x => x.id !== flowId)} v={v} onPick={u} ph={f.ph} /></>
     case 'list': { const L = v || (typeof f.d === 'function' ? f.d() : []); if (!c[f.k] && typeof f.d === 'function') setTimeout(() => u(L)); return <>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}><b style={{ fontSize: 13.3 }}>{f.l}</b><button className="lb2 p sm" style={{ marginLeft: 'auto', height: 34 }} disabled={f.max && L.length >= f.max} onClick={() => u([...L, { id: uid(), ...(f.item.find(i => i.o) ? { [f.item.find(i => i.o).k]: f.item.find(i => i.o).o[0][0] } : {}) }])}><Plus size={15} />{f.add}</button></div>
       {help && <div className="fe-small" style={{ marginTop: -4, marginBottom: 10 }}>{help}</div>}
@@ -520,4 +519,18 @@ export function StartModal({ node, flowName, onClose, onSave }) {
 
       <div className="ini-ft"><button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" disabled={!ok} onClick={() => onSave({ ...node, title: name.trim(), cfg: c, desc: startDesc(c) })}><Zap size={15} />Guardar activador</button></div>
     </div></div></div>
+}
+
+function FlowCombo({ flows, v, onPick, ph }) {
+  const [q, setQ] = useState(''); const [open, setOpen] = useState(false); const [pos, setPos] = useState(null); const ref = useRef(); const lref = useRef()
+  const cur = flows.find(x => x.id === v); const list = flows.filter(x => x.name.toLowerCase().includes(q.toLowerCase()))
+  useEffect(() => { if (!open) return; const r = ref.current.getBoundingClientRect(); setPos({ left: r.left, top: r.bottom + 4, width: r.width })
+    const out = e => { if (!ref.current?.contains(e.target) && !lref.current?.contains(e.target)) setOpen(false) }
+    const sc = e => { if (!lref.current?.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', out); addEventListener('scroll', sc, true); return () => { document.removeEventListener('mousedown', out); removeEventListener('scroll', sc, true) } }, [open])
+  return <div ref={ref} className={'fc' + (open ? ' open' : '')} onClick={() => { setOpen(true); ref.current.querySelector('input').focus() }}>
+    <Search size={15} /><input value={q} onChange={e => { setQ(e.target.value); setOpen(true) }} onFocus={() => setOpen(true)} placeholder={cur ? cur.name : ph} className={cur && !q ? 'has' : ''} />
+    <ChevronDown size={16} className="cv" />
+    {open && pos && createPortal(<ul ref={lref} className="fc-l" style={{ left: pos.left, top: pos.top, width: pos.width }}>{list.length ? list.map(x => <li key={x.id} className={x.id === v ? 'on' : ''} onMouseDown={e => { e.preventDefault(); onPick(x.id); setQ(''); setOpen(false) }}>{x.name}</li>) : <li className="no">Ningún flujo encontrado</li>}</ul>, document.body)}
+  </div>
 }
