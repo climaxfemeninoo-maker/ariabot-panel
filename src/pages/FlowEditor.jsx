@@ -54,7 +54,7 @@ const NVI = { etiquetas: 'tag', mensaje: 'books', botones: 'touch', seguimiento:
 export const paisCodes = t => (t || '').split(',').map(x => x.trim().match(/^\+?(\d{1,4})\s*(.*)$/)).filter(Boolean).map(m => [m[1], m[2] || ''])
 const B = t => FB[t] || FB.mensaje
 const NV = { etiquetas: 1, pais: 1, mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
-const PAL = ['mensaje', 'template', 'etiquetas', 'pix', 'menu', 'carrusel', 'esperar', 'controlador', 'notificacion', 'condicional', 'distribuidor', 'conexion', 'intervalo', 'departamento', 'integracion', 'ia', 'agente', 'kanban', 'manipulador', 'venta', 'pago', 'llamar', 'kie', 'seguimiento']
+const PAL = ['mensaje', 'template', 'etiquetas', 'pix', 'menu', 'carrusel', 'esperar', 'controlador', 'notificacion', 'condicional', 'distribuidor', 'conexion', 'intervalo', 'departamento', 'integracion', 'ia', 'agente', 'kanban', 'manipulador', 'venta', 'pago', 'llamar', 'kie']
 const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#f59e0b', 'Agente de IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {

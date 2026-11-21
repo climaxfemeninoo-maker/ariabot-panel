@@ -2993,3 +2993,40 @@ html.dark .fe-gm .lb2.g,html.dark .ne .ne-cancel{background:transparent!importan
 html.dark .fe-gm .lb2.g:hover,html.dark .ne .ne-cancel:hover{background:rgba(255,255,255,.04)!important}
 html.dark .fe-gm .l-tg.on,html.dark .ne .l-tg.on{background:#8b5cf6!important}
 html.dark .fe-gm,html.dark .ne,.fe-gm,.ne{border-radius:6px!important}html.dark .fe-gm .fe-mh .ic,html.dark .ne .ne-ic{border-radius:8px!important}
+.l-selm.fx{min-width:var(--mw)!important;max-width:min(420px,calc(100vw - 16px))!important;right:auto!important}
+/* Texto centrado en campos */
+html.dark .fe-gm :is(input[class]:not([type=range]):not([type=checkbox]):not([type=radio]),.l-in,.l-selb),html.dark .ne :is(input.ne-in,.l-in){padding-top:0!important;padding-bottom:0!important;line-height:normal!important;display:flex;align-items:center}
+html.dark .fe-gm input[class]{display:block!important;line-height:38px!important}
+html.dark .fe-gm textarea,html.dark .ne textarea.ne-in{padding:10px 12px!important;line-height:1.5!important}
+html.dark .fe-gm input[type=number]{text-align:center}
+/* Herramientas compacto con scroll */
+.fe-pal{width:250px!important;max-height:min(560px,calc(100% - 110px))!important;border-radius:8px!important;background:#1e2538!important;border:1px solid #36405a!important;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.fe-pal .s{padding:9px!important;border-bottom:1px solid #2c3550!important}
+.fe-pal .s div{height:36px!important;border-radius:6px!important;background:#161d31!important;border:1px solid #36405a!important}
+.fe-pal .l{padding:4px 5px 6px!important}
+.fe-pi{height:36px!important;font-size:13.5px!important;border-radius:6px!important;gap:12px!important}
+.fe-pi:hover{background:rgba(0,90,227,.14)!important}
+.fe-pal .l::-webkit-scrollbar{width:6px}.fe-pal .l::-webkit-scrollbar-thumb{background:#3a4560;border-radius:3px}
+/* Esquinas aún menos redondeadas dentro de las ventanas */
+html.dark .fe-gm .fe-blk,html.dark .fe-gm .sc-list,html.dark .fe-gm .dx-o,html.dark .fe-gm .mo-card,html.dark .ne :is(.ne-sec,.ne-item,.ne-route,.ne-sw){border-radius:6px!important}
+html.dark .fe-gm :is(.lb2,.fe-seg,.fe-drop,.fe-add button),html.dark .ne :is(.ne-ok,.ne-cancel){border-radius:6px!important}
+html.dark .fe-gm,html.dark .ne{border-radius:6px!important}
+.l-selm.fx{position:fixed!important;left:var(--l)!important;top:var(--t)!important;bottom:var(--b)!important;right:auto!important;margin-top:0!important;border-radius:6px!important;width:max-content!important}
+/* Llamar como Leona */
+.cl-card{border:1px solid rgba(20,184,166,.45);border-radius:6px;background:linear-gradient(160deg,#0d2a2b,#101a24 70%);padding:16px 16px 14px;margin-bottom:14px}
+.cl-card p{font-size:13px;color:#9ca3af;line-height:1.5;margin-top:8px}.cl-card p.rd{color:#f87171}
+.cl-h{display:flex;gap:12px;align-items:center}.cl-h b{display:block;font-size:15px;color:#f3f4f6}.cl-h small{font-size:13px;color:#9ca3af}
+.cl-ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#2dd4bf;border:1.5px solid #14b8a6;background:rgba(20,184,166,.12);flex-shrink:0}
+.cl-t{display:flex;align-items:flex-end;margin-top:18px}.cl-t span{font-size:12px;letter-spacing:.08em;color:#9ca3af;font-weight:600}.cl-t b{margin-left:auto;font-size:28px;color:#5eead4;line-height:1}
+.cl-rng{width:100%;margin-top:12px}.cl-sc{display:flex;justify-content:space-between;font-size:12px;color:#9ca3af;margin-top:6px}
+.cl-st{font-size:15px;color:#f3f4f6}
+html.dark .fe-gm .cl-seg button.on{background:#0d9488!important}
+.cl-drop{margin-top:12px;border:1.5px dashed #14b8a6;border-radius:6px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:8px;background:rgba(20,184,166,.05)}
+.cl-drop .mic{width:58px;height:58px;border-radius:8px;display:grid;place-items:center;background:#134e4a;color:#2dd4bf}
+.cl-drop small{font-size:13px;color:#9ca3af}.cl-drop button{height:36px;padding:0 18px;border-radius:6px;background:#0d9488;color:#fff;font-weight:600;font-size:14px}
+/* Manipulador: recuadro naranja */
+html.dark .fe-gm.nt-manipulador .lm-b>div:first-child{border:1.5px solid #c2410c;border-radius:6px;padding:16px}
+html.dark .fe-gm.nt-manipulador .l-selb{background:#7c2d12!important;border-color:#9a3412!important}
+/* Bloque de IA: campos dentro de un recuadro */
+html.dark .fe-gm.nt-ia .lm-b>div:first-child{border:1px solid #374151;border-radius:6px;padding:16px}
+html.dark .fe-gm.nt-manipulador .l-in.l-selb.l-selb.l-selb.l-selb.l-selb{background:#7c2d12!important;border-color:#9a3412!important;color:#fff!important}

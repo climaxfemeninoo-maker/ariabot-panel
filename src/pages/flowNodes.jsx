@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Zap, Pencil, Workflow, MessageCircle, Power, Repeat, Hash, MousePointerClick, UserPlus, MessagesSquare, Check, FlaskConical, Clock3 } from 'lucide-react'
-import { X, Plus, Trash2, Info, Upload, Link2, Code, Mic, Image, Music, Video, ChevronDown, Search, Loader2, Eye, EyeOff } from 'lucide-react'
+import { PhoneCall, X, Plus, Trash2, Info, Upload, Link2, Code, Mic, Image, Music, Video, ChevronDown, Search, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useStore, useToast, uid } from '../ui'
 import { LSelect, Toggle } from './leona'
 import { PickBtn, curName } from './flowPickers'
@@ -63,7 +63,7 @@ export const NODE_DEF = {
   integracion: { title: 'Editar integración', fields: [{ t: 'http' }], desc: c => c.url ? `${c.method || 'GET'} ${c.url}` : 'Realizar peticiones HTTP (POST/PUT/GET) a APIs externas',
     outs: () => [{ k: 'success', l: 'Éxito', c: 'gn', pc: '#16a34a' }, { k: 'failure', l: 'Fallo', c: 'rd', pc: '#dc2626' }] },
   ia: { title: 'Editar bloque de IA', fields: [
-    { k: 'prov', t: 'select', l: 'Proveedor de IA', o: [['leona', 'Leona AI'], ['gpt', 'GPT'], ['gemini', 'Gemini'], ['openrouter', 'OpenRouter'], ['biziva', 'BIZIVA'], ['deepseek', 'DeepSeek (próximamente)']], d: 'gpt' },
+    { k: 'prov', t: 'select', l: 'Proveedor de IA', o: [['leona', 'Nubify AI'], ['gpt', 'GPT'], ['gemini', 'Gemini'], ['openrouter', 'OpenRouter'], ['biziva', 'BIZIVA'], ['deepseek', 'DeepSeek (próximamente)']], d: 'gpt' },
     { k: 'auth', t: 'select', l: 'Autenticación', o: [['manual', 'Clave manual o variable global'], ['int', 'Integración registrada']], d: 'manual', when: c => (c.prov || 'gpt') !== 'leona' },
     { k: 'key', t: 'password', l: 'Clave API', ph: 'sk-… o {g_nombre_variable}', help: 'Puede usar la clave fija (como antes) o referenciar una variable global de la cuenta en el formato {g_nome} (el nombre registrado debe empezar por g_).', when: c => (c.prov || 'gpt') !== 'leona' && (c.auth || 'manual') === 'manual' },
     { k: 'model', t: 'select', l: 'Modelo', o: c => (MODELS[c.prov || 'gpt'] || []).map(m => [m, m]), d: 'GPT-5.4 Mini', help: 'Si el modelo seleccionado no está disponible con su clave API, la ejecución fallará. Compruebe el acceso antes de usar.', dyn: 1 },
@@ -233,16 +233,22 @@ function Pay({ c, set }) {
 function Call({ c, set }) {
   const r = c.ring || 8; const src = c.src || 'file'
   const pick = () => { const i = document.createElement('input'); i.type = 'file'; i.accept = '.mp3,.ogg,.m4a,audio/*'; i.onchange = () => { const f = i.files[0]; if (f && f.size <= 16 * 1048576) set({ file: f.name }) }; i.click() }
-  return <><div style={{ border: '1px solid rgba(20,184,166,.4)', background: 'rgba(20,184,166,.07)', borderRadius: 9, padding: '14px 15px' }}><b style={{ fontSize: 14 }}>Llamada al lead</b><Help>Marca el número del contacto automáticamente.</Help></div>
-    <div style={{ display: 'flex', marginTop: 16, fontSize: 13.3 }}><b>{c.file || c.url ? 'TIEMPO EXTRA' : 'Tiempo de toque'}</b><b style={{ marginLeft: 'auto', color: '#2dd4bf' }}>{r}s</b></div>
-    <input type="range" className="fe-rng" min="1" max="15" value={r} onChange={e => set({ ring: +e.target.value })} style={{ marginTop: 9, background: `linear-gradient(90deg,#14b8a6 ${(r - 1) / 14 * 100}%,#374151 0)` }} />
-    <div style={{ display: 'flex', fontSize: 11.5, color: 'var(--muted)', marginTop: 4 }}><span>1s</span><span style={{ marginLeft: 'auto' }}>15s</span></div>
-    <Help>{c.file || c.url ? 'De 1 a 15 segundos. En el request la llamada dura esto + el audio. Ej.: 10s en el bloque y audio de 8s envía 18s.' : 'De 1 a 15 segundos. WhatsApp corta la llamada en ese límite y el flujo solo sigue después.'}</Help>
-    <div className="fe-warn" style={{ marginTop: 12 }}>Solo funciona en conexiones no oficiales (UAZAPI).<br />Puede aumentar la tasa de bloqueo de la instancia.</div>
-    <div style={{ marginTop: 16 }}><b style={{ fontSize: 13.3 }}>Audio (opcional)</b><Help>Sube el archivo en el bloque o pega una URL (puede ser variable). Sin audio, queda solo el toque.</Help></div>
-    <div className="fe-seg" style={{ marginTop: 10 }}>{[['file', 'Archivo', Upload], ['url', 'URL', Link2]].map(([k, l, I]) => <button key={k} className={src === k ? 'on' : ''} onClick={() => set({ src: k })}><I size={14} />{l}</button>)}</div>
-    {src === 'file' ? <div className="fe-drop" style={{ borderColor: '#14b8a6', background: 'rgba(20,184,166,.06)' }}><small>{c.file || 'MP3, OGG, M4A. Máximo 16MB.'}</small><button className="bt" style={{ background: '#0d9488' }} onClick={pick}>Subir audio</button></div>
-      : <><Lb>URL del audio</Lb><VBox v={c.url} set={v => set({ url: v })} ph="https://ejemplo.com/audio.mp3 o {audio_url}" /><Help>HTTPS o variable, igual que el bloque de media. {'{audio_url}'}</Help></>}</>
+  return <>
+    <div className="cl-card">
+      <div className="cl-h"><span className="cl-ic"><PhoneCall size={20} /></span><div><b>Llamada al lead</b><small>Marca el número del contacto automáticamente.</small></div></div>
+      <div className="cl-t"><span>{c.file || c.url ? 'TIEMPO EXTRA' : 'TIEMPO DE TOQUE'}</span><b>{r}s</b></div>
+      <input type="range" className="fe-rng cl-rng" min="1" max="15" value={r} onChange={e => set({ ring: +e.target.value })} style={{ background: `linear-gradient(90deg,#14b8a6 ${(r - 1) / 14 * 100}%,#1f4a47 0)` }} />
+      <div className="cl-sc"><span>1s</span><span>15s</span></div>
+      <p>{c.file || c.url ? 'De 1 a 15 segundos. En el request la llamada dura esto + el audio. Ej.: 10s en el bloque y audio de 8s envía 18s.' : 'De 1 a 15 segundos. WhatsApp corta la llamada en ese límite y el flujo solo sigue después.'}</p>
+      <p>Solo funciona en conexiones no oficiales (UAZAPI).</p>
+      <p className="rd">Puede aumentar la tasa de bloqueo de la instancia.</p>
+    </div>
+    <div className="cl-card">
+      <b className="cl-st">Audio (opcional)</b><p style={{ marginTop: 6 }}>Sube el archivo en el bloque o pega una URL (puede ser variable). Sin audio, queda solo el toque.</p>
+      <div className="fe-seg cl-seg" style={{ marginTop: 12 }}>{[['file', 'Archivo', Upload], ['url', 'URL', Link2]].map(([k, l, I]) => <button key={k} className={src === k ? 'on' : ''} onClick={() => set({ src: k })}><I size={14} />{l}</button>)}</div>
+      {src === 'file' ? <div className="cl-drop"><span className="mic"><Mic size={22} /></span><small>{c.file || 'MP3, OGG, M4A. Máximo 16MB.'}</small><button onClick={pick}>{c.file ? 'Cambiar audio' : 'Subir audio'}</button></div>
+        : <input className="l-in" style={{ marginTop: 12 }} value={c.url || ''} onChange={e => set({ url: e.target.value })} placeholder="https://… o {variable}" />}
+    </div></>
 }
 function Kie({ c, set }) {
   const g = c.gen || 'audio'; const [help, setHelp] = useState(false); const [adv, setAdv] = useState(false)
