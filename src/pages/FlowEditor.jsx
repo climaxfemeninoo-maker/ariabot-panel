@@ -5,6 +5,7 @@ import { useStore, useToast, uid, nowStr, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 import { PickBtn } from './flowPickers'
 import { MI } from './mdIcons'
+import { CUSTOM_ED } from './nodeEditors'
 import { StartModal, startMatches } from './flowNodes'
 import { NODE_DEF, ESPERAR_OUTS, GenericNodeModal, CarouselModal, carOuts } from './flowNodes'
 
@@ -48,12 +49,12 @@ Object.assign(FB, {
   ticket: ['Ticket', '#6366f1', Ticket, 'Asigna el chat a un agente del equipo', ['#f8fafc', '#eef2f7']],
   pais: ['Código de país', '#0891b2', Globe, 'Divide el flujo según el país del número', ['#0284c7', '#06b6d4']],
 })
-FB.botones[0] = 'Mensajes API'; FB.botones[1] = '#0f8f6e'
-const NVI = { mensaje: 'books', botones: 'touch', seguimiento: 'clock', conexion: 'split', copiar: 'copy', intervalo: 'hourglass', notificacion: 'bell', ticket: 'ticket', pais: 'globe', agente: 'spark' }
+FB.botones[0] = 'Mensajes API'; FB.botones[1] = '#0f8f6e'; FB.etiquetas = ['Etiquetas', '#6366f1', Tag, 'Agrega o quita etiquetas del ticket', ['#818cf8', '#4f46e5']]
+const NVI = { etiquetas: 'tag', mensaje: 'books', botones: 'touch', seguimiento: 'clock', conexion: 'split', copiar: 'copy', intervalo: 'hourglass', notificacion: 'bell', ticket: 'ticket', pais: 'globe', agente: 'spark' }
 export const paisCodes = t => (t || '').split(',').map(x => x.trim().match(/^\+?(\d{1,4})\s*(.*)$/)).filter(Boolean).map(m => [m[1], m[2] || ''])
 const B = t => FB[t] || FB.mensaje
-const NV = { pais: 1, mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
-const PAL = ['mensaje', 'seguimiento', 'agente', 'conexion', 'copiar', 'intervalo', 'notificacion', 'ticket', 'pais', 'botones']
+const NV = { etiquetas: 1, pais: 1, mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
+const PAL = ['mensaje', 'seguimiento', 'agente', 'conexion', 'copiar', 'intervalo', 'notificacion', 'ticket', 'pais', 'botones', 'etiquetas']
 const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#10b981', 'Agente IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
@@ -279,7 +280,7 @@ export default function FlowEditor() {
     let x = src ? src.x + NW + 80 : 0, y = src ? src.y : 0
     while (flow.nodes.some(n => Math.abs(n.x - x) < NW && Math.abs(n.y - y) < NH)) y += NH + 40
     const n = newNode(type, x, y)
-    setFlow(f => ({ ...f, nodes: [...f.nodes, n] })); setSel(n.id); setPanel(null); setTimeout(() => setEdit(n), 260)
+    setFlow(f => ({ ...f, nodes: [...f.nodes, n] })); setSel(n.id); setPanel(null); setTimeout(() => setEdit({ ...n, __new: true }), 260)
     const r = box.current.getBoundingClientRect(); setView(v => ({ ...v, x: r.width / 2 - (x + NW / 2) * v.k, y: r.height / 2 - (y + NH / 2) * v.k })); toast(B(type)[0] + ' agregado') }
   function removeNode(nid) { const nn = flow.nodes.find(n => n.id === nid); if (!nn || nn.type === 'inicio') return; setDel(nn) }
   function doRemove(nid) { setFlow(f => ({ ...f, nodes: f.nodes.filter(n => n.id !== nid), edges: f.edges.filter(e => e.from !== nid && e.to !== nid) })); setSel(null); setDel(null) }
@@ -356,6 +357,7 @@ export default function FlowEditor() {
               else if (n.type === 'copiar') bd = <div className="nv-b dk"><div className="nv-cap">SÓLO BUSINESS · QR · CONTINÚA AUTOMÁTICO</div><div className="nv-ct">{cf.text || mute('Mensaje')}</div><div className="nv-cb"><MI n="copy" size={22} />{cf.btn || 'Copiar'}</div><div className="nv-cs">Copia: {cf.copy || '—'}</div></div>
               else if (n.type === 'intervalo') bd = <div className="nv-b"><div className="nv-chip cy"><MI n="hourglass" size={22} color="#0e7490" /><span>{(() => { const [v, u] = cf.time || [1, 'minutes']; return v + ' ' + ({ seconds: 'segundos', minutes: 'minutos', hours: 'horas', days: 'días' })[u] })()}</span></div></div>
               else if (n.type === 'notificacion') bd = <div className="nv-b nt"><div className="nv-l1">{cf.name || cf.phone?.n ? `WhatsApp → ${cf.name || '+' + cf.phone.n}` : mute('Sin configurar')}</div><div className="nv-l2">🔔 {cf.msg || 'Mensaje de la notificación'}</div></div>
+              else if (n.type === 'etiquetas') bd = <div className="nv-b">{(cf.add || []).length + (cf.remove || []).length ? <div className="nv-tags">{(cf.add || []).map(t => <span key={'a' + t} className="ad">+ {t}</span>)}{(cf.remove || []).map(t => <span key={'r' + t} className="rm">− {t}</span>)}</div> : <div className="nv-chip in">{mute('Sin etiquetas')}</div>}</div>
               else if (n.type === 'ticket') bd = <div className="nv-b"><div className="nv-chip in">{cf.who ? '+' + cf.who : mute('+ Asignar')}</div></div>
               else if (n.type === 'pais') { const cs = paisCodes(cf.codes)
                 bd = <div className="nv-b">{cs.map(([cd, nm], i) => <div key={i} className="nv-pr"><b>+{cd}</b><span>{nm}</span>{Out('c' + cd, { right: -30 })}</div>)}<div className="nv-pr ot"><b>Otros países</b>{Out('otros', { right: -30 })}</div></div>; outs = true }
@@ -406,9 +408,11 @@ export default function FlowEditor() {
     {del && <LModal open onClose={() => setDel(null)} title="Eliminar nodo" icon={<TriangleAlert size={21} color="#ef4444" />} width={472} bodyStyle={{ padding: '22px 24px 0' }}>
       <p style={{ fontSize: 14.3, lineHeight: 1.55, color: 'var(--soft)' }}>¿Seguro que desea eliminar el nodo "{del.title}"?</p>
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 22, padding: '16px 0', display: 'flex', justifyContent: 'flex-end', gap: 12 }}><button className="lb2 g" onClick={() => setDel(null)}>Cancelar</button><button className="lb2 d" onClick={() => { doRemove(del.id); toast('Nodo eliminado') }}>Eliminar</button></div></LModal>}
-    {edit && ['template', 'etiquetas', 'pix', 'menu'].includes(edit.type) && (() => { const save = n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || !e.port || e.port === 'main' || (nodeOuts(n) || []).some(o => o.k === e.port)) })); setEdit(null); toast('Nodo guardado') }
+    {edit && CUSTOM_ED[edit.type] && (() => { const E = CUSTOM_ED[edit.type]; const save = ({ __new, ...n }) => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || (nodeOuts(n) ? nodeOuts(n).some(o => o.k === (e.port || 'main')) : !e.port || e.port === 'main')) })); setEdit(null); toast('Nodo guardado') }
+      return <E node={edit} flowId={flow.id} isNew={!!edit.__new} onClose={() => setEdit(null)} onSave={save} /> })()}
+    {edit && !CUSTOM_ED[edit.type] && ['template', 'pix', 'menu'].includes(edit.type) && (() => { const save = n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || !e.port || e.port === 'main' || (nodeOuts(n) || []).some(o => o.k === e.port)) })); setEdit(null); toast('Nodo guardado') }
       const M = { template: TemplateModal, etiquetas: TagsModal, pix: PixModal, menu: MenuModal }[edit.type]; return <M node={edit} onClose={() => setEdit(null)} onSave={save} /> })()}
-    {edit && !['template', 'etiquetas', 'pix', 'menu'].includes(edit.type) && (edit.type === 'mensaje' ? <MessageModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Mensaje guardado') }} />
+    {edit && !CUSTOM_ED[edit.type] && !['template', 'pix', 'menu'].includes(edit.type) && (edit.type === 'mensaje' ? <MessageModal node={edit} onClose={() => setEdit(null)} onSave={n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x) })); setEdit(null); toast('Mensaje guardado') }} />
       : (() => { const save = n => { setFlow(f => ({ ...f, nodes: f.nodes.map(x => x.id === n.id ? n : x), edges: f.edges.filter(e => e.from !== n.id || (nodeOuts(n) ? (nodeOuts(n).some(o => o.k === (e.port || 'main'))) : !e.port || e.port === 'main')) })); setEdit(null); toast('Nodo guardado') }
         const [, c, I] = B(edit.type)
         if (edit.type === 'inicio') return <StartModal node={edit} flowName={flow.name} onClose={() => setEdit(null)} onSave={save} />
