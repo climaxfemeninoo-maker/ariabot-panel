@@ -39,12 +39,9 @@ export const NODE_DEF = {
     desc: c => (c.conds || []).length ? (c.conds || []).map(condLabel).join(c.mode === 'any' ? ' O ' : ' Y ') : 'Dividir el flujo según reglas',
     outs: c => !(c.conds || []).length ? [] : [{ k: 'true', l: 'Condición cumplida', c: 'gn', pc: '#16a34a' }, { k: 'false', l: 'No cumplida', c: 'rd', pc: '#dc2626' }] },
   distribuidor: { title: 'Editar distribuidor', fields: [
-    { t: 'h', l: 'Seleccione cuántas distribuciones se harán:' },
-    { k: 'next', t: 'switch', l: 'Distribuir siempre al siguiente' },
-    { k: 'norep', t: 'switch', l: 'Evitar repetición' },
-    { k: 'outs', t: 'list', add: 'Añadir salida', empty: 'Ninguna salida. Añada al menos dos para repartir los contactos.', item: [{ k: 'name', ph: 'Nombre de la salida' }, { k: 'pct', ph: '%', num: 1, w: 80 }], d: () => [{ id: uid(), name: 'Salida A', pct: 50 }, { id: uid(), name: 'Salida B', pct: 50 }] },
+    { t: 'distx' },
     how('Este nodo distribuye los contactos por igual entre las salidas. Los clientes recurrentes van siempre a la misma salida de antes.')],
-    outs: c => (c.outs || []).map((o, i) => ({ k: 'o' + o.id, l: `${o.name || 'Salida ' + (i + 1)}${o.pct ? ' · ' + o.pct + '%' : ''}`, c: 'or', pc: '#f59e0b' })) },
+    outs: c => (c.outs || []).map((o, i) => ({ k: 'o' + o.id, l: `Salida ${i + 1}`, c: 'or', pc: '#f59e0b' })) },
   conexion: { title: 'Editar conexión de flujo', fields: [{ k: 'flow', t: 'flowpick', l: 'Seleccione el flujo de destino:', ph: 'Escriba el nombre del flujo...' }], desc: (c, s) => c.flow ? '→ ' + (s.flows.find(f => f.id === c.flow)?.name || 'Flujo eliminado') : 'Redirigir a otro flujo', outs: () => [] },
   pixel: { title: 'Editar pixel', fields: [
     { k: 'plat', t: 'select', l: 'Plataforma *', o: [['Facebook', 'Facebook'], ['TikTok', 'TikTok'], ['Kwai', 'Kwai'], ['Google', 'Google']], d: 'Facebook' },
@@ -138,7 +135,7 @@ export const NODE_DEF = {
     { t: 'sec', l: 'Seguimiento UTMify', link: 'Gestionar integraciones UTMify…', help: 'Envía la venta automáticamente a UTMify.' },
     { k: 'utm', t: 'select', l: 'Integración UTMify (opcional)', o: s => [['', 'No enviar a UTMify'], ...s.ints.filter(i => i.prov === 'utmify').map(i => [i.id, i.label || 'UTMify'])], d: '' }],
     desc: (c, s) => c.prod && c.prod !== '__new' ? 'Producto: ' + (s.products.find(p => p.id === c.prod)?.name || '—') : '' },
-  pago: { title: 'Editar Pago', fields: [{ k: 'gw', t: 'select', l: 'GATEWAY', cap: 1, o: [['leonapay', 'Leona Pay'], ['xpag', 'XPag'], ['zenith', 'Zenith']], d: 'leonapay' }, { t: 'pay' }], desc: () => 'Genera un cobro y continúa el flujo' },
+  pago: { title: 'Editar Pago', fields: [{ k: 'gw', t: 'select', l: 'GATEWAY', cap: 1, o: [['xpag', 'XPag'], ['zenith', 'Zenith']], d: 'xpag' }, { t: 'pay' }], desc: () => 'Genera un cobro y continúa el flujo' },
   ariapay: { title: 'Editar Leona Pay', fields: [{ t: 'pay' }], desc: c => `${c.cur || 'BRL'} · ${c.value || '100,00'}`, outs: () => PAYOUTS },
   llamar: { title: 'Editar llamada', fields: [{ t: 'call' }], desc: c => (c.ring || 8) + 's' },
   kie: { title: 'Editar integración Kie.ai', fields: [{ t: 'kie' }], desc: c => c.gen ? ({ audio: 'Audio · ElevenLabs', image: 'Imagen', music: 'Música · Suno', video: 'Video · Veo 3.1' })[c.gen] : '', outs: () => [{ k: 'success', l: 'Éxito', c: 'gn', pc: '#16a34a' }, { k: 'failure', l: 'Fallo', c: 'rd', pc: '#dc2626' }] },
@@ -205,6 +202,11 @@ function Field({ f, c, set, s, flowId }) {
     case 'h': return <b style={{ fontSize: 13.3 }}>{f.l}</b>
     case 'sec': return <div style={{ borderTop: '1px solid var(--border)', paddingTop: 15 }}><div style={{ display: 'flex' }}><b style={{ fontSize: 14 }}>{f.l}</b>{f.link && <span style={{ marginLeft: 'auto', fontSize: 12, color: '#60a5fa' }}>{f.link}</span>}</div>{help && <Help>{help}</Help>}</div>
     case 'conds': return <Conds c={c} set={set} />
+    case 'distx': { const os = c.outs || []
+      return <div className="dx"><div className="dx-h"><Link2 size={19} /><div><b>Editar distribuidor</b><small>Seleccione cuántas distribuciones se harán:</small></div></div>
+        <div className="dx-sw"><span className={c.norep ? '' : 'on'}>Distribuir siempre al siguiente</span><Toggle on={!!c.norep} onChange={v => set({ norep: v, next: !v })} /><span className={c.norep ? 'on' : ''}>Evitar repetición</span></div>
+        {os.map((o, i) => <div key={o.id} className="dx-o"><div><b>Salida {i + 1}</b><small>Cantidad: {o.n || 0}</small></div><button title="Eliminar" onClick={() => set({ outs: os.filter(x => x.id !== o.id) })}><Trash2 size={15} /></button></div>)}
+        <button className="dx-add" onClick={() => set({ outs: [...os, { id: uid(), n: 0 }] })}><Plus size={17} />Añadir salida</button></div> }
     case 'sched': return <Sched v={c.sched} set={v => set({ sched: v })} />
     case 'pay': return <Pay c={c} set={set} />
     case 'call': return <Call c={c} set={set} />
@@ -314,7 +316,7 @@ export function GenericNodeModal({ node, def, color, icon, onClose, onSave, flow
   const set = p => setC(x => ({ ...x, ...p }))
   const fs = def.fields.filter(f => !f.when || f.when(c))
   const req = fs.filter(f => f.req).every(f => f.t === 'phone' ? (c[f.k]?.n || '').replace(/\D/g, '').length >= 6 : (c[f.k] || '').toString().trim())
-  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm" style={{ maxWidth: 540, maxHeight: '94vh', '--nc': color }}>
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className={'lm fe-gm nt-' + node.type} style={{ maxWidth: 540, maxHeight: '94vh', '--nc': color }}>
     <div className="fe-mh"><span className="ic" style={{ background: color }}>{icon}</span><h2>{def.title}</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
     <div className="lm-b" style={{ padding: '20px 24px 0', overflowY: 'auto' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>{fs.map((f, i) => <div key={f.k || i} style={f.half ? { display: 'inline-block' } : null}><Field f={f} c={c} set={set} s={s} flowId={flowId} /></div>)}</div>
@@ -335,7 +337,7 @@ export function CarouselModal({ node, onClose, onSave }) {
   const pick = id => { const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/jpeg,image/png,image/webp'; i.onchange = () => { const f = i.files[0]; if (!f) return; if (f.size > 20 * 1048576) return toast('Máx. 20MB', 'err'); const r = new FileReader(); r.onload = () => card(id, { img: f.size < 1.5 * 1048576 ? r.result : '', fname: f.name }); r.readAsDataURL(f) }; i.click() }
   const ok = c.cards.length && c.cards.every(k => k.text.trim())
   const nb = c.cards.reduce((a, k) => a + (k.buttons || []).filter(b => (b.type || 'reply') === 'reply').length, 0)
-  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm" style={{ maxWidth: 560, maxHeight: '94vh' }}>
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm" style={{ '--nc': '#0ea5e9', maxWidth: 560, maxHeight: '94vh' }}>
     <div className="fe-mh"><span className="ic" style={{ background: '#0ea5e9' }}><LayoutGridI /></span><h2>Editar carrusel</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
     <div className="lm-b" style={{ padding: '20px 24px 0', overflowY: 'auto' }}>
       <Lb>Tiempo de expiración</Lb><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 11 }}><input className="l-in" type="number" min="0" style={{ ...IN, fontWeight: 700 }} value={c.exp} onChange={e => set({ exp: Math.max(0, +e.target.value || 0) })} /><LSelect className="l-in" bold value={c.unit} onChange={v => set({ unit: v })} options={U4.map(([value, label]) => ({ value, label }))} /></div>
