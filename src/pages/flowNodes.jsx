@@ -69,14 +69,14 @@ export const NODE_DEF = {
     { k: 'model', t: 'select', l: 'Modelo', o: c => (MODELS[c.prov || 'gpt'] || []).map(m => [m, m]), d: 'GPT-5.4 Mini', help: 'Si el modelo seleccionado no está disponible con su clave API, la ejecución fallará. Compruebe el acceso antes de usar.', dyn: 1 },
     { k: 'msg', t: 'varea', l: 'Mensaje enviado al modelo', ph: '{last_user_message}', help: 'Use variables como {last_user_message} o {campo} con el botón de variables en la barra de herramientas' },
     { k: 'save', t: 'text', l: 'Campo para guardar la respuesta de la IA:', ph: 'ai.response', d: 'ai.response', help: 'Si no se completa, se guardará en ai.response. La respuesta siempre se guarda también en ai.response.' },
-    { k: 'auto', t: 'switch', l: 'Enviar respuesta automáticamente', help: 'Envía la respuesta de la IA como mensaje al lead automáticamente' },
+    { k: 'auto', t: 'switch', box: 1, tone: 'g', l: 'Enviar respuesta automáticamente', help: 'Envía la respuesta de la IA como mensaje al lead automáticamente' },
     { k: 'prompt', t: 'area', l: 'Prompt de IA / Comportamiento', ph: 'Usted es un asistente útil.\nResponda siempre en español.\nSea claro y conciso.' },
-    { k: 'audio', t: 'switch', l: 'Entender audio', help: 'Permite procesar mensajes de audio' },
-    { k: 'image', t: 'switch', l: 'Entender imagen', help: 'Permite procesar imágenes' },
-    { k: 'pdf', t: 'switch', l: 'Entender PDF', help: 'Permite procesar documentos PDF' },
-    { k: 'receipt', t: 'switch', l: 'Identificar comprobante', help: 'Identifica comprobantes de pago en imagen/PDF y extrae datos en el lead. Crea la salida Comprobante válido en la parte superior del bloque.' },
+    { k: 'audio', t: 'switch', box: 1, l: 'Entender audio', help: 'Permite procesar mensajes de audio' },
+    { k: 'image', t: 'switch', box: 1, l: 'Entender imagen', help: 'Permite procesar imágenes' },
+    { k: 'pdf', t: 'switch', box: 1, l: 'Entender PDF', help: 'Permite procesar documentos PDF' },
+    { k: 'receipt', t: 'switch', box: 1, tone: 'o', l: 'Identificar comprobante', help: 'Identifica comprobantes de pago en imagen/PDF y extrae datos en el lead. Crea la salida Comprobante válido en la parte superior del bloque.' },
     { k: 'conds', t: 'aiconds' },
-    { k: 'ctx', t: 'switch', l: 'Mantener contexto de la conversación (últimas 5 interacciones)', help: 'Mantiene el historial de las últimas interacciones para mejor contexto (máximo 20 interacciones)' },
+    { k: 'ctx', t: 'switch', box: 1, tone: 'g', l: 'Mantener contexto de la conversación (últimas 5 interacciones)', help: 'Mantiene el historial de las últimas interacciones para mejor contexto (máximo 20 interacciones)' },
     how('Este bloque se integra con APIs de IA (GPT, Gemini, OpenRouter o Leona AI) para generar respuestas inteligentes. La respuesta se guarda en una variable configurable y puede usarse en otros bloques. En caso de error, el motivo se guarda en una variable de fallo para su tratamiento.')],
     desc: () => 'Integración con GPT y Gemini para respuestas inteligentes',
     outs: c => [...(c.receipt ? [{ k: 'receipt', l: 'Comprobante válido', c: 'gn', pc: '#16a34a' }] : []), ...(c.conds || []).map((x, i) => ({ k: 'c' + x.id, l: x.out || 'Condicional ' + (i + 1), c: 'pu', pc: '#005ae3' })), ...((c.conds || []).length ? [{ k: 'cdef', l: c.defOut || 'Salida predeterminada', c: 'gr', pc: '#6b7280' }] : []), { k: 'success', l: 'Éxito', c: 'gn', pc: '#16a34a' }, { k: 'failure', l: 'Fallo', c: 'rd', pc: '#dc2626' }] },
@@ -164,7 +164,7 @@ function Field({ f, c, set, s, flowId }) {
   const opts = typeof f.o === 'function' ? f.o(f.dyn ? c : s, c) : f.o
   const help = typeof f.help === 'function' ? f.help(c) : f.help
   switch (f.t) {
-    case 'switch': return <div className={f.box ? 'fe-blk' : ''} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, ...(f.box ? { padding: '13px 15px', marginBottom: 0 } : {}) }}><div style={{ flex: 1 }}><div style={{ fontSize: 13.3, fontWeight: 600 }}>{f.l}</div>{help && <Help>{help}</Help>}</div><Toggle on={!!v} onChange={u} /></div>
+    case 'switch': return <div className={(f.box ? 'fe-blk sw-box' : '') + (f.tone ? ' tone-' + f.tone : '') + (v ? ' is-on' : '')} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, ...(f.box ? { padding: '13px 15px', marginBottom: 0 } : {}) }}><div style={{ flex: 1 }}><div style={{ fontSize: 13.3, fontWeight: 600 }}>{f.l}</div>{help && <Help>{help}</Help>}</div><Toggle on={!!v} onChange={u} /></div>
     case 'text': return <><Lb>{f.l}</Lb><input className="l-in" style={IN} value={v || ''} onChange={e => u(e.target.value)} placeholder={f.ph} />{help && <Help>{help}</Help>}</>
     case 'password': return <><Lb>{f.l}</Lb><Pwd v={v} set={u} ph={f.ph} />{help && <Help>{help}</Help>}</>
     case 'aiconds': return <AiConds c={c} set={set} />
@@ -256,7 +256,7 @@ function Kie({ c, set }) {
   return <><div style={{ border: '1px solid rgba(26,115,240,.4)', background: 'rgba(26,115,240,.07)', borderRadius: 9, padding: '14px 15px' }}><b style={{ fontSize: 14 }}>Integración Kie.ai</b><Help>Bloque nativo para generación de audio, imagen y video (Veo)</Help></div>
     <div style={{ marginTop: 16 }}><Lb>API key de Kie.ai</Lb><Pwd v={c.key} set={v => set({ key: v })} ph="{minha_key_kie}" /><button className="fe-lnk" style={{ marginTop: 6 }} onClick={() => setHelp(!help)}>Cómo obtener tu API key</button>
       {help && <div className="fe-blk" style={{ padding: '11px 13px', marginTop: 8 }}><b style={{ fontSize: 13 }}>Cómo obtener la API key de Kie.ai</b><Help>Abre tu panel Kie.ai, copia la API key y pégala en el campo de arriba.</Help></div>}</div>
-    <div style={{ marginTop: 16 }}><Lb>¿Qué generar?</Lb><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>{GEN.map(([k, l, d, I]) => <button key={k} onClick={() => set({ gen: k, model: MOD[k][0][0] })} style={{ textAlign: 'left', padding: '12px 13px', borderRadius: 8, border: '1px solid ' + (g === k ? '#1a73f0' : 'var(--border2)'), background: g === k ? 'rgba(26,115,240,.1)' : 'transparent', color: 'var(--text)' }}><div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 700, fontSize: 13.5 }}><I size={15} color="#60a5fa" />{l}</div><div style={{ fontSize: 11.5, color: 'var(--soft)', marginTop: 4, lineHeight: 1.4 }}>{d}</div></button>)}</div></div>
+    <div style={{ marginTop: 16 }}><Lb>¿Qué generar?</Lb><div className="kie-gen" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 9 }}>{GEN.map(([k, l, d, I]) => <button key={k} onClick={() => set({ gen: k, model: MOD[k][0][0] })} style={{ textAlign: 'left', padding: '12px 13px', borderRadius: 8, border: '1px solid ' + (g === k ? '#8b5cf6' : '#2a2540'), background: g === k ? '#1e1a2e' : 'transparent', color: 'var(--text)' }}><div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 700, fontSize: 14.5 }}>{l}</div><div style={{ fontSize: 11.5, color: 'var(--soft)', marginTop: 4, lineHeight: 1.4 }}>{d}</div></button>)}</div></div>
     <div style={{ marginTop: 16 }}><Lb>Modelo</Lb><LSelect className="l-in" bold value={c.model || MOD[g][0][0]} onChange={v => set({ model: v })} options={MOD[g].map(([value, label]) => ({ value, label }))} /></div>
     {g === 'audio' && <><div style={{ marginTop: 16 }}><Lb>Texto</Lb><VBox area v={c.text} set={v => set({ text: v })} ph="Olá {nome}, bem-vindo!" /></div>
       <div style={{ marginTop: 16 }}><Lb>Voz</Lb><LSelect className="l-in" bold value={c.voice || 'Rachel'} onChange={v => set({ voice: v })} options={['Rachel (feminina calma)', 'Adam (masculina grave)', 'Bella (feminina suave)', 'Antoni (masculina natural)', 'Elli (feminina jovem)', 'Josh (masculina profunda)'].map(x => ({ value: x.split(' ')[0], label: x }))} /></div>
@@ -434,11 +434,11 @@ export function Sched({ v, set }) {
   return <>
     <b style={{ fontSize: 13.3 }}>Días y horarios</b><Help>El flujo espera hasta entrar en un horario activo. Si ya está dentro del rango, continúa de inmediato.</Help>
     <div className="fe-blk" style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 14px', margin: '12px 0' }}><div style={{ flex: 1 }}><div style={{ fontSize: 13.3, fontWeight: 600 }}>Usar horarios de funcionamiento</div><Help>{wh ? 'Usa los horarios definidos en Configuración › Empresa.' : 'Une franjas del mismo día (ej.: 09:00 a 12:00 y 18:00 a 21:00 pasa a 09:00 a 21:00).'}</Help></div><Toggle on={!!s.useWork} onChange={x => set({ ...s, useWork: x })} /></div>
-    {!s.useWork && SDAYS.map((n, i) => { const d = s.days[i] || { on: false, ranges: [['09:00', '18:00']] }
+    {!s.useWork && <div className="sc-list">{SDAYS.map((n, i) => { const d = s.days[i] || { on: false, ranges: [['09:00', '18:00']] }
       return <div key={n} className="sc-row"><Toggle on={d.on} onChange={x => day(i, { on: x })} /><b>{n}</b>
         {d.on ? <div className="rg">{d.ranges.map((r, j) => <div key={j}><input type="time" className="l-in" value={r[0]} onChange={e => day(i, { ranges: d.ranges.map((x, k) => k === j ? [e.target.value, x[1]] : x) })} /><span>a</span><input type="time" className="l-in" value={r[1]} onChange={e => day(i, { ranges: d.ranges.map((x, k) => k === j ? [x[0], e.target.value] : x) })} />
-          {j > 0 ? <button onClick={() => day(i, { ranges: d.ranges.filter((_, k) => k !== j) })}><Trash2 size={14} /></button> : <button title="Añadir franja" onClick={() => day(i, { ranges: [...d.ranges, ['14:00', '18:00']] })}><Plus size={14} /></button>}</div>)}</div> : <span className="off">Inactivo</span>}</div> })}
-    {!s.useWork && !any && <div style={{ fontSize: 12.5, color: '#f87171', marginTop: 8 }}>Active al menos un día de la semana</div>}
+          {j > 0 ? <button onClick={() => day(i, { ranges: d.ranges.filter((_, k) => k !== j) })}><Trash2 size={14} /></button> : <button title="Añadir franja" onClick={() => day(i, { ranges: [...d.ranges, ['14:00', '18:00']] })}><Plus size={14} /></button>}</div>)}</div> : <span className="off">Inactivo</span>}</div> })}</div>}
+    {!s.useWork && !any && <div style={{ fontSize: 12.5, color: '#f59e0b', marginTop: 8 }}>Active al menos un día de la semana</div>}
   </>
 }
 

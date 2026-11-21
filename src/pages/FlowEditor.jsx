@@ -578,7 +578,7 @@ function MenuModal({ node, onClose, onSave }) {
   const L = m.mode === 'list'; const key = L ? 'options' : 'buttons'; const list = m[key]
   const maxExp = { m: 44640, h: 744, d: 31 }[m.unit]
   const ok = m.text.trim() && (!L || m.btn.trim()) && list.length > 0 && list.every(o => o.title.trim())
-  return <NModal title="Menú" icon={<List size={20} />} grad="#1a73f0" width={512} onClose={onClose}
+  return <NModal title="Menú" icon={<List size={20} />} grad="#a855f7" width={512} onClose={onClose}
     footer={<Foot onClose={onClose} ok={ok} onOk={() => onSave({ ...node, menu: m, desc: m.text })} />}>
     <div className="fe-seg" style={{ marginTop: 10 }}><button className={L ? 'on' : ''} onClick={() => u({ mode: 'list' })}><List size={15} />Lista</button><button className={!L ? 'on' : ''} onClick={() => u({ mode: 'buttons' })}><Square size={14} />Botones</button></div>
     {!L && <div className="fe-blk" style={{ padding: '15px 15px', marginBottom: 14 }}><label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.3, cursor: 'pointer' }}><input type="checkbox" checked={m.img} onChange={e => u({ img: e.target.checked })} style={{ width: 15, height: 15 }} /><b>Imagen</b><span style={{ color: 'var(--soft)', marginLeft: -5 }}>(opcional)</span></label>
