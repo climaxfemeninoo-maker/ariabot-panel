@@ -2887,3 +2887,34 @@ html:not(.dark) .mo-card{background:#fff;border-color:#e5e7eb}html:not(.dark) .m
 .fe-rn .fe-port.in{left:-8px!important}
 .fe-rn .fe-ns{width:150px!important;gap:4px}.fe-rn .fe-ns span{font-size:8px!important}.fe-rn .fe-ns b{font-size:11px!important}
 .fe-rn{width:160px!important}
+/* Nodos Leona: contenido y tamaños */
+.fe-node{width:290px!important;border-radius:16px!important}
+.fe-nh{height:auto!important;min-height:68px;padding:12px 14px!important;border-radius:13px 13px 0 0!important}
+.fe-nh .ic{width:48px!important;height:48px!important;background:rgba(255,255,255,.22)!important;border:2px solid rgba(255,255,255,.35)!important}
+.fe-nh .ic svg{width:22px;height:22px}
+.fe-nh b{font-size:16.5px!important;font-weight:700!important}
+.fe-nh .acts{align-self:flex-start}
+.fe-ns{padding:12px 6px 8px!important}.fe-ns span{font-size:11.5px!important;letter-spacing:.02em}.fe-ns b{font-size:18px!important}
+.fe-nd.lc{display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important;font-size:14px!important;color:#d1d5db!important;padding:4px 14px 16px!important;line-height:1.45}
+.lc-l{display:flex;flex-direction:column;gap:7px}
+.lc-chip{padding:9px 12px;border-radius:10px;background:#1e2a5a;border:1px solid #2f3f80;color:#dbeafe;font-size:14px;line-height:1.4}
+.lc-chip.or{background:#3b2414;border-color:#7c3a12;color:#fed7aa}.lc-chip.gn{background:#0f2e22;border-color:#166534;color:#bbf7d0}
+.lc-btn{padding:8px;border-radius:8px;background:#1f2937;color:#e5e7eb;text-align:center;font-size:13.5px}
+.lc-more{color:#9ca3af;font-size:12px}
+.lc-tags{display:flex;flex-wrap:wrap;gap:8px;font-size:15px;color:#e5e7eb}.lc-tags .rm{text-decoration:line-through;color:#fca5a5}
+.lc-tx{margin-top:10px;font-size:14.5px;color:#d1d5db}
+.lc-k{display:block;font-size:13px;font-weight:600;color:#d1d5db;margin:4px 0 2px}
+.lc-box{padding:10px 12px;border-radius:9px;background:#163a2e;color:#f3f4f6;font-size:14px;word-break:break-word}
+.lc-box.or{background:transparent;border:1.5px solid #9a3412;display:flex;flex-direction:column;gap:2px}
+.lc-box.or b{color:#fff}.lc-box.or span{color:#fdba74;font-size:13px}.lc-box.or em{font-style:normal;color:#d1d5db;font-size:13px}
+.fe-row{font-size:14px!important;padding:11px 13px!important}
+/* círculos grandes como Leona */
+.fe-rn{width:190px!important}
+.fe-rn .circ{width:112px!important;height:112px!important;border-width:2.5px!important;gap:3px!important}
+.fe-rn .circ svg{width:34px;height:34px}
+.fe-rn .circ small{font-size:12px!important;font-weight:700}
+.fe-rn .circ.agente{width:112px!important;height:112px!important}
+.fe-rn .fe-ns{width:180px!important;margin-top:10px;border-radius:10px!important;background:#15112d!important;padding:8px 6px!important}
+.fe-rn .fe-ns span{font-size:11px!important}.fe-rn .fe-ns b{font-size:16px!important}
+.fe-rn .fe-port.in{left:-8px!important}
+.fe-rn .circ.agente{background:radial-gradient(circle at 40% 30%,#1fc48f,#0b7a55)!important;border:2.5px solid #34d399!important;box-shadow:0 0 18px rgba(52,211,153,.55)!important;overflow:hidden}.fe-rn .circ.agente img{inset:14px!important;width:calc(100% - 28px)!important;height:calc(100% - 44px)!important;object-fit:contain!important;border-radius:0!important;filter:brightness(0) invert(1)!important}
