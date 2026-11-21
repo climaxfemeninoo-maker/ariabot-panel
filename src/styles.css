@@ -2786,3 +2786,23 @@ html:not(.dark) .ne-cancel{color:#334155!important;border-color:#d8dbe2!importan
 @keyframes skBlink2{0%,100%{opacity:.6}50%{opacity:1}}
 .fe-skel .sk-n{animation:skIn .35s ease-out forwards,skBlink2 1.4s ease-in-out .4s infinite!important}
 .fe-skel .bx{fill:#22243d;stroke:#3a3c63}
+/* Campos dentro de los nodos: como "Editar Pagamento" */
+html.dark .ne :is(input.ne-in,textarea.ne-in,.l-in,.l-selb,.ne-inw,.ne-mtb),html.dark .fe-gm :is(input[class],textarea,.l-in,.l-selb){
+  background:#111827!important;background-color:#111827!important;border:1.5px solid #475467!important;border-radius:8px!important;color:#f3f4f6!important;box-shadow:none}
+html.dark .ne :is(input.ne-in,textarea.ne-in,.l-in,.ne-inw):hover{border-color:#5b6577!important}
+html.dark .ne :is(input.ne-in,textarea.ne-in,.l-in,.ne-inw,.ne-mtb):focus,html.dark .ne .ne-inw:focus-within{border-color:var(--nc)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--nc) 22%,transparent)!important}
+html.dark .ne .ne-inw input{background:transparent!important;border:none!important}
+.ne :is(input.ne-in,.l-in,.ne-inw){min-height:50px!important;font-size:16px!important;padding-left:16px!important}
+.ne textarea.ne-in{font-size:15.5px!important;padding:14px 16px!important;line-height:1.55}
+.ne ::placeholder{color:#6b7280!important}
+/* Esquinas menos pronunciadas */
+.ne,.fe-gm{border-radius:12px!important}
+.ne-sec,.ne-sw,.ne-item,.ne-route,.ne-pv,.ne-empty,.ne-drop,.ne-other,.ne-media-l>div{border-radius:8px!important}
+.ne-item{background:transparent!important;border:1px solid #374151!important;border-left:3px solid var(--k)!important;padding:12px 14px 14px!important}
+.ne-ok,.ne-cancel{border-radius:8px!important}
+.ne-ic{border-radius:9px!important}
+.ne-add button,.ne-tools button,.ne-vars button,.ne-btn2,.ne-vi button{border-radius:6px!important}
+.nv{border-radius:11px!important}.nv-h{border-radius:8px 8px 0 0!important}
+.nv-b.dk{border-radius:0 0 8px 8px!important}
+.nv-it,.nv-chip,.nv-pr,.nv-bt,.nv-tm{border-radius:7px!important}
+.fe-start{border-radius:11px!important}
