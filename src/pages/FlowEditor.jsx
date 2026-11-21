@@ -38,14 +38,14 @@ export const FB = {
   kie: ['Integración Kie.ai', '#d946ef', Sparkles, 'Bloque nativo para generación de audio, imagen y video (Veo)'],
 }
 Object.assign(FB, {
-  mensaje: ['Contenido', '#3b82f6', Files, 'Envía textos, imágenes, audios o videos', ['#60a5fa', '#2563eb']],
+  mensaje: ['Mensaje', '#3b82f6', MessageSquare, 'Envía textos, imágenes, audios o videos', ['#60a5fa', '#2563eb']],
   botones: ['Mensajes API', '#8b5cf6', Component, 'Mensaje con botones de respuesta (API oficial)', ['#a78bfa', '#7c3aed']],
-  agente: ['Agente IA', '#10b981', BrainCircuit, 'IA responde consultas o avanza por un camino', ['#34d399', '#059669']],
+  agente: ['Agente de IA', '#d97706', Bot, 'IA responde consultas o avanza por un camino', ['#34d399', '#059669']],
   seguimiento: ['Seguimiento', '#f97316', Clock, 'Reenvía mensajes si el cliente no responde', ['#fb923c', '#ea580c']],
-  conexion: ['Activar Flujo', '#7c3aed', Split, 'Activa otro flujo para el contacto', ['#a78bfa', '#6d28d9']],
+  conexion: ['Conexión de flujo', '#f43f5e', Share2, 'Redirigir a otro flujo', ['#fb7185', '#e11d48']],
   copiar: ['Botón Copiar', '#0d9488', Copy, 'Envía un botón para copiar un texto', ['#2dd4bf', '#0f766e']],
-  intervalo: ['Espera', '#06b6d4', Hourglass, 'Espera un tiempo antes de continuar', ['#67e8f9', '#0891b2']],
-  notificacion: ['Notificación', '#f59e0b', Bell, 'Avisa al equipo cuando un cliente llega aquí', ['#fcd34d', '#f59e0b']],
+  intervalo: ['Intervalo inteligente', '#06b6d4', Clock, 'Espera de 01 minuto', ['#22d3ee', '#0891b2']],
+  notificacion: ['Notificación', '#14b8a6', Bell, 'Enviar notificación por WhatsApp', ['#2dd4bf', '#0d9488']],
   ticket: ['Ticket', '#64748b', Ticket, 'Asigna el chat a un agente del equipo', ['#64748b', '#475569']],
   pais: ['Código de país', '#0891b2', Globe, 'Divide el flujo según el país del número', ['#0284c7', '#06b6d4']],
 })
@@ -54,8 +54,8 @@ const NVI = { etiquetas: 'tag', mensaje: 'books', botones: 'touch', seguimiento:
 export const paisCodes = t => (t || '').split(',').map(x => x.trim().match(/^\+?(\d{1,4})\s*(.*)$/)).filter(Boolean).map(m => [m[1], m[2] || ''])
 const B = t => FB[t] || FB.mensaje
 const NV = { etiquetas: 1, pais: 1, mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
-const PAL = ['mensaje', 'botones', 'template', 'etiquetas', 'agente', 'seguimiento', 'intervalo', 'conexion', 'copiar', 'notificacion', 'ticket', 'pais', 'menu', 'carrusel', 'esperar', 'controlador', 'condicional', 'distribuidor', 'departamento', 'integracion', 'ia', 'kanban', 'manipulador', 'pix', 'pago', 'venta', 'llamar', 'kie']
-const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#10b981', 'Agente IA'] }
+const PAL = ['mensaje', 'template', 'etiquetas', 'pix', 'menu', 'carrusel', 'esperar', 'controlador', 'notificacion', 'condicional', 'distribuidor', 'conexion', 'intervalo', 'departamento', 'integracion', 'ia', 'agente', 'kanban', 'manipulador', 'venta', 'pago', 'llamar', 'kie', 'seguimiento']
+const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#f59e0b', 'Agente de IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
   if (n.type === 'template') { const t = n.tpl || {}; return [{ k: 'reply', l: 'Resposta livre', c: 'or', pc: '#d97706' }, { k: 'timeout', l: 'Timeout sem clique', s: `${t.timeout || 60} ${({ m: 'minutes', h: 'hours', d: 'days' })[t.unit || 'm']}`, c: 'gr', pc: '#6b7280' }, { k: 'fail', l: 'Falha de entrega', c: 'rd', pc: '#dc2626' }] }
@@ -137,7 +137,7 @@ function MessageModal({ node, onClose, onSave }) {
   return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm" style={{ maxWidth: 546, height: acts.length ? '92vh' : 'auto', '--nc': '#3b82f6' }}>
     <div className="fe-mh"><span className="ic" style={{ background: '#3b82f6' }}><MessageSquare size={20} /></span><h2>Editar mensaje</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
     <div className="lm-b" style={{ padding: '24px 22px 0', flex: 1 }}>
-      {acts.length === 0 && <div style={{ border: '1px solid var(--border)', borderRadius: 7, padding: '18px 20px', textAlign: 'center', color: 'var(--soft)', fontSize: 13.3, lineHeight: 1.5 }}><MessageSquare size={28} style={{ color: 'var(--soft)', marginBottom: 7 }} /><br />Ninguna acción configurada. Añada mensajes de texto o multimedia.</div>}
+      {acts.length === 0 && <div style={{ border: '1px solid #2a2540', borderRadius: 10, padding: '18px 20px', textAlign: 'center', color: 'var(--soft)', fontSize: 13.3, lineHeight: 1.5 }}><MessageSquare size={28} style={{ color: 'var(--soft)', marginBottom: 7 }} /><br />Ninguna acción configurada. Añada mensajes de texto o multimedia.</div>}
       {acts.map((a, i) => { const [l, I, c, t2] = ACT[a.type]; return <div key={a.id} className="fe-blk" draggable onDragStart={() => drag.current = i} onDragOver={e => e.preventDefault()} onDrop={() => { const f = drag.current; if (f == null || f === i) return; setActs(x => { const y = [...x]; const [m] = y.splice(f, 1); y.splice(i, 0, m); return y }) }}>
         <div className="fe-bh"><I size={16} color={c} />{t2 || l}<span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}><button style={{ cursor: 'grab' }} title="Arrastrar"><GripVertical size={16} /></button><button onClick={() => setActs(x => x.filter((_, j) => j !== i))}><Trash2 size={16} /></button></span></div>
         {a.type === 'text' && <><div className="fe-lb">Contenido del mensaje *</div><Editor value={a.text} onChange={v => set(i, { text: v })} ph="Escriba el contenido del mensaje..." magic={() => set(i, { showAi: !a.showAi })} />
@@ -155,7 +155,7 @@ function MessageModal({ node, onClose, onSave }) {
       <div style={{ fontSize: 15, fontWeight: 700, margin: acts.length ? '6px 0 14px' : '27px 0 14px' }}>Añadir contenido</div>
       <div className="fe-add">{Object.entries(ACT).map(([k, [l, I, c]]) => <button key={k} onClick={() => setActs(x => [...x, actBlank(k)])}><i style={{ background: c + '55', color: c }}><I size={17} /></i>{l}</button>)}</div>
     </div>
-    <div style={{ margin: '0 22px', borderTop: '1px solid var(--border)', padding: '14px 0 22px', display: 'flex', justifyContent: 'flex-end', gap: 11, marginTop: 17 }}>
+    <div style={{ margin: '0 22px', borderTop: '1px solid #29243b', padding: '14px 0 22px', display: 'flex', justifyContent: 'flex-end', gap: 11, marginTop: 17 }}>
       <button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" onClick={() => onSave({ ...node, actions: acts, desc: acts.find(a => a.text)?.text || (acts.length ? acts.map(a => ACT[a.type][0]).join(' · ') : '') })}>Guardar</button></div>
   </div></div>
 }
@@ -429,7 +429,7 @@ export default function FlowEditor() {
       <div className="fe-tools"><button className={'fe-tb' + (panel === 'tools' ? ' p' : '')} onClick={() => setPanel(panel === 'tools' ? null : 'tools')}><LayoutGrid size={16} />Herramientas</button>
         <button className={'fe-tb' + (panel === 'sim' ? ' p' : '')} onClick={() => setPanel(panel === 'sim' ? null : 'sim')}><Play size={14} fill="currentColor" />Simular</button></div>
       {panel === 'tools' && <div className="fe-pal"><div className="s"><div><Search size={16} color="#8f8a9e" /><input autoFocus value={pq} onChange={e => setPq(e.target.value)} placeholder="Buscar bloques..." /></div></div>
-        <div className="l">{PAL.map(k => [k, FB[k]]).filter(([k, b]) => b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{NVI[k] ? <MI n={NVI[k]} size={21} color={k === 'ticket' ? '#6366f1' : k === 'notificacion' ? '#f59e0b' : c} /> : <I size={20} color={c} />}{l}</button>)}</div></div>}
+        <div className="l">{PAL.map(k => [k, FB[k]]).filter(([k, b]) => b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{false ? <MI n={NVI[k]} size={21} color={k === 'ticket' ? '#6366f1' : k === 'notificacion' ? '#f59e0b' : c} /> : <I size={20} color={c} />}{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
       <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#12161f)', display: 'block' }}>

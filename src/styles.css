@@ -2944,3 +2944,27 @@ html.dark .fe-gm .fe-mh .ic{width:44px!important;height:44px!important;border-ra
 html.dark .fe-gm .lb2.p,html.dark .fe-gm .lb2.g{height:44px!important;font-size:15px!important;padding:0 24px!important}
 html.dark .fe-gm .lb2.p{background:#9333ea!important}
 html.dark .fe-gm .fe-mh .ic{background:linear-gradient(145deg,color-mix(in srgb,var(--nc,#8b5cf6) 75%,#fff),var(--nc,#8b5cf6))!important}
+/* ===== Ventanas de nodos: IGUAL a Leona (colores, esquinas, detalles) ===== */
+html.dark .fe-gm,html.dark .ne{background:#13111c!important;border:1px solid #29243b!important;border-radius:14px!important}
+html.dark .fe-gm .fe-mh,html.dark .ne .ne-h{border-bottom:1px solid #29243b!important;padding:20px 24px!important}
+html.dark .fe-gm .fe-mh h2{font-size:21px!important;font-weight:700!important}
+html.dark .fe-gm .fe-mh .ic{width:38px!important;height:38px!important;border-radius:9px!important}
+html.dark .fe-gm .lm-f,html.dark .ne .ne-f{background:#13111c!important;border-top:1px solid #29243b!important}
+html.dark .fe-gm :is(.l-lbl,.fe-lb),html.dark .ne :is(.ne-lb,.ne-st),html.dark .fe-gm .lm-b b[style*="13.3"]{color:#e5e7eb!important;text-transform:none!important;letter-spacing:0!important;font-size:14.5px!important;font-weight:600!important}
+html.dark .ne :is(input.ne-in,textarea.ne-in,.l-in,.l-selb,.ne-inw,.ne-mtb),html.dark .fe-gm :is(input[class]:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,.l-in,.l-selb,.fe-ed,.fe-vin){
+  background:#1e1a2e!important;background-color:#1e1a2e!important;border:1px solid #2d2842!important;border-radius:8px!important;color:#f3f4f6!important;font-weight:600!important;min-height:42px;font-size:14.5px!important}
+html.dark .fe-gm .fe-ed textarea,html.dark .fe-gm .fe-vin :is(input,textarea){background:transparent!important;border:none!important}
+html.dark .fe-gm .fe-blk,html.dark .ne :is(.ne-sec,.ne-item,.ne-route,.ne-sw,.ne-other),html.dark .fe-gm .sc-list,html.dark .fe-gm .sc-list .sc-row,html.dark .fe-gm .dx-o,html.dark .fe-gm .mo-card{background:transparent!important;border-color:#2a2540!important;border-radius:10px!important}
+html.dark .fe-gm .fe-seg,html.dark .ne .ne-seg{background:#13111c!important;border:1px solid #2a2540!important}
+html.dark .fe-gm .fe-seg button.on{background:#8b5cf6!important}
+html.dark .fe-gm .fe-drop{background:#17112a!important;border-color:#8b5cf6!important}
+html.dark .fe-gm .lb2.p,html.dark .ne .ne-ok{background:#8b5cf6!important;border:none!important;border-radius:9px!important;height:42px!important;font-size:15px!important}
+html.dark .fe-gm .lb2.p:hover:not(:disabled),html.dark .ne .ne-ok:hover:not(:disabled){background:#7c3aed!important}
+html.dark .fe-gm .lb2.g,html.dark .ne .ne-cancel{background:#272238!important;border:none!important;color:#f3f4f6!important;border-radius:9px!important;height:42px!important;font-size:15px!important}
+html.dark .fe-gm .lb2.g:hover,html.dark .ne .ne-cancel:hover{background:#322c48!important}
+html.dark .fe-gm .mo-h .r button{background:#1e1a2e!important;border-color:#2a2540!important}
+/* "Añadir contenido": cuadros con borde punteado como Leona */
+html.dark .fe-gm .fe-add,html.dark .fe-gm .fe-addb,html.dark .fe-gm [class*="fe-add"] button{border-color:#2d2842!important}
+html.dark .fe-gm .fe-add button{background:transparent!important;border:1.5px dashed #2d2842!important;border-radius:10px!important;color:#f3f4f6!important;font-weight:700}
+html.dark .fe-gm .fe-add button:hover{border-color:#8b5cf6!important;background:rgba(139,92,246,.06)!important}
+html.dark .fe-gm .fe-add button i{width:38px;height:38px;border-radius:50%}
