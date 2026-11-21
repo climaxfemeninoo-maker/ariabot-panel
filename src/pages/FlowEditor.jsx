@@ -31,7 +31,7 @@ export const FB = {
   agente: ['Agente de IA', '#d97706', Bot, 'Entregar o retomar la conversación'],
   kanban: ['Kanban', '#a855f7', Kanban, 'Crear o mover tarjeta en el Kanban seleccionado'],
   manipulador: ['Manipulador', '#f97316', SlidersHorizontal, 'Actualizar la fecha de creación del contacto en la base o guardar un campo personalizado'],
-  venta: ['Venta aprobada', '#4ade80', DollarSign, ''],
+  venta: ['Venta aprobada', '#22c55e', DollarSign, ''],
   pago: ['Pago', '#a78bfa', CreditCard, 'Genera un cobro y continúa el flujo'],
   ariapay: ['Leona Pay', '#6366f1', Wallet, 'BRL · 100,00'],
   llamar: ['Llamar', '#14b8a6', PhoneCall, '8s'],
@@ -54,7 +54,7 @@ const NVI = { etiquetas: 'tag', mensaje: 'books', botones: 'touch', seguimiento:
 export const paisCodes = t => (t || '').split(',').map(x => x.trim().match(/^\+?(\d{1,4})\s*(.*)$/)).filter(Boolean).map(m => [m[1], m[2] || ''])
 const B = t => FB[t] || FB.mensaje
 const NV = { etiquetas: 1, pais: 1, mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
-const PAL = ['mensaje', 'seguimiento', 'agente', 'conexion', 'copiar', 'intervalo', 'notificacion', 'ticket', 'pais', 'botones', 'etiquetas']
+const PAL = ['mensaje', 'botones', 'template', 'etiquetas', 'agente', 'seguimiento', 'intervalo', 'conexion', 'copiar', 'notificacion', 'ticket', 'pais', 'menu', 'carrusel', 'esperar', 'controlador', 'condicional', 'distribuidor', 'departamento', 'integracion', 'ia', 'kanban', 'manipulador', 'pix', 'pago', 'venta', 'llamar', 'kie']
 const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#10b981', 'Agente IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
@@ -341,12 +341,15 @@ export default function FlowEditor() {
             if (n.type === 'inicio') return <div key={n.id} className={'fe-start' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
               <div className="h" onMouseDown={drag}><Play size={18} fill="#fff" />{n.title && n.title !== 'Início' ? n.title : 'Inicio del Flujo'}</div>
               <div className="b">{n.desc || 'Aquí comienza tu flujo de conversación'}</div>{P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}</div>
-            if (NV[n.type]) { const cf = n.cfg || {}; const cls = 'nv nv-' + n.type + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')
+            if (n.type !== 'inicio') { const cf = n.cfg || {}; const gen = !NV[n.type]; const cls = 'nv nv-' + n.type + (gen ? ' nv-gen' : '') + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')
               const ic = NVI[n.type]
               const A = <span className="acts">{n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><MI n="copy" size={22} /></button><button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><MI n="del" size={22} /></button></>}</span>
-              const Hd = () => <div className="nv-h" onMouseDown={drag}><MI n={ic} size={26} /><b>{FB[n.type][0]}</b>{A}</div>
+              const Hd = () => <div className="nv-h" onMouseDown={drag}>{ic ? <MI n={ic} size={26} /> : <I size={24} strokeWidth={2.3} />}<b>{gen ? n.title || B(n.type)[0] : FB[n.type][0]}</b>{A}</div>
               const In = st => <span className="fe-port in" data-port={n.id + '|in'} style={st} />
               const Out = (k = 'main', st) => P(k, undefined, { top: '50%', marginTop: -14, right: -16, ...st })
+              if (n.type === 'venta' || n.type === 'llamar') return <div key={n.id} className={'nv-ag rd' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': c, width: 260 }} {...nodeEv}>
+                <div className="circ" onMouseDown={drag}><span className="halo" /><span className="core"><I size={40} strokeWidth={2.2} /><b>{n.type === 'llamar' ? 'Llamar ' + ((n.cfg || {}).ring || 8) + 's' : 'Venta aprobada'}</b></span>{In()}{Out()}</div>{A}
+                <div className="cap">{n.desc || (n.type === 'venta' ? 'Registra la venta en el dashboard' : 'Realiza una llamada de voz')}</div></div>
               if (n.type === 'agente') { const paths = (cf.act || 'give') === 'give' ? (cf.paths || '').split(',').map(x => x.trim()).filter(Boolean) : []
                 return <div key={n.id} className={'nv-ag' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
                   <div className="circ" onMouseDown={drag}><span className="halo" /><span className="core"><MI n="spark" size={44} /><b>Agente IA</b></span><span className="fe-port in2" />{In()}{(cf.act || 'give') === 'take' && Out()}</div>
@@ -355,7 +358,7 @@ export default function FlowEditor() {
                   {paths.length > 0 && <div className="outs">{paths.map((p, i) => { const pay = /pago|\$|pay|cobro/i.test(p); return <div key={i} className={'op' + (pay ? ' pay' : '')}><i />{pay && <span className="cd">💳</span>}{p}{pay && <MI n="clip" size={20} color="#9ca3af" />}{Out('p' + i, { right: -17 })}</div> })}</div>}
                 </div> }
               const mute = t => <span className="nv-mu">{t}</span>
-              let bd, outs = null
+              let bd, multi = null
               if (n.type === 'mensaje') bd = <div className="nv-b">{(n.actions || []).length ? n.actions.slice(0, 5).map(a => { const t = a.type; const m = { text: ['chat', '#3b82f6'], image: ['image', '#10b981'], video: ['video', '#8b5cf6'], audio: ['mic', '#f97316'], file: ['file', '#64748b'], delay: ['hourglass', '#06b6d4'] }[t] || ['chat', '#3b82f6']
                 return <div key={a.id} className="nv-it"><MI n={m[0]} size={24} color={m[1]} /><span>{t === 'text' ? a.text : t === 'delay' ? `${a.sec || a.time || 3} segundos` : a.file?.name || a.name || ''}</span></div> })
                 : <div className="nv-it"><MI n="image" size={24} color="#10b981" /><span /></div>}</div>
@@ -370,9 +373,14 @@ export default function FlowEditor() {
               else if (n.type === 'etiquetas') bd = <div className="nv-b">{(cf.add || []).length + (cf.remove || []).length ? <div className="nv-tags">{(cf.add || []).map(t => <span key={'a' + t} className="ad">+ {t}</span>)}{(cf.remove || []).map(t => <span key={'r' + t} className="rm">− {t}</span>)}</div> : <div className="nv-chip in">{mute('Sin etiquetas')}</div>}</div>
               else if (n.type === 'ticket') bd = <div className="nv-b"><div className="nv-chip in">{cf.who ? '+' + cf.who : mute('+ Asignar')}</div></div>
               else if (n.type === 'pais') { const cs = paisCodes(cf.codes)
-                bd = <div className="nv-b">{cs.map(([cd, nm], i) => <div key={i} className="nv-pr"><b>+{cd}</b><span>{nm}</span>{Out('c' + cd, { right: -30 })}</div>)}<div className="nv-pr ot"><b>Otros países</b>{Out('otros', { right: -30 })}</div></div>; outs = true }
-              const hasOut = !outs && n.type !== 'conexion'
-              return <div key={n.id} className={cls} style={{ left: n.x, top: n.y }} {...nodeEv}><Hd />{bd}{In()}
+                bd = <div className="nv-b">{cs.map(([cd, nm], i) => <div key={i} className="nv-pr"><b>+{cd}</b><span>{nm}</span>{Out('c' + cd, { right: -30 })}</div>)}<div className="nv-pr ot"><b>Otros países</b>{Out('otros', { right: -30 })}</div></div>; multi = true }
+              else if (gen) { const os = nodeOuts(n); const d = n.type === 'template' ? (n.tpl?.name || 'Seleccione un template') : (n.desc || dd)
+                bd = <div className="nv-b">{d && <div className="nv-chip gc"><I size={18} /><span>{d}</span></div>}
+                  {(os || []).map(o => <div key={o.k} className={'nv-pr gr ' + (o.c || '')}><i className="dt" style={{ background: o.pc || c }} /><b>{o.l}</b>{o.s && <span>{o.s}</span>}{Out(o.k, { right: -30 })}</div>)}
+                  {os && os.length === 0 && <div className="nv-tm em">Configura este nodo para crear sus salidas</div>}</div>
+                if (os) multi = true }
+              const hasOut = !multi && n.type !== 'conexion'
+              return <div key={n.id} className={cls} style={{ left: n.x, top: n.y, '--c': c }} {...nodeEv}><Hd />{bd}{In()}
                 {hasOut && (n.type === 'seguimiento' ? P('main', undefined, { top: 'auto', bottom: -16, right: 'auto', left: '50%', marginLeft: -14, marginTop: 0, background: 'linear-gradient(145deg,#10b981,#059669)' }) : Out())}</div> }
             if (ROUND[n.type]) { const [cc, lbl] = ROUND[n.type]; const cf = n.cfg || {}
               return <div key={n.id} className={'fe-rn' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': cc }} {...nodeEv}>
@@ -407,7 +415,7 @@ export default function FlowEditor() {
       <div className="fe-tools"><button className={'fe-tb' + (panel === 'tools' ? ' p' : '')} onClick={() => setPanel(panel === 'tools' ? null : 'tools')}><LayoutGrid size={16} />Herramientas</button>
         <button className={'fe-tb' + (panel === 'sim' ? ' p' : '')} onClick={() => setPanel(panel === 'sim' ? null : 'sim')}><Play size={14} fill="currentColor" />Simular</button></div>
       {panel === 'tools' && <div className="fe-pal"><div className="s"><div><Search size={16} color="#8f8a9e" /><input autoFocus value={pq} onChange={e => setPq(e.target.value)} placeholder="Buscar bloques..." /></div></div>
-        <div className="l">{PAL.map(k => [k, FB[k]]).filter(([k, b]) => b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}><MI n={NVI[k]} size={21} color={k === 'ticket' ? '#6366f1' : k === 'notificacion' ? '#f59e0b' : c} />{l}</button>)}</div></div>}
+        <div className="l">{PAL.map(k => [k, FB[k]]).filter(([k, b]) => b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{NVI[k] ? <MI n={NVI[k]} size={21} color={k === 'ticket' ? '#6366f1' : k === 'notificacion' ? '#f59e0b' : c} /> : <I size={20} color={c} />}{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
       <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#12161f)', display: 'block' }}>
@@ -492,7 +500,7 @@ function AiModal({ onClose, onGen }) {
 /* ======================= Editores de nodos ======================= */
 function NModal({ title, icon, grad, width = 546, children, onClose, footer, tall }) {
   useEffect(() => { const k = e => e.key === 'Escape' && onClose(); addEventListener('keydown', k); return () => removeEventListener('keydown', k) }, [])
-  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm" style={{ maxWidth: width, maxHeight: '94vh' }}>
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm fe-gm" style={{ maxWidth: width, maxHeight: '94vh', '--nc': /^#/.test(grad || '') ? grad : '#3b82f6' }}>
     <div className="fe-mh"><span className="ic" style={{ background: grad }}>{icon}</span><h2>{title}</h2><button style={{ marginLeft: 'auto', color: 'var(--muted)', display: 'grid' }} onClick={onClose}><X size={19} /></button></div>
     <div className="lm-b" style={{ padding: '20px 24px 0', overflowY: 'auto' }}>{children}
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 18, padding: '14px 0 20px', display: 'flex', justifyContent: 'flex-end', gap: 11 }}>{footer}</div></div>

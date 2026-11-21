@@ -3,6 +3,7 @@ import { X, Plus, Trash2, ChevronUp, ChevronDown, Upload, ShieldCheck, RefreshCw
 import { useStore, useToast, uid } from '../ui'
 import { LSelect, Toggle } from './leona'
 import { MI } from './mdIcons'
+import { Sched, useStores } from './flowNodes'
 
 /* ---------- utilidades ---------- */
 const VARS = ['{nombre}', '{telefono}', '{email}', '{origen}', '{fecha}', '{precio}']
@@ -127,10 +128,17 @@ export function AgentEditor({ node, onClose, onSave }) {
   const c0 = node.cfg || {}; const toast = useToast(); const f = useRef()
   const [c, setC] = useState({ own: true, prompt: '', routes: c0.routes || (c0.paths ? c0.paths.split(',').map(x => x.trim()).filter(Boolean).map(v => ({ id: uid(), t: /pago|\$/i.test(v) ? 'pay' : 'text', v, amount: (v.match(/\d+(\.\d+)?/) || [''])[0] })) : []), fallback: true, flows: false, audio: false, ...c0 })
   const [media, setMedia] = useStore('ai_media', [])
+  const st = useStores(); const agents = st.agents || []
   const set = p => setC(x => ({ ...x, ...p })); const upR = (id, p) => set({ routes: c.routes.map(r => r.id === id ? { ...r, ...p } : r) })
   const lbl = r => r.t === 'pay' ? `Pago ${r.cur && r.cur !== 'auto' ? r.cur + ' ' : '$'}${r.amount || ''}`.trim() : r.t === 'image' ? 'Imagen' : r.v
   return <Shell color="#10b981" icon={<MI n="spark" size={22} />} title="Editar Agente IA" sub="La IA responde y decide por qué camino seguir" onClose={onClose} okLabel="Guardar"
-    onOk={() => { const paths = c.routes.map(lbl).filter(Boolean); onSave({ ...node, cfg: { ...c, act: 'give', paths: paths.join(', ') }, desc: 'IA responde consultas o avanza por un camino' }) }}>
+    onOk={() => { const act = c.act || 'give'; const paths = act === 'give' ? c.routes.map(lbl).filter(Boolean) : []; onSave({ ...node, cfg: { ...c, act, paths: paths.join(', ') }, desc: act === 'take' ? 'Devuelve la conversación al flujo' : 'IA responde consultas o avanza por un camino' }) }}>
+    <Sec t="Acción del nodo" dot="#10b981">
+      <div className="ne-cards">{[['give', 'Entregar', 'El agente toma el chat y responde.'], ['take', 'Quitar', 'Devuelve la conversación al flujo.']].map(([k, l, d]) => <button key={k} className={(c.act || 'give') === k ? 'on' : ''} onClick={() => set({ act: k })}><b>{l}</b><small>{d}</small></button>)}</div>
+      {(c.act || 'give') === 'give' && <><Lb>Agente</Lb><LSelect className="l-in ct-in ne-in" value={c.agent || ''} onChange={v => set({ agent: v })} placeholder="Agente general" options={[{ value: '', label: 'Agente general (este nodo)' }, ...agents.map(a => ({ value: a.id, label: a.name }))]} />
+        {!agents.length && <small className="ne-cnt">Puedes crear agentes guardados en Agentes de IA.</small>}</>}
+    </Sec>
+    {(c.act || 'give') === 'give' && <>
     <Sec t="Prompt independiente de este agente" dot="#a855f7">
       <Sw on={c.own} set={v => set({ own: v })} t="Usar un prompt independiente" d="Estas instrucciones solo se aplican a este agente." />
       {c.own && <><textarea className="ne-in ne-ta" rows={8} maxLength={10000} value={c.prompt} onChange={e => set({ prompt: e.target.value })} placeholder={'Actúa como un experto en ventas.\nResponde con claridad, naturalidad y de forma breve.\nUsa emojis y *negritas* en frases clave.\nSiempre pide la foto o captura del pago.'} />
@@ -166,7 +174,7 @@ export function AgentEditor({ node, onClose, onSave }) {
       <button className="ne-btn2" onClick={() => f.current.click()}><Upload size={15} />Subir archivo</button>
       {(Array.isArray(media) ? media : []).length ? <div className="ne-media-l">{media.map(m => <div key={m.id}>{m.url ? <img src={m.url} alt="" /> : <FileText size={20} />}<span>{m.name}</span><button onClick={() => setMedia(x => x.filter(y => y.id !== m.id))}><Trash2 size={14} /></button></div>)}</div>
         : <div className="ne-empty sm">Sin archivos. Sube archivos para que la IA pueda enviarlos.</div>}
-    </Sec>
+    </Sec></>}
   </Shell>
 }
 
@@ -263,16 +271,23 @@ export function CountryEditor({ node, onClose, onSave }) {
 /* ---------- 7. Espera ---------- */
 const UN = [['seconds', 'Segundos', 1], ['minutes', 'Minutos', 60], ['hours', 'Horas', 3600], ['days', 'Días', 86400]]
 export function WaitEditor({ node, onClose, onSave, isNew }) {
-  const [t, setT] = useState((node.cfg || {}).time || [1, 'minutes'])
-  const total = t[0] * UN.find(u => u[0] === t[1])[2]; const ok = t[0] > 0 && total <= 31 * 86400
-  return <Shell color="#06b6d4" icon={<MI n="hourglass" size={22} />} title={isNew ? 'Nueva espera' : 'Editar espera'} sub="Pausa el flujo y luego continúa solo" width={500} onClose={onClose} ok={ok} okLabel={isNew ? 'Agregar' : 'Guardar'}
-    onOk={() => onSave({ ...node, cfg: { ...(node.cfg || {}), kind: 'interval', time: t }, desc: '' })}>
-    <p className="ne-p">El flujo se pausará durante el tiempo indicado y luego continuará automáticamente al siguiente nodo.</p>
-    <Lb>Tiempo de espera</Lb>
-    <div className="ne-row"><div className="ne-inw" style={{ flex: 1 }}><MI n="hourglass" size={18} color="#22d3ee" /><input type="number" min="1" autoFocus value={t[0]} onChange={e => setT([Math.max(0, +e.target.value || 0), t[1]])} /></div>
-      <LSelect className="l-in ct-in ne-in" style={{ width: 150 }} value={t[1]} onChange={v => setT([t[0], v])} options={UN.map(([value, label]) => ({ value, label }))} /></div>
-    <div className="ne-qk">{[[30, 'seconds', '30 s'], [1, 'minutes', '1 min'], [5, 'minutes', '5 min'], [1, 'hours', '1 h'], [1, 'days', '1 día']].map(([v, u, l]) => <button key={l} className={t[0] === v && t[1] === u ? 'on' : ''} onClick={() => setT([v, u])}>{l}</button>)}</div>
-    {!ok && t[0] > 0 && <small className="ne-cnt bad">Máximo 31 días.</small>}
+  const c0 = node.cfg || {}
+  const [kind, setKind] = useState(c0.kind || 'interval'); const [t, setT] = useState(c0.time || [1, 'minutes']); const [date, setDate] = useState(c0.date || ''); const [sched, setSched] = useState(c0.sched || { useWork: false, days: {} })
+  const total = t[0] * UN.find(u => u[0] === t[1])[2]
+  const ok = kind === 'interval' ? t[0] > 0 && total <= 31 * 86400 : kind === 'date' ? !!date && new Date(date) > new Date() : (sched.useWork || Object.values(sched.days || {}).some(d => d.on))
+  return <Shell color="#06b6d4" icon={<MI n="hourglass" size={22} />} title={isNew ? 'Nueva espera' : 'Editar espera'} sub="Pausa el flujo y luego continúa solo" width={560} onClose={onClose} ok={ok} okLabel={isNew ? 'Agregar' : 'Guardar'}
+    onOk={() => onSave({ ...node, cfg: { ...c0, kind, time: t, date, sched }, desc: '' })}>
+    <Lb>Tipo de programación</Lb>
+    <div className="ne-seg">{[['interval', 'Intervalo'], ['date', 'Fecha exacta'], ['hours', 'Horarios']].map(([k, l]) => <button key={k} className={kind === k ? 'on' : ''} onClick={() => setKind(k)}>{l}</button>)}</div>
+    {kind === 'interval' && <><p className="ne-p" style={{ marginTop: 12 }}>El flujo se pausará durante el tiempo indicado y luego continuará automáticamente al siguiente nodo.</p>
+      <Lb>Tiempo de espera</Lb>
+      <div className="ne-row"><div className="ne-inw" style={{ flex: 1 }}><MI n="hourglass" size={18} color="#22d3ee" /><input type="number" min="1" autoFocus value={t[0]} onChange={e => setT([Math.max(0, +e.target.value || 0), t[1]])} /></div>
+        <LSelect className="l-in ct-in ne-in" style={{ width: 160 }} value={t[1]} onChange={v => setT([t[0], v])} options={UN.map(([value, label]) => ({ value, label }))} /></div>
+      <div className="ne-qk">{[[30, 'seconds', '30 s'], [1, 'minutes', '1 min'], [5, 'minutes', '5 min'], [1, 'hours', '1 h'], [1, 'days', '1 día']].map(([v, u, l]) => <button key={l} className={t[0] === v && t[1] === u ? 'on' : ''} onClick={() => setT([v, u])}>{l}</button>)}</div>
+      {t[0] > 0 && total > 31 * 86400 && <small className="ne-cnt bad">Máximo 31 días.</small>}</>}
+    {kind === 'date' && <><p className="ne-p" style={{ marginTop: 12 }}>El flujo continuará en la fecha y hora exactas que elijas.</p><Lb>Fecha de envío</Lb>
+      <input className="ne-in" type="datetime-local" value={date} onChange={e => setDate(e.target.value)} />{date && new Date(date) <= new Date() && <small className="ne-cnt bad">La fecha debe ser futura.</small>}</>}
+    {kind === 'hours' && <><p className="ne-p" style={{ marginTop: 12 }}>El flujo solo continuará dentro de los días y horarios activos.</p><div className="ne-sched"><Sched v={sched} set={setSched} /></div></>}
   </Shell>
 }
 

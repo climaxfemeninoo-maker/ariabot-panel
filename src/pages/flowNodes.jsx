@@ -146,7 +146,7 @@ export const NODE_DEF = {
 const PAYOUTS = [{ k: 'charge_created', l: 'Cobro generado', c: 'pu', pc: '#639cf1' }, { k: 'payment_approved', l: 'Pago aprobado', c: 'gn', pc: '#16a34a' }, { k: 'payment_expired', l: 'Pago expirado', c: 'or', pc: '#d97706' }, { k: 'error', l: 'Error', c: 'rd', pc: '#dc2626' }]
 export const ESPERAR_OUTS = c => [{ k: 'main', l: 'Respuesta del cliente', c: 'pu', pc: '#005ae3' }, ...(c.forever ? [] : [{ k: 'timeout', l: 'O si no responde', s: `Após ${(c.wait || [1])[0]} ${({ seconds: 'segundo', minutes: 'minuto', hours: 'hora', days: 'día' })[(c.wait || [1, 'days'])[1]]}${(c.wait || [1])[0] > 1 ? 's' : ''}`, c: 'gr', pc: '#6b7280' }])]
 
-const useStores = () => {
+export const useStores = () => {
   const [flows] = useStore('flows', []); const [boards] = useStore('boards', []); const [deps] = useStore('departments', []); const [products] = useStore('products', [])
   const [pixels] = useStore('track_pixels', []); const [agents] = useStore('agents', []); const [ints] = useStore('integrations', [])
   return { flows, boards, deps, products, pixels, agents, ints }
@@ -425,7 +425,7 @@ function CondModal({ init, onClose, onSave }) {
 
 /* ---------- Intervalo inteligente: días y horarios ---------- */
 const SDAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-function Sched({ v, set }) {
+export function Sched({ v, set }) {
   const [wh] = useStore('work_hours', null); const s = v || { useWork: false, days: {} }
   const day = (i, p) => set({ ...s, days: { ...s.days, [i]: { on: false, ranges: [['09:00', '18:00']], ...(s.days[i] || {}), ...p } } })
   const any = Object.values(s.days).some(d => d.on)
