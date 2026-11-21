@@ -83,7 +83,7 @@ export const NODE_DEF = {
     how('Este bloque se integra con APIs de IA (GPT, Gemini, OpenRouter o Leona AI) para generar respuestas inteligentes. La respuesta se guarda en una variable configurable y puede usarse en otros bloques. En caso de error, el motivo se guarda en una variable de fallo para su tratamiento.')],
     desc: () => 'Integración con GPT y Gemini para respuestas inteligentes',
     outs: c => [...(c.receipt ? [{ k: 'receipt', l: 'Comprobante válido', c: 'gn', pc: '#16a34a' }] : []), ...(c.conds || []).map((x, i) => ({ k: 'c' + x.id, l: x.out || 'Condicional ' + (i + 1), c: 'pu', pc: '#005ae3' })), ...((c.conds || []).length ? [{ k: 'cdef', l: c.defOut || 'Salida predeterminada', c: 'gr', pc: '#6b7280' }] : []), { k: 'success', l: 'Éxito', c: 'gn', pc: '#16a34a' }, { k: 'failure', l: 'Fallo', c: 'rd', pc: '#dc2626' }] },
-  botones: { title: 'Editar Mensajes API', fields: [
+  botones: { title: 'Editar mensaje con botones', fields: [
     { k: 'text', t: 'area', l: 'Mensaje *', ph: 'Escribe el mensaje con formato de WhatsApp…', req: 1, tb: 1 },
     { k: 'buttons', t: 'text', l: 'Botones de respuesta (separados por coma)', ph: 'Yape, Plin' },
     how('Envía un mensaje interactivo con botones de respuesta rápida mediante la API oficial de Meta (máximo 3 botones).')], desc: c => c.text || '' },
@@ -96,6 +96,10 @@ export const NODE_DEF = {
     { k: 'copy', t: 'text', l: 'Texto a copiar *', ph: '994181027', req: 1 },
     { k: 'btn', t: 'text', l: 'Texto del botón', ph: 'Copiar' },
     how('Solo WhatsApp Business por QR. El flujo continúa automáticamente después de enviar.')], desc: c => c.copy || '' },
+  pais: { title: 'Editar código de país', fields: [
+    { k: 'codes', t: 'text', l: 'Códigos de país (separados por coma) *', ph: '+51 Perú, +57 Colombia', req: 1 },
+    how('El flujo sigue por la salida del país del número del cliente. Si no coincide, sale por "Otros países".')],
+    desc: c => c.codes || '', outs: c => [...(c.codes || '').split(',').map(x => x.trim().match(/^\+?(\d{1,4})\s*(.*)$/)).filter(Boolean).map(m => ({ k: 'c' + m[1], l: '+' + m[1] + ' ' + m[2], c: 'gr', pc: '#d97706' })), { k: 'otros', l: 'Otros países', c: 'gr', pc: '#d97706' }] },
   ticket: { title: 'Editar ticket', fields: [
     { k: 'who', t: 'text', l: 'Asignar el chat a *', ph: 'Pablo', req: 1 },
     how('Asigna el chat a un agente del equipo y abre el ticket de atención.')], desc: c => '+' + (c.who || '') },

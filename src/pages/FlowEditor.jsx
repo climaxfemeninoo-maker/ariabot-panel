@@ -4,6 +4,7 @@ import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search,
 import { useStore, useToast, uid, nowStr, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 import { PickBtn } from './flowPickers'
+import { MI } from './mdIcons'
 import { StartModal, startMatches } from './flowNodes'
 import { NODE_DEF, ESPERAR_OUTS, GenericNodeModal, CarouselModal, carOuts } from './flowNodes'
 
@@ -45,10 +46,14 @@ Object.assign(FB, {
   intervalo: ['Espera', '#06b6d4', Hourglass, 'Espera un tiempo antes de continuar', ['#67e8f9', '#0891b2']],
   notificacion: ['Notificación', '#f59e0b', Bell, 'Avisa al equipo cuando un cliente llega aquí', ['#fcd34d', '#f59e0b']],
   ticket: ['Ticket', '#6366f1', Ticket, 'Asigna el chat a un agente del equipo', ['#f8fafc', '#eef2f7']],
+  pais: ['Código de país', '#0891b2', Globe, 'Divide el flujo según el país del número', ['#0284c7', '#06b6d4']],
 })
+FB.botones[0] = 'Mensajes API'; FB.botones[1] = '#0f8f6e'
+const NVI = { mensaje: 'books', botones: 'touch', seguimiento: 'clock', conexion: 'split', copiar: 'copy', intervalo: 'hourglass', notificacion: 'bell', ticket: 'ticket', pais: 'globe', agente: 'spark' }
+export const paisCodes = t => (t || '').split(',').map(x => x.trim().match(/^\+?(\d{1,4})\s*(.*)$/)).filter(Boolean).map(m => [m[1], m[2] || ''])
 const B = t => FB[t] || FB.mensaje
-const NV = { mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
-const PAL = ['mensaje', 'botones', 'agente', 'seguimiento', 'conexion', 'copiar', 'intervalo', 'notificacion', 'ticket']
+const NV = { pais: 1, mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
+const PAL = ['mensaje', 'seguimiento', 'agente', 'conexion', 'copiar', 'intervalo', 'notificacion', 'ticket', 'pais', 'botones']
 const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#10b981', 'Agente IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
@@ -274,7 +279,7 @@ export default function FlowEditor() {
     let x = src ? src.x + NW + 80 : 0, y = src ? src.y : 0
     while (flow.nodes.some(n => Math.abs(n.x - x) < NW && Math.abs(n.y - y) < NH)) y += NH + 40
     const n = newNode(type, x, y)
-    setFlow(f => ({ ...f, nodes: [...f.nodes, n] })); setSel(n.id); setPanel(null)
+    setFlow(f => ({ ...f, nodes: [...f.nodes, n] })); setSel(n.id); setPanel(null); setTimeout(() => setEdit(n), 260)
     const r = box.current.getBoundingClientRect(); setView(v => ({ ...v, x: r.width / 2 - (x + NW / 2) * v.k, y: r.height / 2 - (y + NH / 2) * v.k })); toast(B(type)[0] + ' agregado') }
   function removeNode(nid) { const nn = flow.nodes.find(n => n.id === nid); if (!nn || nn.type === 'inicio') return; setDel(nn) }
   function doRemove(nid) { setFlow(f => ({ ...f, nodes: f.nodes.filter(n => n.id !== nid), edges: f.edges.filter(e => e.from !== nid && e.to !== nid) })); setSel(null); setDel(null) }
@@ -326,31 +331,37 @@ export default function FlowEditor() {
               <div className="h" onMouseDown={drag}><Play size={18} fill="#fff" />{n.title && n.title !== 'Início' ? n.title : 'Inicio del Flujo'}</div>
               <div className="b">{n.desc || 'Aquí comienza tu flujo de conversación'}</div>{P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}</div>
             if (NV[n.type]) { const cf = n.cfg || {}; const cls = 'nv nv-' + n.type + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')
-              const Hd = () => <div className="nv-h" style={{ background: n.type === 'ticket' ? undefined : `linear-gradient(120deg,${g[1]} 0%,${c} 50%,${g[0]} 100%)` }} onMouseDown={drag}><I size={24} strokeWidth={2.3} fill={n.type === 'notificacion' ? 'currentColor' : 'none'} /><b>{n.title && !['Mensaje', 'Notificación', 'Intervalo inteligente', 'Conexión de flujo', 'Agente de IA'].includes(n.title) ? n.title : FB[n.type][0]}</b>{acts}</div>
+              const ic = NVI[n.type]
+              const A = <span className="acts">{n.type !== 'inicio' && <><button title="Duplicar" onMouseDown={e => e.stopPropagation()} onClick={() => setFlow(f => ({ ...f, nodes: [...f.nodes, { ...JSON.parse(JSON.stringify(n)), id: uid(), x: n.x + 40, y: n.y + 40 }] }))}><MI n="copy" size={22} /></button><button title="Eliminar" onMouseDown={e => e.stopPropagation()} onClick={() => removeNode(n.id)}><MI n="del" size={22} /></button></>}</span>
+              const Hd = () => <div className="nv-h" onMouseDown={drag}><MI n={ic} size={26} /><b>{FB[n.type][0]}</b>{A}</div>
               const In = st => <span className="fe-port in" data-port={n.id + '|in'} style={st} />
+              const Out = (k = 'main', st) => P(k, undefined, { top: '50%', marginTop: -14, right: -16, ...st })
               if (n.type === 'agente') { const paths = (cf.act || 'give') === 'give' ? (cf.paths || '').split(',').map(x => x.trim()).filter(Boolean) : []
                 return <div key={n.id} className={'nv-ag' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
-                  <div className="circ" onMouseDown={drag}><BrainCircuit size={46} strokeWidth={1.8} /><b>Agente IA</b>{In()}{!paths.length && (cf.act || 'give') === 'take' && P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}</div>
-                  {acts}
-                  <div className="cap">{n.desc || 'IA responde consultas o avanza por un camino'}</div>
-                  {paths.length > 0 && <div className="outs">{paths.map((p, i) => { const pay = /pago|\$|pay/i.test(p); return <div key={i} className={'op' + (pay ? ' pay' : '')}><i />{pay ? '💳 ' : ''}{p}{P('p' + i, undefined, { top: '50%', marginTop: -13, right: -15 })}</div> })}</div>}
+                  <div className="circ" onMouseDown={drag}><MI n="spark" size={48} /><b>Agente IA</b><span className="fe-port in2" />{In()}{(cf.act || 'give') === 'take' && Out()}</div>
+                  {A}
+                  <div className="cap">IA responde consultas o avanza por un camino</div>
+                  {paths.length > 0 && <div className="outs">{paths.map((p, i) => { const pay = /pago|\$|pay|cobro/i.test(p); return <div key={i} className={'op' + (pay ? ' pay' : '')}><i />{pay && <span className="cd">💳</span>}{p}{pay && <MI n="clip" size={20} color="#9ca3af" />}{Out('p' + i, { right: -17 })}</div> })}</div>}
                 </div> }
-              let bd
-              if (n.type === 'mensaje') bd = <div className="nv-b">{(n.actions || []).length ? n.actions.slice(0, 5).map(a => <div key={a.id} className="nv-it">{a.type === 'text' ? <MessageSquareText size={22} color="#3b82f6" fill="#3b82f6" stroke="#fff" /> : a.type === 'image' ? <Image size={22} color="#10b981" /> : (() => { const [, AI, ac] = ACT[a.type] || ACT.text; return <AI size={22} color={ac} /> })()}<span>{a.type === 'text' ? a.text : a.file?.name || a.name || ''}</span></div>)
-                : <div className="nv-it"><Image size={22} color="#10b981" /><span /></div>}</div>
-              else if (n.type === 'botones') { const btns = (cf.buttons || 'Yape, Plin').split(',').map(x => x.trim()).filter(Boolean)
-                bd = <><div className="nv-band"><Pointer size={20} />BOTONES</div><div className="nv-b"><div className="nv-tx">{cf.text || '🎉 *¡Estás aprovechando la promoción vigente!* Escribe tu mensaje aquí…'}</div>
-                  <div className="nv-cnt"><ChevronRight size={16} />{btns.length} botón{btns.length !== 1 ? 'es' : ''} de respuesta</div>{btns.map((b, i) => <div key={i} className="nv-bt">{b}</div>)}</div></> }
-              else if (n.type === 'seguimiento') { const ts = (cf.times || '30').split(',').map(x => parseInt(x)).filter(x => x > 0)
-                bd = <div className="nv-b"><div className="nv-lb">Configuración de tiempos:</div>{ts.map((t, i) => <div key={i} className="nv-tm">Tiempo {i + 1} ({t >= 1440 ? t / 1440 + 'd' : t >= 60 ? +(t / 60).toFixed(1) + 'h' : t + 'min'})<em>{i + 1}</em></div>)}</div> }
-              else if (n.type === 'conexion') bd = <div className="nv-b"><div className="nv-chip pu"><Split size={18} /><span>{(n.desc || '').replace(/^→\s*/, '') || 'Seleccione un flujo'}</span></div></div>
-              else if (n.type === 'copiar') bd = <div className="nv-b dk"><div className="nv-cap">SÓLO BUSINESS · QR · CONTINÚA AUTOMÁTICO</div><div className="nv-ct">{cf.text || 'Escribe el mensaje'}</div><div className="nv-cb"><Copy size={18} />{cf.btn || 'Copiar'}</div><div className="nv-cs">Copia: {cf.copy || '—'}</div></div>
-              else if (n.type === 'intervalo') bd = <div className="nv-b"><div className="nv-chip cy"><Hourglass size={18} /><span>{(() => { const [v, u] = cf.time || [1, 'minutes']; return v + ' ' + ({ seconds: 'segundos', minutes: 'minutos', hours: 'horas', days: 'días' })[u] })()}</span></div></div>
-              else if (n.type === 'notificacion') bd = <div className="nv-b"><div className="nv-l1">WhatsApp → {cf.name || cf.phone?.n || 'dueño de la cuenta'}</div><div className="nv-l2">🔔 {cf.msg || 'Un cliente llegó a este punto del flujo'}</div></div>
-              else if (n.type === 'ticket') bd = <div className="nv-b"><div className="nv-chip in">+{cf.who || 'Pablo'}</div></div>
-              const hasOut = !['conexion'].includes(n.type)
-              return <div key={n.id} className={cls} style={{ left: n.x, top: n.y, '--c': c }} {...nodeEv}><Hd />{bd}{In()}
-                {hasOut && (n.type === 'seguimiento' ? P('main', undefined, { top: 'auto', bottom: -15, right: 'auto', left: '50%', marginLeft: -13, marginTop: 0 }) : P('main', undefined, { top: '50%', marginTop: -13, right: -15 }))}</div> }
+              const mute = t => <span className="nv-mu">{t}</span>
+              let bd, outs = null
+              if (n.type === 'mensaje') bd = <div className="nv-b">{(n.actions || []).length ? n.actions.slice(0, 5).map(a => { const t = a.type; const m = { text: ['chat', '#3b82f6'], image: ['image', '#10b981'], video: ['video', '#8b5cf6'], audio: ['mic', '#f97316'], file: ['file', '#64748b'], delay: ['hourglass', '#06b6d4'] }[t] || ['chat', '#3b82f6']
+                return <div key={a.id} className="nv-it"><MI n={m[0]} size={24} color={m[1]} /><span>{t === 'text' ? a.text : t === 'delay' ? `${a.sec || a.time || 3} segundos` : a.file?.name || a.name || ''}</span></div> })
+                : <div className="nv-it"><MI n="image" size={24} color="#10b981" /><span /></div>}</div>
+              else if (n.type === 'botones') { const btns = (cf.buttons || '').split(',').map(x => x.trim()).filter(Boolean)
+                bd = <div className="nv-b"><span className="nv-tag">QR + API OFICIAL · CONTINÚA AUTOMÁTICO</span><div className="nv-tx">{cf.text || mute('Escribe el mensaje…')}</div>{btns.map((b, i) => <div key={i} className="nv-bt">{b}</div>)}</div> }
+              else if (n.type === 'seguimiento') { const ts = (cf.times || '').split(',').map(x => parseInt(x)).filter(x => x > 0)
+                bd = <div className="nv-b"><div className="nv-lb">Configuración de tiempos:</div>{ts.length ? ts.map((t, i) => <div key={i} className="nv-tm">Tiempo {i + 1} ({t >= 1440 ? +(t / 1440).toFixed(1) + 'd' : t >= 60 ? +(t / 60).toFixed(1) + 'h' : t + 'min'})<em>{i + 1}</em></div>) : <div className="nv-tm em">Sin tiempos</div>}</div> }
+              else if (n.type === 'conexion') bd = <div className="nv-b"><div className="nv-chip pu"><MI n="split" size={22} color="#7c3aed" /><span>{(n.desc || '').replace(/^→\s*/, '') || 'Seleccione un flujo'}</span></div></div>
+              else if (n.type === 'copiar') bd = <div className="nv-b dk"><div className="nv-cap">SÓLO BUSINESS · QR · CONTINÚA AUTOMÁTICO</div><div className="nv-ct">{cf.text || mute('Mensaje')}</div><div className="nv-cb"><MI n="copy" size={22} />{cf.btn || 'Copiar'}</div><div className="nv-cs">Copia: {cf.copy || '—'}</div></div>
+              else if (n.type === 'intervalo') bd = <div className="nv-b"><div className="nv-chip cy"><MI n="hourglass" size={22} color="#0e7490" /><span>{(() => { const [v, u] = cf.time || [1, 'minutes']; return v + ' ' + ({ seconds: 'segundos', minutes: 'minutos', hours: 'horas', days: 'días' })[u] })()}</span></div></div>
+              else if (n.type === 'notificacion') bd = <div className="nv-b nt"><div className="nv-l1">{cf.name || cf.phone?.n ? `WhatsApp → ${cf.name || '+' + cf.phone.n}` : mute('Sin configurar')}</div><div className="nv-l2">🔔 {cf.msg || 'Mensaje de la notificación'}</div></div>
+              else if (n.type === 'ticket') bd = <div className="nv-b"><div className="nv-chip in">{cf.who ? '+' + cf.who : mute('+ Asignar')}</div></div>
+              else if (n.type === 'pais') { const cs = paisCodes(cf.codes)
+                bd = <div className="nv-b">{cs.map(([cd, nm], i) => <div key={i} className="nv-pr"><b>+{cd}</b><span>{nm}</span>{Out('c' + cd, { right: -30 })}</div>)}<div className="nv-pr ot"><b>Otros países</b>{Out('otros', { right: -30 })}</div></div>; outs = true }
+              const hasOut = !outs && n.type !== 'conexion'
+              return <div key={n.id} className={cls} style={{ left: n.x, top: n.y }} {...nodeEv}><Hd />{bd}{In()}
+                {hasOut && (n.type === 'seguimiento' ? P('main', undefined, { top: 'auto', bottom: -16, right: 'auto', left: '50%', marginLeft: -14, marginTop: 0, background: 'linear-gradient(145deg,#10b981,#059669)' }) : Out())}</div> }
             if (ROUND[n.type]) { const [cc, lbl] = ROUND[n.type]; const cf = n.cfg || {}
               return <div key={n.id} className={'fe-rn' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': cc }} {...nodeEv}>
                 <div className={'circ ' + n.type} onMouseDown={drag}><I size={34} strokeWidth={2} /><b>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</b>
@@ -384,7 +395,7 @@ export default function FlowEditor() {
       <div className="fe-tools"><button className={'fe-tb' + (panel === 'tools' ? ' p' : '')} onClick={() => setPanel(panel === 'tools' ? null : 'tools')}><LayoutGrid size={16} />Herramientas</button>
         <button className={'fe-tb' + (panel === 'sim' ? ' p' : '')} onClick={() => setPanel(panel === 'sim' ? null : 'sim')}><Play size={14} fill="currentColor" />Simular</button></div>
       {panel === 'tools' && <div className="fe-pal"><div className="s"><div><Search size={16} color="#8f8a9e" /><input autoFocus value={pq} onChange={e => setPq(e.target.value)} placeholder="Buscar bloques..." /></div></div>
-        <div className="l">{PAL.map(k => [k, FB[k]]).filter(([k, b]) => b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}><I size={19} color={k === 'ticket' ? '#6366f1' : c} />{l}</button>)}</div></div>}
+        <div className="l">{PAL.map(k => [k, FB[k]]).filter(([k, b]) => b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}><MI n={NVI[k]} size={21} color={k === 'ticket' ? '#6366f1' : k === 'notificacion' ? '#f59e0b' : c} />{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
       <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#12161f)', display: 'block' }}>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Info, Clock, Timer, Workflow, Megaphone, Brain, DollarSign, CirclePlus, ReceiptText, StickyNote, ChevronDown, Pencil, Check, X, Trash2, Ban, Pause, Play, Power, RotateCcw, UserCheck } from 'lucide-react'
+import { Info, Clock, Timer, Workflow, Megaphone, Brain, DollarSign, CirclePlus, ReceiptText, StickyNote, ChevronDown, Pencil, Check, X, Trash2, Ban, Pause, Play, Power, RotateCcw, UserCheck, User, Phone, Mail, MessageCircle, Plus } from 'lucide-react'
 import { useStore, useToast, uid } from '../ui'
 import { LSelect } from './leona'
 
@@ -55,9 +55,7 @@ export function ChatInfo({ c, upd, onClose }) {
     <div className="ci-hd">
       <span className="ci-av" style={{ background: COLORS[c.name.length % 6] }}>{c.name[0]?.toUpperCase()}</span>
       <div style={{ minWidth: 0, flex: 1 }}>
-        {ed != null ? <div className="ci-ed"><input autoFocus value={ed} onChange={e => setEd(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && ed.trim()) { upd(x => ({ ...x, name: ed.trim() })); setEd(null) } if (e.key === 'Escape') setEd(null) }} />
-          <button onClick={() => { if (ed.trim()) { upd(x => ({ ...x, name: ed.trim() })); toast('Nombre actualizado') } setEd(null) }}><Check size={15} /></button></div>
-          : <div className="ci-nm"><b>{c.name}</b><button title="Editar nombre" onClick={() => setEd(c.name)}><Pencil size={14} /></button></div>}
+        <div className="ci-nm"><b>{c.name}</b><button title="Editar contacto" onClick={() => setEd({ name: c.name, phone: (c.phone || '').replace(/[^\d]/g, ''), email: c.email || '', conn: c.conn || '', extra: c.extra || [] })}><Pencil size={14} /></button></div>
         <div className="ci-ph">{(c.phone || '').replace(/[^\d]/g, '')}</div>
         {(c.blocked || c.paused) && <div className="ci-flags">{c.blocked && <span className="r"><Ban size={11} />Bloqueado</span>}{c.paused && <span className="o"><Pause size={11} />Automatización pausada</span>}</div>}
       </div>
@@ -69,7 +67,7 @@ export function ChatInfo({ c, upd, onClose }) {
         <div className="ci-box"><Timer size={14} /><div><small>Duración</small><b>{dur(created)}</b></div></div>
       </div>
       <div className="ci-box"><Workflow size={15} /><div><small>Flujo</small><b>{flow ? flow.toUpperCase() : 'Sin flujo asignado'}</b></div></div>
-      <div className="ci-box"><Megaphone size={14} color="#ec4899" /><div><small>Origen</small><b>{c.origin ? <>Anuncio: <a href={c.origin} target="_blank" rel="noreferrer">{c.origin.replace(/^https?:\/\//, '')}</a></> : 'Mensaje directo'}</b></div></div>
+      <div className="ci-box"><span className="ci-emo">📢</span><div><small>Origen</small><b>{c.origin ? <>Anuncio: <a href={c.origin} target="_blank" rel="noreferrer">{c.origin.replace(/^https?:\/\//, '')}</a></> : 'Mensaje directo'}</b></div></div>
     </Sec>
 
     <Sec icon={<Brain size={15} className="ci-ic" />} title="Memoria IA">
@@ -78,15 +76,13 @@ export function ChatInfo({ c, upd, onClose }) {
         <div className="ci-tot"><div><small>TOTAL CONFIRMADO</small><span>{pays.length} pago{pays.length !== 1 ? 's' : ''} registrado{pays.length !== 1 ? 's' : ''}</span></div><b>{n2(total)}</b></div>
         {form ? <div className="ci-form">
           <b>Registrar venta manual</b>
-          <p>Ingresa el monto real de la venta. Al confirmar, se registrará en las métricas y se enviará a Meta. El comprobante es opcional.</p>
+          <p>Ingresa el monto real. Se sumará a tus métricas y se enviará a Meta.</p>
           <div style={{ display: 'flex', gap: 8 }}>
             <div className="ci-fl" style={{ flex: 1, minWidth: 0 }}><label className="ci-lb">Monto real</label><input autoFocus inputMode="decimal" className="ci-in" value={form.value} onChange={e => setForm({ ...form, value: e.target.value.replace(/[^\d.,]/g, '') })} placeholder="0.00" /></div>
             <div className="ci-fl" style={{ width: 88 }}><label className="ci-lb">Moneda</label><LSelect className="l-in ct-in" value={form.cur} onChange={v => setForm({ ...form, cur: v })} options={CURS.map(x => ({ value: x, label: x }))} /></div>
           </div>
-          <div><label className="ci-lb">Método de pago</label><input className="ci-in" value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} placeholder="Yape, Plin, transferencia…" /></div>
-          <div><label className="ci-lb">N° de operación <i style={{ textTransform: 'none', fontStyle: 'normal', letterSpacing: 0 }}>(opcional)</i></label><input className="ci-in" value={form.op} onChange={e => setForm({ ...form, op: e.target.value })} placeholder="Ej.: 00123456" /></div>
-          <div><label className="ci-lb">Comprobante <i style={{ textTransform: 'none', fontStyle: 'normal', letterSpacing: 0 }}>(opcional)</i></label><LSelect className="l-in ct-in ci-in" value={form.proof} onChange={v => setForm({ ...form, proof: v })} options={[{ value: '', label: 'Sin comprobante' }, ...imgs.map((m, i) => ({ value: m.img, label: 'Imagen ' + (i + 1) + ' · ' + m.t }))]} /></div>
-          {!imgs.length && <small className="ci-hint">Puedes registrar esta venta sin adjuntar un comprobante.</small>}
+          <div><label className="ci-lb">Método de pago</label><input className="ci-in" value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} placeholder="Yape, Plin, transferencia…" />
+            <div className="ci-chips">{['Yape', 'Plin', 'Transferencia', 'Efectivo', 'Tarjeta'].map(m => <button key={m} className={form.method === m ? 'on' : ''} onClick={() => setForm({ ...form, method: m })}>{m}</button>)}</div></div>
           <div className="ci-fa"><button onClick={() => setForm(null)}>Cancelar</button><button className="go" onClick={save}><span className="fb">f</span>Registrar y enviar a Meta</button></div>
         </div> : <button className="ci-reg" onClick={() => setForm({ value: '', cur: 'PEN', method: '', op: '', proof: '' })}><CirclePlus size={17} />Registrar venta manual</button>}
         {pays.length ? <div className="ci-pays">{pays.slice().reverse().map(p => <div key={p.id} className="ci-pay">
@@ -102,5 +98,33 @@ export function ChatInfo({ c, upd, onClose }) {
       {(c.notes || []).length ? (c.notes || []).map(n => <div key={n.id} className="ci-nt"><p>{n.x}</p><div><small>{fmtDate(n.ts)} · Pablo Monja</small><button onClick={() => upd(x => ({ ...x, notes: x.notes.filter(y => y.id !== n.id) }))}><Trash2 size={12} /></button></div></div>)
         : <div className="ci-empty">Sin notas registradas</div>}
     </Sec>
+    {ed && <ContactEdit v={ed} onClose={() => setEd(null)} onSave={v => { upd(x => ({ ...x, name: v.name.trim(), phone: '+' + v.phone, email: v.email, conn: v.conn, extra: v.extra.filter(f => f.k.trim()) })); setEd(null); toast('Contacto actualizado') }} />}
   </aside>
+}
+
+function ContactEdit({ v: init, onClose, onSave }) {
+  const [v, setV] = useState(init); const [conns] = useStore('wa_conns', [])
+  const set = p => setV(x => ({ ...x, ...p }))
+  const ok = v.name.trim() && v.phone.replace(/\D/g, '').length >= 8
+  return <div className="lm-ov" onMouseDown={e => e.target === e.currentTarget && onClose()}><div className="lm ce">
+    <div className="ce-h"><Pencil size={19} /><b>Editar contacto</b><button onClick={onClose}><X size={19} /></button></div>
+    <div className="ce-b">
+      <p className="ce-d">Agrega o edita la información de contacto. El número debe incluir el código de país sin el signo +.</p>
+      <label className="ce-l"><span className="ic" style={{ '--k': '#8b5cf6' }}><User size={14} /></span>Nombre</label>
+      <input className="ce-in" autoFocus value={v.name} onChange={e => set({ name: e.target.value })} placeholder="Nombre del contacto" />
+      <label className="ce-l"><span className="ic" style={{ '--k': '#22c55e' }}><Phone size={14} /></span>Número de WhatsApp</label>
+      <input className="ce-in" inputMode="numeric" value={v.phone} onChange={e => set({ phone: e.target.value.replace(/\D/g, '') })} placeholder="51999999999" />
+      {v.phone && v.phone.length < 8 && <small className="ce-err">El número debe tener al menos 8 dígitos con el código de país.</small>}
+      <label className="ce-l"><span className="ic" style={{ '--k': '#3b82f6' }}><Mail size={14} /></span>Email</label>
+      <input className="ce-in" type="email" value={v.email} onChange={e => set({ email: e.target.value })} placeholder="correo@ejemplo.com" />
+      <label className="ce-l"><span className="ic" style={{ '--k': '#22c55e' }}><MessageCircle size={14} /></span>Conexión origen</label>
+      <LSelect className="l-in ct-in ce-in" value={v.conn} onChange={x => set({ conn: x })} placeholder="Sin conexión" options={[{ value: '', label: 'Sin conexión' }, ...(Array.isArray(conns) ? conns : []).filter(x => !x.archived).map(x => ({ value: x.id, label: x.name + (x.phone ? ' · ' + x.phone : '') }))]} />
+      <label className="ce-l"><span className="ic" style={{ '--k': '#f59e0b' }}><Plus size={14} /></span>Información adicional</label>
+      {v.extra.map((f, i) => <div key={i} className="ce-kv"><input className="ce-in" value={f.k} onChange={e => set({ extra: v.extra.map((y, j) => j === i ? { ...y, k: e.target.value } : y) })} placeholder="Nombre del campo" />
+        <input className="ce-in" value={f.v} onChange={e => set({ extra: v.extra.map((y, j) => j === i ? { ...y, v: e.target.value } : y) })} placeholder="Valor" />
+        <button title="Quitar" onClick={() => set({ extra: v.extra.filter((_, j) => j !== i) })}><Trash2 size={17} /></button></div>)}
+      <button className="ce-add" onClick={() => set({ extra: [...v.extra, { k: '', v: '' }] })}>+ Agregar información</button>
+    </div>
+    <div className="ce-f"><button className="ce-c" onClick={onClose}>Cancelar</button><button className="ce-s" disabled={!ok} onClick={() => onSave(v)}>Guardar</button></div>
+  </div></div>
 }
