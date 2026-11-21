@@ -3037,3 +3037,8 @@ html.dark .fe-gm .fe-ed .tb{border-top:1px solid #374151!important;background:tr
 html.dark .fe-gm .fe-ed:focus-within{border-color:#8b5cf6!important}
 html.dark .fe-gm .fe-ed textarea:not(#z),html.dark .ne .fe-ed textarea:not(#z){border:none!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}
 html.dark .fe-vin :is(input,textarea):not(#z){border:none!important;background:transparent!important;box-shadow:none!important}
+/* Ícono y botón Guardar del color de cada nodo (más encendido) */
+html.dark .fe-gm .fe-mh .ic,html.dark .ne .ne-ic{background:linear-gradient(145deg,var(--nc,#8b5cf6),color-mix(in srgb,var(--nc,#8b5cf6) 82%,#000))!important;color:#fff!important}
+html.dark .fe-gm .lb2.p:not(.sm),html.dark .ne .ne-ok{background:var(--nc,#9333ea)!important}
+html.dark .fe-gm .lb2.p:not(.sm):hover:not(:disabled),html.dark .ne .ne-ok:hover:not(:disabled){background:color-mix(in srgb,var(--nc,#9333ea) 85%,#000)!important}
+html.dark .fe-gm .l-tg.on,html.dark .ne .l-tg.on,html.dark .fe-gm .fe-seg button.on{background:var(--nc,#8b5cf6)!important}
