@@ -2934,3 +2934,13 @@ html.dark .fe-wrap,html.dark .fe{background:#161d31!important}
 html.dark .fe-node,.fe-node{background:#1e2538!important}
 .fe-rn .fe-ns{background:#1e2538!important}
 html.dark .fe-skel .bx{fill:#232b40;stroke:#36405a}html.dark .fe-skel .ln{fill:#36405a}
+/* ventanas: tamaños y radios como capturas */
+html.dark .fe-gm :is(input[class]:not([type=range]):not([type=checkbox]):not([type=radio]),.l-in,.l-selb){min-height:44px;font-size:15px!important}
+html.dark .fe-gm textarea{font-size:15px!important}
+html.dark .fe-gm .lm-b label{font-size:14.5px!important;color:#d1d5db!important}
+html.dark .fe-gm .fe-mh{padding:22px 24px!important}
+html.dark .fe-gm .fe-mh h2{font-size:22px!important}
+html.dark .fe-gm .fe-mh .ic{width:44px!important;height:44px!important;border-radius:10px!important}
+html.dark .fe-gm .lb2.p,html.dark .fe-gm .lb2.g{height:44px!important;font-size:15px!important;padding:0 24px!important}
+html.dark .fe-gm .lb2.p{background:#9333ea!important}
+html.dark .fe-gm .fe-mh .ic{background:linear-gradient(145deg,color-mix(in srgb,var(--nc,#8b5cf6) 75%,#fff),var(--nc,#8b5cf6))!important}
