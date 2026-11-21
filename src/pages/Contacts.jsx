@@ -71,7 +71,7 @@ export default function Contacts() {
         <LSelect value={or} onChange={setOr} bold style={{ width: 178 }} options={[['all', 'Todos los orígenes'], ['WhatsApp', 'WhatsApp'], ['Facebook', 'Facebook'], ['Instagram', 'Instagram'], ['Sitio web', 'Sitio web'], ['Referido', 'Referido']].map(([value, label]) => ({ value, label }))} />
       </div>
     </div>
-    <div className="lp-card" style={{ marginTop: 11 }}>
+    <div className="lp-card" style={{ marginTop: 11, minHeight: 'calc(100vh - 205px)' }}>
       {list.length === 0 ? <div className="ct-empty"><Users size={46} strokeWidth={1.8} className="big" /><h3>No hay contactos creados</h3><p>Cree su primer contacto para empezar a gestionar</p>
         <button className="lp-btn p" style={{ marginTop: 17 }} onClick={() => setModal('search')}><Plus size={16} />Crear primer contacto</button></div>
         : <table className="ct-tbl"><thead><tr>

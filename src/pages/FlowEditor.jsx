@@ -228,7 +228,8 @@ export default function FlowEditor() {
   const { id } = useParams(); const nav = useNavigate(); const toast = useToast()
   const [flows, setFlows] = useStore('flows', [])
   const flow = flows.find(f => f.id === id)
-  const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false)
+  const [view, setView] = useState({ x: 0, y: 0, k: 1 }); const [ready, setReady] = useState(false); const [boot, setBoot] = useState(true)
+  useEffect(() => { const t = setTimeout(() => setBoot(false), 560); return () => clearTimeout(t) }, [])
   const [panel, setPanel] = useState(null); const [pq, setPq] = useState(''); const [sel, setSel] = useState(null); const [run, setRun] = useState(null)
   const [link, setLink] = useState(null); const [edit, setEdit] = useState(null); const [rename, setRename] = useState(false); const [modal, setModal] = useState(null)
   const box = useRef(); const act = useRef(null); const world = useRef(); const [ports, setPorts] = useState({}); const [del, setDel] = useState(null)
@@ -283,9 +284,13 @@ export default function FlowEditor() {
       <button className="fe-hb" onClick={() => { setFlow(f => ({ ...f, status: 'archivado' })); toast('Flujo archivado'); nav('/flows') }}><Archive size={14} />Archivar</button>
     </div>
     <div className="fe-wrap">
+      {boot && <div className="fe-skel"><svg viewBox="0 0 900 420" preserveAspectRatio="xMidYMid meet">
+        <path className="sk-e" d="M190 210 C 270 210, 280 120, 360 120" /><path className="sk-e" d="M190 210 C 270 210, 280 300, 360 300" /><path className="sk-e" d="M540 120 C 610 120, 620 210, 690 210" /><path className="sk-e" d="M540 300 C 610 300, 620 210, 690 210" />
+        {[[40, 170, 150, 80, 0], [360, 70, 180, 100, .12], [360, 250, 180, 100, .24], [690, 160, 170, 100, .36]].map(([x, y, w, h, d], i) => <g key={i} className="sk-n" style={{ animationDelay: d + 's' }}><rect x={x} y={y} width={w} height={h} rx="12" /><rect className="sk-l" x={x + 14} y={y + 16} width={w * .5} height="9" rx="4.5" /><rect className="sk-l" x={x + 14} y={y + 36} width={w - 28} height="7" rx="3.5" /><rect className="sk-l" x={x + 14} y={y + 52} width={w * .62} height="7" rx="3.5" /></g>)}
+      </svg></div>}
       <div className="fe-cv" ref={box} style={{ backgroundSize: `${45 * view.k}px ${45 * view.k}px`, backgroundPosition: `${view.x}px ${view.y}px` }}
         onMouseDown={e => { if (e.target === box.current || e.target.tagName === 'svg') { act.current = { t: 'pan', sx: e.clientX, sy: e.clientY, vx: view.x, vy: view.y }; box.current.classList.add('panning'); setSel(null); if (panel === 'tools') setPanel(null) } }}>
-        <div ref={world} style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`, transformOrigin: '0 0' }}>
+        <div ref={world} className={'fe-world' + (boot ? ' boot' : ' in')} style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${view.x}px,${view.y}px) scale(${view.k})`, transformOrigin: '0 0' }}>
           <svg style={{ position: 'absolute', overflow: 'visible', left: 0, top: 0, width: 1, height: 1 }}>
             {flow.edges.map(e => { const a = nodeMap[e.from], b = nodeMap[e.to]; if (!a || !b) return null; const pp = ports[e.from + '|' + (e.port || 'main')]; if (!pp) return null; const d = path(pp, ports[b.id + '|in'] || { x: b.x - 8, y: b.y + 34 })
               return <g key={e.id} style={{ cursor: 'pointer' }} onClick={() => { setFlow(f => ({ ...f, edges: f.edges.filter(x => x.id !== e.id) })); toast('Conexión eliminada', 'info') }}>

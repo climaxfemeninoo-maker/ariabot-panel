@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, ListFilter, SlidersHorizontal, X, Check, ArrowLeft, Send, Smartphone, Plus, ChevronRight, ChevronDown, ChevronLeft, Lock, Copy, LogOut, Award, Archive, FolderPlus, LayoutGrid, RefreshCw, ArrowUpDown, BarChart3, QrCode, ShieldCheck, CheckCheck, UserCheck, CircleCheck, RotateCcw, Info } from 'lucide-react'
 import { ChatInfo, ChatActions } from './ChatInfo'
+import { Ticks } from './ChatTools'
 import { useStore, useToast, uid, nowStr } from '../ui'
 import { Sheet } from './dash/MobileDash'
 import { HuellaModal } from './Huella'
@@ -56,7 +57,7 @@ export function MobileChats() {
     {mInfo && <div className="ci-mob"><ChatInfo c={cur} upd={fn => upd(cur.id, fn)} onClose={() => setMInfo(false)} /></div>}
     <div className="wa-bg" style={{ flex: 1, overflowY: 'auto', padding: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
       {cur.msgs.length === 0 && <div style={{ margin: 'auto', fontSize: 13, color: '#8f8a9e' }}>Envía el primer mensaje.</div>}
-      {cur.msgs.map((m, i) => <div key={i} className={'ch-m ' + m.f} style={{ maxWidth: '82%' }}>{m.x}<div className="t">{m.t}{m.f === 'out' && <CheckCheck size={12} />}</div></div>)}<div ref={end} /></div>
+      {cur.msgs.map((m, i) => <div key={i} className={'ch-m ' + m.f} style={{ maxWidth: '82%' }}>{m.x}<div className="t">{m.t}{m.f === 'out' && <Ticks size={16} />}</div></div>)}<div ref={end} /></div>
     {qrs.length > 0 && <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px 8px' }}>{qrs.map(r => <button key={r.id} className="mv-chip" style={{ height: 28, fontSize: 12, whiteSpace: 'nowrap', color: '#93c5fd' }} onClick={() => send(r.actions.filter(a => a.text).map(a => a.text).join('\n') || r.short)}>#{r.short}</button>)}</div>}
     <div style={{ display: 'flex', gap: 8, padding: '10px 12px 18px', borderTop: '1px solid #1b1f27' }}><div className="mv-srch" style={{ height: 44 }}><input value={txt} onChange={e => setTxt(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Escribe un mensaje…" /></div>
       <button className="mv-rb" style={{ width: 44, height: 44, background: '#005ae3' }} onClick={() => send()}><Send size={18} /></button></div>

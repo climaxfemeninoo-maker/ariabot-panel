@@ -3,6 +3,8 @@ import { MessageCircle, MessageSquare, Search, Plus, Filter, CalendarDays, Calen
 import { useStore, useToast, uid, useOutside, Menu } from '../ui'
 import { LModal, LSelect } from './leona'
 import { ChatInfo, ChatActions } from './ChatInfo'
+import { EmojiPanel, FlowPicker, Ticks } from './ChatTools'
+import { SEED_FLOWS } from './Flows'
 
 const COLORS = ['#005ae3', '#22c55e', '#f59e0b', '#ec4899', '#06b6d4', '#ef4444']
 const hhmm = () => new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
@@ -21,7 +23,7 @@ export default function Chats() {
   const [sched] = useStore('scheduled', [])
   const [qrs] = useStore('quick_replies', [])
   const [tab, setTab] = useState('espera'); const [chip, setChip] = useState('Todo'); const [q, setQ] = useState('')
-  const [sel, setSel] = useState(null); const [txt, setTxt] = useState(''); const [hide, setHide] = useState(false); const [quick, setQuick] = useState(false)
+  const [sel, setSel] = useState(null); const [txt, setTxt] = useState(''); const [hide, setHide] = useState(false); const [quick, setQuick] = useState(false); const [emo, setEmo] = useState(false); const [fpick, setFpick] = useState(false); const [pinned, setPinned] = useStore('chat_quick_flows', []); const [allFlows] = useStore('flows', SEED_FLOWS)
   const [modal, setModal] = useState(null); const [info, setInfo] = useStore('chat_info_open', true)
   const blankF = { resp: '', from: '', to: '', crm: 'all', tags: [], conns: [], deps: [] }
   const [flt, setFlt] = useState(blankF)
@@ -43,6 +45,7 @@ export default function Chats() {
     if (!x.trim() || !cur) return
     upd(cur.id, c => ({ ...c, last: Date.now(), msgs: [...c.msgs, { f: 'out', x, t: hhmm() }] })); setTxt(''); setQuick(false)
   }
+  const runFlow = f => { upd(cur.id, c => ({ ...c, last: Date.now(), flow: f.name, msgs: [...c.msgs, { f: 'out', sys: true, x: 'Flujo «' + f.name + '» enviado', t: hhmm() }] })); toast('Flujo enviado: ' + f.name) }
   const move = (status, msg) => { upd(cur.id, c => ({ ...c, status, agent: status === 'atencion' ? 'Pablo Monja Suclupe' : c.agent })); setTab(status); toast(msg) }
   const startChat = (ct, conn) => {
     const ex = chats.find(c => c.contactId === ct.id)
@@ -75,7 +78,7 @@ export default function Chats() {
           <div className="ch-av" style={{ background: COLORS[c.name.length % 6] }}>{c.name[0]?.toUpperCase()}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span className="nm">{c.name}</span><span className="tm">{c.msgs.at(-1)?.t}</span></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}><span className="lm2">{c.msgs.at(-1)?.f === 'out' && <CheckCheck size={12} color="#22d3ee" style={{ verticalAlign: -2, marginRight: 3 }} />}{c.msgs.at(-1)?.x || c.phone}</span>{c.unread > 0 && <span className="ur">{c.unread}</span>}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}><span className="lm2">{c.msgs.at(-1)?.f === 'out' && <span style={{ color: '#53bdeb', marginRight: 3, verticalAlign: -1 }}><Ticks size={15} /></span>}{c.msgs.at(-1)?.x || c.phone}</span>{c.unread > 0 && <span className="ur">{c.unread}</span>}</div>
           </div></div>)
           : <div className="ch-empty"><MessageSquare size={47} strokeWidth={1.9} /><h3>No hay chats</h3><p>Pruebe a ajustar la búsqueda o los filtros</p></div>}
       </div>
@@ -94,18 +97,21 @@ export default function Chats() {
         </div>
         <div className="ch-msgs wa-bg">
           {cur.msgs.length === 0 && <div style={{ margin: 'auto', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>Envía el primer mensaje para iniciar la conversación.</div>}
-          {cur.msgs.map((m, i) => <div key={i} className={'ch-m ' + m.f}>{m.x}<div className="t">{m.t}{m.f === 'out' && <CheckCheck size={12} />}</div></div>)}
+          {cur.msgs.map((m, i) => m.sys ? <div key={i} className="ch-sys"><Zap size={12} />{m.x}<span>{m.t}</span></div> : <div key={i} className={'ch-m ' + m.f}>{m.x}<div className="t">{m.t}{m.f === 'out' && <Ticks size={16} />}</div></div>)}
           <div ref={end} /></div>
-        <div style={{ position: 'relative' }}>{quick && <div className="l-selm" style={{ top: 'auto', bottom: 6, left: 14, right: 'auto', width: 340 }}>{(qrs.length ? qrs.map(r => ['#' + r.short, r.actions.filter(x => x.text).map(x => x.text).join('\n') || r.actions.map(x => x.file?.name).join(', ')]) : QUICK.map(x => [x, x])).map(([l, x]) => <button key={l} className="l-opt" style={{ fontWeight: 500 }} onClick={() => send(x)}><Zap size={13} color="#f59e0b" />{l}</button>)}</div>}</div>
+        {(() => { const pf = (Array.isArray(pinned) ? pinned : []).map(id => allFlows.find(f => f.id === id)).filter(Boolean); return pf.length > 0 && !cur.blocked && <div className="ch-qb">{pf.map(f => <span key={f.id} className="ch-qc"><button onClick={() => runFlow(f)} title="Enviar flujo"><Zap size={12} />{f.name}</button><button className="x" title="Quitar de la barra" onClick={() => setPinned(p => p.filter(x => x !== f.id))}><X size={11} /></button></span>)}</div> })()}
+        <div style={{ position: 'relative' }}>{emo && <div style={{ position: 'absolute', bottom: 8, left: 14, zIndex: 40 }}><EmojiPanel onPick={e => setTxt(x => x + e)} onClose={() => setEmo(false)} /></div>}{quick && <div className="l-selm" style={{ top: 'auto', bottom: 6, left: 14, right: 'auto', width: 340 }}>{(qrs.length ? qrs.map(r => ['#' + r.short, r.actions.filter(x => x.text).map(x => x.text).join('\n') || r.actions.map(x => x.file?.name).join(', ')]) : QUICK.map(x => [x, x])).map(([l, x]) => <button key={l} className="l-opt" style={{ fontWeight: 500 }} onClick={() => send(x)}><Zap size={13} color="#f59e0b" />{l}</button>)}</div>}</div>
         {cur.blocked ? <div className="ch-blk"><Ban size={15} />Este contacto está bloqueado. Desbloquéalo para enviar mensajes.</div> : <div className="ch-comp">
-          <button className="ch-ib" onClick={() => setTxt(x => x + '😊')}><Smile size={18} /></button>
+          <button className={'ch-ib' + (emo ? ' on' : '')} title="Emojis" onMouseDown={e => e.stopPropagation()} onClick={() => setEmo(!emo)}><Smile size={18} /></button>
           <button className="ch-ib" onClick={() => toast('Adjuntar archivo disponible al conectar WhatsApp', 'info')}><Paperclip size={18} /></button>
-          <button className="ch-ib" style={{ color: '#f59e0b' }} title="Respuestas rápidas" onClick={() => setQuick(!quick)}><Zap size={18} /></button>
+          <button className="ch-ib" style={{ color: '#f59e0b' }} title="Flujos" onClick={() => setFpick(true)}><Zap size={18} /></button>
+          {qrs.length > 0 && <button className={'ch-ib' + (quick ? ' on' : '')} title="Respuestas rápidas" onClick={() => setQuick(!quick)}><MessageSquare size={17} /></button>}
           <input className="l-in" value={txt} onChange={e => setTxt(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Escribe un mensaje…" />
           <button className="lb2 p" style={{ minWidth: 0, padding: '0 13px' }} onClick={() => send()}><Send size={15} /></button>
         </div>}
       </> : <div className="ch-sel"><div className="bx"><MessageSquare size={36} strokeWidth={1.8} /></div><h3>Seleccione un chat</h3><p>Elija una conversación de la lista para empezar a atender</p></div>}
     </div>
+    {fpick && cur && <FlowPicker pinned={Array.isArray(pinned) ? pinned : []} onToggle={id => setPinned(p => { const a = Array.isArray(p) ? p : []; return a.includes(id) ? a.filter(x => x !== id) : [...a, id] })} onRun={f => { runFlow(f); setFpick(false) }} onClose={() => setFpick(false)} />}
     {cur && info && <ChatInfo key={cur.id} c={cur} upd={fn => upd(cur.id, fn)} />}
 
     <LModal open={modal === 'sched'} onClose={() => setModal(null)} title="Mensajes programados" icon={<Calendar size={19} />} footerBg

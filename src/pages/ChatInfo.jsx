@@ -65,10 +65,10 @@ export function ChatInfo({ c, upd, onClose }) {
 
     <Sec icon={<Info size={15} className="ci-ic" />} title="Info Ticket">
       <div className="ci-g2">
-        <div className="ci-box"><Clock size={14} /><div><small>Creado</small><b>{fmtDate(created)}</b></div></div>
+        <div className="ci-box"><Clock size={14} /><div><small>Creado</small><b className="nw">{fmtDate(created)}</b></div></div>
         <div className="ci-box"><Timer size={14} /><div><small>Duración</small><b>{dur(created)}</b></div></div>
       </div>
-      <div className="ci-box"><Workflow size={14} /><div><small>Flujo</small><b>{flow ? flow.toUpperCase() : 'Sin flujo asignado'}</b></div></div>
+      <div className="ci-box"><Workflow size={15} /><div><small>Flujo</small><b>{flow ? flow.toUpperCase() : 'Sin flujo asignado'}</b></div></div>
       <div className="ci-box"><Megaphone size={14} color="#ec4899" /><div><small>Origen</small><b>{c.origin ? <>Anuncio: <a href={c.origin} target="_blank" rel="noreferrer">{c.origin.replace(/^https?:\/\//, '')}</a></> : 'Mensaje directo'}</b></div></div>
     </Sec>
 
@@ -80,14 +80,14 @@ export function ChatInfo({ c, upd, onClose }) {
           <b>Registrar venta manual</b>
           <p>Ingresa el monto real de la venta. Al confirmar, se registrará en las métricas y se enviará a Meta. El comprobante es opcional.</p>
           <div style={{ display: 'flex', gap: 8 }}>
-            <div className="ci-fl" style={{ flex: 1 }}><label>Monto real</label><input autoFocus inputMode="decimal" value={form.value} onChange={e => setForm({ ...form, value: e.target.value.replace(/[^\d.,]/g, '') })} placeholder="0.00" /></div>
+            <div className="ci-fl" style={{ flex: 1 }}><input autoFocus inputMode="decimal" className="ci-in" value={form.value} onChange={e => setForm({ ...form, value: e.target.value.replace(/[^\d.,]/g, '') })} placeholder="Monto real" /></div>
             <div className="ci-fl" style={{ width: 92 }}><label>Moneda</label><LSelect className="l-in ct-in" value={form.cur} onChange={v => setForm({ ...form, cur: v })} options={CURS.map(x => ({ value: x, label: x }))} /></div>
           </div>
-          <input className="ci-in" value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} placeholder="Método de pago (Yape, Plin, transferencia…)" />
+          <input className="ci-in" value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} placeholder="Método de pago" />
           <input className="ci-in" value={form.op} onChange={e => setForm({ ...form, op: e.target.value })} placeholder="Número de operación (opcional)" />
           <LSelect className="l-in ct-in ci-in" value={form.proof} onChange={v => setForm({ ...form, proof: v })} placeholder="Comprobante del chat (opcional)" options={[{ value: '', label: 'Comprobante del chat (opcional)' }, ...imgs.map((m, i) => ({ value: m.img, label: 'Imagen ' + (i + 1) + ' · ' + m.t }))]} />
           {!imgs.length && <small className="ci-hint">Puedes registrar esta venta sin adjuntar un comprobante.</small>}
-          <div className="ci-fa"><button onClick={() => setForm(null)}>Cancelar</button><button className="go" onClick={save}><span className="fb">f</span>Registrar y enviar</button></div>
+          <div className="ci-fa"><button onClick={() => setForm(null)}>Cancelar</button><button className="go" onClick={save}><span className="fb">f</span>Registrar y enviar a Meta</button></div>
         </div> : <button className="ci-reg" onClick={() => setForm({ value: '', cur: 'PEN', method: '', op: '', proof: '' })}><CirclePlus size={17} />Registrar venta manual</button>}
         {pays.length ? <div className="ci-pays">{pays.slice().reverse().map(p => <div key={p.id} className="ci-pay">
           <ReceiptText size={15} /><div style={{ flex: 1, minWidth: 0 }}><b>{p.cur} {n2(p.value)}</b><small>{[p.method, p.op && '#' + p.op, fmtDate(p.ts)].filter(Boolean).join(' · ')}</small></div>
