@@ -2928,3 +2928,9 @@ html.dark .fe-cv{background-color:#1b1833!important;background-image:radial-grad
 html.dark .fe-wrap,html.dark .fe{background:#1b1833!important}
 .lc-chip{background:#1d2a5c!important;border-color:#2c3f86!important}
 .fe-rn .circ.agente{color:#fff!important}.fe-rn .circ.agente svg{width:36px;height:36px}
+/* Colores de Nubify (no morado) en el editor de flujos */
+html.dark .fe-cv{background-color:#161d31!important;background-image:radial-gradient(circle,#3a4560 1.2px,transparent 1.3px)!important}
+html.dark .fe-wrap,html.dark .fe{background:#161d31!important}
+html.dark .fe-node,.fe-node{background:#1e2538!important}
+.fe-rn .fe-ns{background:#1e2538!important}
+html.dark .fe-skel .bx{fill:#232b40;stroke:#36405a}html.dark .fe-skel .ln{fill:#36405a}
