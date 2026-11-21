@@ -2968,3 +2968,27 @@ html.dark .fe-gm .fe-add,html.dark .fe-gm .fe-addb,html.dark .fe-gm [class*="fe-
 html.dark .fe-gm .fe-add button{background:transparent!important;border:1.5px dashed #2d2842!important;border-radius:10px!important;color:#f3f4f6!important;font-weight:700}
 html.dark .fe-gm .fe-add button:hover{border-color:#8b5cf6!important;background:rgba(139,92,246,.06)!important}
 html.dark .fe-gm .fe-add button i{width:38px;height:38px;border-radius:50%}
+/* ===== Estilo definitivo de ventanas de nodos: "Editar Pagamento" (campos finos) ===== */
+html.dark .fe-gm,html.dark .ne{background:#1f2937!important;border:1px solid #374151!important;border-radius:12px!important}
+html.dark .fe-gm .fe-mh,html.dark .ne .ne-h{border-bottom:1px solid #374151!important}
+html.dark .fe-gm .fe-mh h2{font-size:20px!important;font-weight:600!important;color:#f9fafb!important}
+html.dark .fe-gm .lm-f,html.dark .ne .ne-f{background:#1f2937!important;border-top:1px solid #374151!important}
+html.dark .fe-gm :is(.l-lbl,.fe-lb),html.dark .ne :is(.ne-lb,.ne-st),html.dark .fe-gm .lm-b b[style*="13.3"]{color:#9ca3af!important;text-transform:uppercase!important;letter-spacing:.06em!important;font-size:12.5px!important;font-weight:500!important}
+html.dark .ne :is(input.ne-in,textarea.ne-in,.l-in,.l-selb,.ne-inw,.ne-mtb),html.dark .fe-gm :is(input[class]:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,.l-in,.l-selb,.fe-ed,.fe-vin){
+  background:#111827!important;background-color:#111827!important;border:1px solid #4b5563!important;border-radius:6px!important;color:#f3f4f6!important;font-weight:400!important;min-height:38px!important;height:auto;font-size:14px!important}
+html.dark .fe-gm :is(input[class]:not([type=range]):not([type=checkbox]):not([type=radio]),.l-in,.l-selb){height:38px!important}
+html.dark .fe-gm .fe-ed textarea,html.dark .fe-gm .fe-vin :is(input,textarea){background:transparent!important;border:none!important;height:auto!important}
+html.dark .fe-gm textarea{min-height:80px!important}
+html.dark .fe-gm .l-selb b,html.dark .fe-gm .l-in b{font-weight:400!important}
+html.dark .fe-gm :is(input,textarea,.l-in):focus,html.dark .ne .ne-inw:focus-within{border-color:#8b5cf6!important;box-shadow:none!important}
+html.dark .fe-gm .fe-blk,html.dark .ne :is(.ne-sec,.ne-item,.ne-route,.ne-sw,.ne-other),html.dark .fe-gm .sc-list,html.dark .fe-gm .sc-list .sc-row,html.dark .fe-gm .dx-o,html.dark .fe-gm .mo-card{background:transparent!important;border:1px solid #374151!important;border-radius:8px!important}
+html.dark .fe-gm .fe-blk div[style*="600"]{font-weight:500!important}
+html.dark .fe-gm .fe-seg,html.dark .ne .ne-seg{background:#111827!important;border:1px solid #4b5563!important;border-radius:6px!important}
+html.dark .fe-gm .fe-add button{border:1px dashed #4b5563!important;border-radius:8px!important}
+html.dark .fe-gm .fe-drop{background:#111827!important;border:1px dashed #8b5cf6!important}
+html.dark .fe-gm a,html.dark .fe-gm .fe-var,html.dark .fe-gm code{color:#a78bfa!important}
+html.dark .fe-gm .lb2.p,html.dark .ne .ne-ok{background:#9333ea!important;border:none!important;border-radius:8px!important;height:40px!important;font-weight:500!important;font-size:15px!important}
+html.dark .fe-gm .lb2.p:hover:not(:disabled),html.dark .ne .ne-ok:hover:not(:disabled){background:#7e22ce!important}
+html.dark .fe-gm .lb2.g,html.dark .ne .ne-cancel{background:transparent!important;border:1px solid #4b5563!important;color:#e5e7eb!important;border-radius:8px!important;height:40px!important;font-weight:500!important;font-size:15px!important}
+html.dark .fe-gm .lb2.g:hover,html.dark .ne .ne-cancel:hover{background:rgba(255,255,255,.04)!important}
+html.dark .fe-gm .l-tg.on,html.dark .ne .l-tg.on{background:#8b5cf6!important}
