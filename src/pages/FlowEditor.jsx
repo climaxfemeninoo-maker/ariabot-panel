@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search, ZoomIn, ZoomOut, Maximize2, RotateCcw, MessageSquare, FileText, Tag, CreditCard, List, Save, MessageCircle, Bell, GitBranch, Share2, Target, Clock, Building2, Globe, Bot, Kanban, SlidersHorizontal, DollarSign, Wallet, PhoneCall, Sparkles, Copy, Trash2, X, Send, Image, Video, Mic, User, File, Sticker, GripVertical, Bold, Italic, Strikethrough, Smile, Code, WandSparkles, Upload, Link2, Repeat, CirclePlay, Workflow, TriangleAlert, Plus, Square, KeyRound, ChevronDown, Check, History, Paperclip, MoreHorizontal } from 'lucide-react'
+import { ArrowLeft, Pencil, Pause, Play, Languages, Archive, LayoutGrid, Search, ZoomIn, ZoomOut, Maximize2, RotateCcw, MessageSquare, FileText, Tag, CreditCard, List, Save, MessageCircle, Bell, GitBranch, Share2, Target, Clock, Building2, Globe, Bot, Kanban, SlidersHorizontal, DollarSign, Wallet, PhoneCall, Sparkles, Copy, Trash2, X, Send, Image, Video, Mic, User, File, Sticker, GripVertical, Bold, Italic, Strikethrough, Smile, Code, WandSparkles, Upload, Link2, Repeat, CirclePlay, Workflow, TriangleAlert, Plus, Square, KeyRound, ChevronDown, Check, History, Paperclip, MoreHorizontal, Files, Component, BrainCircuit, Split, Hourglass, Ticket, Pointer, MessageSquareText, ChevronRight } from 'lucide-react'
 import { useStore, useToast, uid, nowStr, useOutside } from '../ui'
 import { LModal, LSelect, Toggle } from './leona'
 import { PickBtn } from './flowPickers'
@@ -35,8 +35,20 @@ export const FB = {
   llamar: ['Llamar', '#14b8a6', PhoneCall, '8s'],
   kie: ['Integración Kie.ai', '#d946ef', Sparkles, 'Bloque nativo para generación de audio, imagen y video (Veo)'],
 }
+Object.assign(FB, {
+  mensaje: ['Contenido', '#3b82f6', Files, 'Envía textos, imágenes, audios o videos', ['#60a5fa', '#2563eb']],
+  botones: ['Mensajes API', '#8b5cf6', Component, 'Mensaje con botones de respuesta (API oficial)', ['#a78bfa', '#7c3aed']],
+  agente: ['Agente IA', '#10b981', BrainCircuit, 'IA responde consultas o avanza por un camino', ['#34d399', '#059669']],
+  seguimiento: ['Seguimiento', '#f97316', Clock, 'Reenvía mensajes si el cliente no responde', ['#fb923c', '#ea580c']],
+  conexion: ['Activar Flujo', '#7c3aed', Split, 'Activa otro flujo para el contacto', ['#a78bfa', '#6d28d9']],
+  copiar: ['Botón Copiar', '#0d9488', Copy, 'Envía un botón para copiar un texto', ['#2dd4bf', '#0f766e']],
+  intervalo: ['Espera', '#06b6d4', Hourglass, 'Espera un tiempo antes de continuar', ['#67e8f9', '#0891b2']],
+  notificacion: ['Notificación', '#f59e0b', Bell, 'Avisa al equipo cuando un cliente llega aquí', ['#fcd34d', '#f59e0b']],
+  ticket: ['Ticket', '#6366f1', Ticket, 'Asigna el chat a un agente del equipo', ['#f8fafc', '#eef2f7']],
+})
 const B = t => FB[t] || FB.mensaje
-const PAL = ['mensaje', 'template', 'etiquetas', 'carrusel', 'notificacion', 'conexion', 'intervalo', 'departamento', 'ia', 'kanban']
+const NV = { mensaje: 1, botones: 1, agente: 1, seguimiento: 1, conexion: 1, copiar: 1, intervalo: 1, notificacion: 1, ticket: 1 }
+const PAL = ['mensaje', 'botones', 'agente', 'seguimiento', 'conexion', 'copiar', 'intervalo', 'notificacion', 'ticket']
 const ROUND = { venta: ['#22c55e', 'Venta aprobada'], llamar: ['#14b8a6', 'Llamar'], agente: ['#10b981', 'Agente IA'] }
 const NW = 260, NH = 150, OUTY = 108
 export const nodeOuts = (n, tpls = []) => {
@@ -313,6 +325,32 @@ export default function FlowEditor() {
             if (n.type === 'inicio') return <div key={n.id} className={'fe-start' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
               <div className="h" onMouseDown={drag}><Play size={18} fill="#fff" />{n.title && n.title !== 'Início' ? n.title : 'Inicio del Flujo'}</div>
               <div className="b">{n.desc || 'Aquí comienza tu flujo de conversación'}</div>{P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}</div>
+            if (NV[n.type]) { const cf = n.cfg || {}; const cls = 'nv nv-' + n.type + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')
+              const Hd = () => <div className="nv-h" style={{ background: n.type === 'ticket' ? undefined : `linear-gradient(120deg,${g[1]} 0%,${c} 50%,${g[0]} 100%)` }} onMouseDown={drag}><I size={24} strokeWidth={2.3} fill={n.type === 'notificacion' ? 'currentColor' : 'none'} /><b>{n.title && !['Mensaje', 'Notificación', 'Intervalo inteligente', 'Conexión de flujo', 'Agente de IA'].includes(n.title) ? n.title : FB[n.type][0]}</b>{acts}</div>
+              const In = st => <span className="fe-port in" data-port={n.id + '|in'} style={st} />
+              if (n.type === 'agente') { const paths = (cf.act || 'give') === 'give' ? (cf.paths || '').split(',').map(x => x.trim()).filter(Boolean) : []
+                return <div key={n.id} className={'nv-ag' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y }} {...nodeEv}>
+                  <div className="circ" onMouseDown={drag}><BrainCircuit size={46} strokeWidth={1.8} /><b>Agente IA</b>{In()}{!paths.length && (cf.act || 'give') === 'take' && P('main', undefined, { top: '50%', marginTop: -13, right: -14 })}</div>
+                  {acts}
+                  <div className="cap">{n.desc || 'IA responde consultas o avanza por un camino'}</div>
+                  {paths.length > 0 && <div className="outs">{paths.map((p, i) => { const pay = /pago|\$|pay/i.test(p); return <div key={i} className={'op' + (pay ? ' pay' : '')}><i />{pay ? '💳 ' : ''}{p}{P('p' + i, undefined, { top: '50%', marginTop: -13, right: -15 })}</div> })}</div>}
+                </div> }
+              let bd
+              if (n.type === 'mensaje') bd = <div className="nv-b">{(n.actions || []).length ? n.actions.slice(0, 5).map(a => <div key={a.id} className="nv-it">{a.type === 'text' ? <MessageSquareText size={22} color="#3b82f6" fill="#3b82f6" stroke="#fff" /> : a.type === 'image' ? <Image size={22} color="#10b981" /> : (() => { const [, AI, ac] = ACT[a.type] || ACT.text; return <AI size={22} color={ac} /> })()}<span>{a.type === 'text' ? a.text : a.file?.name || a.name || ''}</span></div>)
+                : <div className="nv-it"><Image size={22} color="#10b981" /><span /></div>}</div>
+              else if (n.type === 'botones') { const btns = (cf.buttons || 'Yape, Plin').split(',').map(x => x.trim()).filter(Boolean)
+                bd = <><div className="nv-band"><Pointer size={20} />BOTONES</div><div className="nv-b"><div className="nv-tx">{cf.text || '🎉 *¡Estás aprovechando la promoción vigente!* Escribe tu mensaje aquí…'}</div>
+                  <div className="nv-cnt"><ChevronRight size={16} />{btns.length} botón{btns.length !== 1 ? 'es' : ''} de respuesta</div>{btns.map((b, i) => <div key={i} className="nv-bt">{b}</div>)}</div></> }
+              else if (n.type === 'seguimiento') { const ts = (cf.times || '30').split(',').map(x => parseInt(x)).filter(x => x > 0)
+                bd = <div className="nv-b"><div className="nv-lb">Configuración de tiempos:</div>{ts.map((t, i) => <div key={i} className="nv-tm">Tiempo {i + 1} ({t >= 1440 ? t / 1440 + 'd' : t >= 60 ? +(t / 60).toFixed(1) + 'h' : t + 'min'})<em>{i + 1}</em></div>)}</div> }
+              else if (n.type === 'conexion') bd = <div className="nv-b"><div className="nv-chip pu"><Split size={18} /><span>{(n.desc || '').replace(/^→\s*/, '') || 'Seleccione un flujo'}</span></div></div>
+              else if (n.type === 'copiar') bd = <div className="nv-b dk"><div className="nv-cap">SÓLO BUSINESS · QR · CONTINÚA AUTOMÁTICO</div><div className="nv-ct">{cf.text || 'Escribe el mensaje'}</div><div className="nv-cb"><Copy size={18} />{cf.btn || 'Copiar'}</div><div className="nv-cs">Copia: {cf.copy || '—'}</div></div>
+              else if (n.type === 'intervalo') bd = <div className="nv-b"><div className="nv-chip cy"><Hourglass size={18} /><span>{(() => { const [v, u] = cf.time || [1, 'minutes']; return v + ' ' + ({ seconds: 'segundos', minutes: 'minutos', hours: 'horas', days: 'días' })[u] })()}</span></div></div>
+              else if (n.type === 'notificacion') bd = <div className="nv-b"><div className="nv-l1">WhatsApp → {cf.name || cf.phone?.n || 'dueño de la cuenta'}</div><div className="nv-l2">🔔 {cf.msg || 'Un cliente llegó a este punto del flujo'}</div></div>
+              else if (n.type === 'ticket') bd = <div className="nv-b"><div className="nv-chip in">+{cf.who || 'Pablo'}</div></div>
+              const hasOut = !['conexion'].includes(n.type)
+              return <div key={n.id} className={cls} style={{ left: n.x, top: n.y, '--c': c }} {...nodeEv}><Hd />{bd}{In()}
+                {hasOut && (n.type === 'seguimiento' ? P('main', undefined, { top: 'auto', bottom: -15, right: 'auto', left: '50%', marginLeft: -13, marginTop: 0 }) : P('main', undefined, { top: '50%', marginTop: -13, right: -15 }))}</div> }
             if (ROUND[n.type]) { const [cc, lbl] = ROUND[n.type]; const cf = n.cfg || {}
               return <div key={n.id} className={'fe-rn' + (sel === n.id ? ' sel' : '') + (run === n.id ? ' run' : '')} style={{ left: n.x, top: n.y, '--c': cc }} {...nodeEv}>
                 <div className={'circ ' + n.type} onMouseDown={drag}><I size={34} strokeWidth={2} /><b>{n.type === 'llamar' ? `${lbl} ${cf.ring || 8}s` : lbl}</b>
@@ -346,7 +384,7 @@ export default function FlowEditor() {
       <div className="fe-tools"><button className={'fe-tb' + (panel === 'tools' ? ' p' : '')} onClick={() => setPanel(panel === 'tools' ? null : 'tools')}><LayoutGrid size={16} />Herramientas</button>
         <button className={'fe-tb' + (panel === 'sim' ? ' p' : '')} onClick={() => setPanel(panel === 'sim' ? null : 'sim')}><Play size={14} fill="currentColor" />Simular</button></div>
       {panel === 'tools' && <div className="fe-pal"><div className="s"><div><Search size={16} color="#8f8a9e" /><input autoFocus value={pq} onChange={e => setPq(e.target.value)} placeholder="Buscar bloques..." /></div></div>
-        <div className="l">{Object.entries(FB).filter(([k, b]) => PAL.includes(k) && b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}>{k === 'agente' ? <img className="av ag" src="/leona-mark.png" alt="" /> : k === 'ariapay' ? <img className="av" src="/leona-mark.png" alt="" /> : <I size={19} color={c} />}{l}</button>)}</div></div>}
+        <div className="l">{PAL.map(k => [k, FB[k]]).filter(([k, b]) => b[0].toLowerCase().includes(pq.toLowerCase())).map(([k, [l, c, I]]) => <button key={k} className="fe-pi" title={B(k)[3]} onClick={() => addNode(k)}><I size={19} color={k === 'ticket' ? '#6366f1' : c} />{l}</button>)}</div></div>}
       {panel === 'sim' && <Simulator flow={flow} onClose={() => { setPanel(null); setRun(null) }} onStep={nid => { setRun(nid); if (nid) setFlow(f => ({ ...f, nodes: f.nodes.map(n => n.id === nid ? { ...n, stats: [n.stats[0] + 1, n.stats[1] + 1, 100] } : n) })) }} />}
       <div className="fe-zoom"><button onClick={() => setView(v => ({ ...v, k: Math.max(.25, v.k * .85) }))}><ZoomOut size={16} /></button><button onClick={() => setView(v => ({ ...v, k: Math.min(2.5, v.k * 1.15) }))}><ZoomIn size={16} /></button><i /><button title="Ajustar a la pantalla" onClick={fit}><Maximize2 size={15} /></button><button title="Ordenar bloques automáticamente" onClick={() => { setFlow(f => autoLayout(f)); setTimeout(() => fitRef.current && fitRef.current(), 120); toast('Bloques ordenados') }}><Workflow size={15} /></button><button onClick={() => setView({ x: 0, y: 0, k: 1 })}><RotateCcw size={15} /></button></div>
       <div className="fe-mm"><svg width="100%" height="100%" viewBox={`${mmX} ${mmY} ${mmW} ${mmH}`} preserveAspectRatio="xMidYMid meet" style={{ background: 'var(--mmbg,#12161f)', display: 'block' }}>

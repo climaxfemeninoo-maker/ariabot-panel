@@ -31,6 +31,10 @@ export const BLOCKS = {
   ariapay: ['Aria Pay', '#4686e5', Wallet, 'Cobro integrado con estados de pago'],
   llamar: ['Llamar', '#0d9488', Phone, 'Realiza una llamada de voz'],
   kie: ['Integración Kie.ai', '#be185d', Sparkles, 'Genera imágenes o videos con IA'],
+  botones: ['Mensajes API', '#8b5cf6', List, 'Mensaje con botones de respuesta'],
+  seguimiento: ['Seguimiento', '#f97316', Timer, 'Reenvía si el cliente no responde'],
+  copiar: ['Botón Copiar', '#0d9488', Copy, 'Botón para copiar un texto'],
+  ticket: ['Ticket', '#6366f1', BadgeCheck, 'Asigna el chat a un agente'],
 }
 const N = (type, x, y) => ({ id: uid(), type, x, y, title: type === 'inicio' ? 'Início' : BLOCKS[type][0], desc: '', actions: [], stats: [0, 0, 0] })
 const seedFlow = (name, status, blocks, date) => {
@@ -40,9 +44,9 @@ const seedFlow = (name, status, blocks, date) => {
 export const SEED_FLOWS = () => [
   seedFlow('Flujo nuevo', 'pausado', [], '20/10/2026, 10:39 p.m.'),
   seedFlow('Flujo nuevo 1', 'archivado', [], '20/10/2026, 10:39 p.m.'),
-  seedFlow('Flujo nuevo 2', 'activo', ['menu', 'manipulador', 'etiquetas', 'menu', 'pago', 'pixel', 'conexion', 'intervalo', 'ariapay', 'ia'], '20/10/2026, 10:39 p.m.'),
-  seedFlow('TEMPLATE MÉXICO - SPEI e OXXO', 'activo', ['mensaje', 'esperar', 'menu', 'condicional', 'pago', 'venta', 'notificacion'], '18/11/2026, 11:43 a.m.'),
-  seedFlow('Flujo nuevo 3', 'activo', ['mensaje', 'agente', 'kanban', 'venta'], '19/11/2026, 11:04 a.m.'),
+  seedFlow('Flujo nuevo 2', 'activo', ['mensaje', 'intervalo', 'copiar', 'conexion'], '20/10/2026, 10:39 p.m.'),
+  seedFlow('TEMPLATE MÉXICO - SPEI e OXXO', 'activo', ['mensaje', 'botones', 'agente', 'seguimiento', 'notificacion', 'ticket'], '18/11/2026, 11:43 a.m.'),
+  seedFlow('Flujo nuevo 3', 'activo', ['mensaje', 'agente', 'ticket'], '19/11/2026, 11:04 a.m.'),
 ]
 const STAT = { activo: ['#22c55e', 'ACTIVO', 'rgba(34,197,94,.1)', 'rgba(34,197,94,.35)'], pausado: ['#f59e0b', 'PAUSADO', 'rgba(245,158,11,.1)', 'rgba(245,158,11,.4)'], archivado: ['#ef4444', 'ARCHIVADO', 'rgba(239,68,68,.1)', 'rgba(239,68,68,.35)'] }
 const FCOL = [['#3b82f6', 'Azul'], ['#10b981', 'Verde'], ['#005ae3', 'Morado'], ['#f97316', 'Naranja'], ['#ef4444', 'Rojo'], ['#f59e0b', 'Amarillo'], ['#6b7280', 'Gris']]

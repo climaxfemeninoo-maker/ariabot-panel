@@ -83,11 +83,28 @@ export const NODE_DEF = {
     how('Este bloque se integra con APIs de IA (GPT, Gemini, OpenRouter o Leona AI) para generar respuestas inteligentes. La respuesta se guarda en una variable configurable y puede usarse en otros bloques. En caso de error, el motivo se guarda en una variable de fallo para su tratamiento.')],
     desc: () => 'Integración con GPT y Gemini para respuestas inteligentes',
     outs: c => [...(c.receipt ? [{ k: 'receipt', l: 'Comprobante válido', c: 'gn', pc: '#16a34a' }] : []), ...(c.conds || []).map((x, i) => ({ k: 'c' + x.id, l: x.out || 'Condicional ' + (i + 1), c: 'pu', pc: '#005ae3' })), ...((c.conds || []).length ? [{ k: 'cdef', l: c.defOut || 'Salida predeterminada', c: 'gr', pc: '#6b7280' }] : []), { k: 'success', l: 'Éxito', c: 'gn', pc: '#16a34a' }, { k: 'failure', l: 'Fallo', c: 'rd', pc: '#dc2626' }] },
+  botones: { title: 'Editar Mensajes API', fields: [
+    { k: 'text', t: 'area', l: 'Mensaje *', ph: 'Escribe el mensaje con formato de WhatsApp…', req: 1, tb: 1 },
+    { k: 'buttons', t: 'text', l: 'Botones de respuesta (separados por coma)', ph: 'Yape, Plin' },
+    how('Envía un mensaje interactivo con botones de respuesta rápida mediante la API oficial de Meta (máximo 3 botones).')], desc: c => c.text || '' },
+  seguimiento: { title: 'Editar seguimiento', fields: [
+    { k: 'times', t: 'text', l: 'Tiempos de espera en minutos (separados por coma) *', ph: '30, 120, 1440', req: 1 },
+    { k: 'msg', t: 'area', l: 'Mensaje de seguimiento', ph: '¿Sigues interesado? 😊' },
+    how('Si el cliente no responde, se envía el seguimiento después de cada tiempo configurado.')], desc: c => c.times || '' },
+  copiar: { title: 'Editar botón copiar', fields: [
+    { k: 'text', t: 'area', l: 'Mensaje *', ph: 'HOLA', req: 1 },
+    { k: 'copy', t: 'text', l: 'Texto a copiar *', ph: '994181027', req: 1 },
+    { k: 'btn', t: 'text', l: 'Texto del botón', ph: 'Copiar' },
+    how('Solo WhatsApp Business por QR. El flujo continúa automáticamente después de enviar.')], desc: c => c.copy || '' },
+  ticket: { title: 'Editar ticket', fields: [
+    { k: 'who', t: 'text', l: 'Asignar el chat a *', ph: 'Pablo', req: 1 },
+    how('Asigna el chat a un agente del equipo y abre el ticket de atención.')], desc: c => '+' + (c.who || '') },
   agente: { title: 'Editar Agente de IA', fields: [
     { t: 'note', l: 'El agente se arma en Agentes de IA. Aquí el bloque solo entrega o retoma la conversación.' },
     { k: 'act', t: 'cards', o: [['give', 'Entregar', 'El agente toma el chat.'], ['take', 'Quitar', 'Devuelve la conversación al flujo.']], d: 'give' },
-    { k: 'agent', t: 'select', l: 'Agente', o: s => s.agents.map(a => [a.id, a.name]), ph: 'Seleccione un agente', emptyMsg: 'Aún no hay agentes. Créalos en Agentes de IA.', when: c => (c.act || 'give') === 'give' }],
-    desc: (c, s) => (c.act || 'give') === 'take' ? 'Devuelve la conversación al flujo' : c.agent ? 'Agente: ' + (s.agents.find(a => a.id === c.agent)?.name || '—') : '', outs: c => (c.act || 'give') === 'take' ? null : [] },
+    { k: 'agent', t: 'select', l: 'Agente', o: s => s.agents.map(a => [a.id, a.name]), ph: 'Seleccione un agente', emptyMsg: 'Aún no hay agentes. Créalos en Agentes de IA.', when: c => (c.act || 'give') === 'give' },
+    { k: 'paths', t: 'text', l: 'Caminos de salida (separados por coma)', ph: 'yape, plin, Pago $5', when: c => (c.act || 'give') === 'give' }],
+    desc: (c, s) => (c.act || 'give') === 'take' ? 'Devuelve la conversación al flujo' : c.agent ? 'Agente: ' + (s.agents.find(a => a.id === c.agent)?.name || '—') : '', outs: c => (c.act || 'give') === 'take' ? null : (c.paths || '').split(',').map(x => x.trim()).filter(Boolean).map((l, i) => ({ k: 'p' + i, l, c: 'gn', pc: '#f59e0b' })) },
   kanban: { title: 'Editar Kanban', fields: [
     { k: 'act', t: 'select', l: 'Acción *', o: [['create', 'Añadir'], ['remove', 'Quitar']], d: 'create', help: c => (c.act || 'create') === 'create' ? 'Crea una tarjeta en el Kanban seleccionado' : 'Quita la tarjeta del lead del Kanban seleccionado', dynHelp: 1 },
     { k: 'board', t: 'select', l: 'Seleccionar Kanban *', o: s => s.boards.map(b => [b.id, b.name]), ph: 'Seleccione un Kanban', emptyMsg: 'No hay Kanbans. Cree uno primero.' },
