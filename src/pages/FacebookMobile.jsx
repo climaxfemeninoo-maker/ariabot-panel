@@ -42,7 +42,7 @@ export default function FacebookMobile() {
   const totV = q => CM[q][4] === 't' || tot[q] === undefined ? 'N/A' : fmt(q, tot[q])
   const isRed = (q, v) => RED.includes(q) && v != null && (q === 'roas' ? v < 1 : v < 0)
   const S = sel[tab]; const setS = v => setSel(s => ({ ...s, [tab]: v }))
-  const ordered = h => <button className="fbm-h" onClick={() => setSort(s => ({ k: h, dir: s.k === h ? -s.dir : -1 }))}><ChevronDown size={13} style={{ transform: sort.k === h && sort.dir > 0 ? 'rotate(180deg)' : '', opacity: sort.k === h ? 1 : .7 }} /></button>
+  const ordered = h => <button className="fbm-h" onClick={() => setSort(s => ({ k: h, dir: s.k === h ? -s.dir : -1 }))}><span className={'fbm-car' + (sort.k === h ? ' on' : '') + (sort.k === h && sort.dir > 0 ? ' up' : '')} /></button>
   const refresh = () => { setSpin(true); setTimeout(() => { setSpin(false); setUpd(Date.now()); toast(data ? 'Datos actualizados' : 'No hay cuentas de anuncios conectadas', data ? 'ok' : 'info') }, 900) }
   const toggle = (x, on) => { const key = tab === 'camp' ? 'camps' : tab === 'set' ? 'sets' : 'ads'; setData(D => ({ ...D, [key]: D[key].map(y => y.id === x.id ? { ...y, status: on ? 'ACTIVE' : 'PAUSED' } : y) })); toast(`${ent} ${on ? 'activado' : 'pausado'}`) }
   const saveBudget = () => { const v = parseFloat(String(edit.v).replace(/[^\d,.-]/g, '').replace(',', '.')); if (!(v > 0)) return toast('Ingrese un valor válido', 'err'); const key = tab === 'camp' ? 'camps' : 'sets'; setData(D => ({ ...D, [key]: D[key].map(y => y.id === edit.id ? { ...y, budget: v } : y) })); setEdit(null); toast('Presupuesto actualizado') }
@@ -80,6 +80,6 @@ export default function FacebookMobile() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 18 }}><button className="fbm-b2" onClick={() => { const b = { ...f, status: 'any', period: 'today' }; setDraft(b); setF(b); setSheet(null) }}>Limpiar</button><button className="fbm-b2 p" onClick={() => { setF(draft); setSheet(null) }}>Aplicar</button></div></div></Sheet>}
     {edit && <div className="mv-dlg" onClick={e => e.target === e.currentTarget && setEdit(null)}><div><div style={{ fontSize: 20, fontWeight: 500 }}>Diario</div>
       <div className="fbm-money"><span>$</span><input autoFocus inputMode="decimal" value={edit.v} onChange={e => setEdit({ ...edit, v: e.target.value })} onKeyDown={e => e.key === 'Enter' && saveBudget()} /></div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 24 }}><button className="fbm-b2" style={{ border: '1px solid #005ae3', color: '#93c5fd', background: 'transparent', width: 104 }} onClick={() => setEdit(null)}>Cancelar</button><button className="fbm-b2 p" style={{ width: 104 }} onClick={saveBudget}>Guardar</button></div></div></div>}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 24 }}><button className="fbm-b2" style={{ border: '1.5px solid #005ae3', color: '#2f7bff', background: 'transparent', width: 112 }} onClick={() => setEdit(null)}>Cancelar</button><button className="fbm-b2 p" style={{ width: 112 }} onClick={saveBudget}>Guardar</button></div></div></div>}
   </div>
 }
