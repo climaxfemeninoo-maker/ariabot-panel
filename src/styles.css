@@ -3200,3 +3200,20 @@ html:not(.dark) .vp-s{background:#fff!important;border-color:#e5e7eb!important}
 html:not(.dark) .fe-gm{--rt:#e5e7eb}
 html:not(.dark) .fe-gm .lm-b [style*="border-top"],html:not(.dark) .fe-gm .lm-b>div[style*="borderTop"]{border-top-color:#eef0f4!important}
 html:not(.dark) .fe-gm hr,html:not(.dark) .fe-gm .lm-b>div:last-child{border-color:#eef0f4!important}
+/* ===== MODO BLANCO definitivo: fondo blanco, tarjetas como Leona (#f8fafc, borde #e2e8f0, sombra fina) ===== */
+html:not(.dark){--card:#f8fafc;--card2:#f8fafc;--border:#e2e8f0;--border2:#e2e8f0;--sh:0 1px 2px rgba(0,0,0,.12)}
+html:not(.dark) body,html:not(.dark) .app,html:not(.dark) .main,html:not(.dark) #root{background:#ffffff!important}
+html:not(.dark) .side{background:#fff!important;border-right:1px solid #e5e7eb!important;box-shadow:none!important}
+html:not(.dark) :is(.card,.st-card,.lp-card,.db-card,.db-kpi,.pf-card,.pf-top,.wh-card,.wh-box,.wh-cons,.it-card,.it-row,.bl-card,.bl-filt,.cn-card,.cn-st,.kb-col,.kb-stat,.kb-st,.kb-filt,.kb-bc,.iv-st,.ms-buy,.fl-panel,.ct-tbl,.db-panel,.lp-hd-card,.fbx-panel,.wc-card,.cn-panel,.ms-st,.ms-card,.ag-card,.tu-card,.nf-card){background:#f8fafc!important;border:1px solid #e2e8f0!important;box-shadow:0 1px 2px rgba(0,0,0,.12)!important;border-radius:7px!important}
+html:not(.dark) :is(.it-card,.db-kpi,.cn-card,.wc-card):hover{box-shadow:0 2px 8px rgba(0,0,0,.1)!important}
+html:not(.dark) :is(.ch-list,.ch-head,.fe-head){background:#f8fafc!important;border-color:#e5e7eb!important;box-shadow:none!important}
+html:not(.dark) input[class]:not([type=checkbox]):not([type=radio]):not([type=range]),html:not(.dark) textarea[class],html:not(.dark) select,html:not(.dark) .l-in,html:not(.dark) .l-selb,html:not(.dark) .lp-srch,html:not(.dark) .pf-in,html:not(.dark) .st-in,html:not(.dark) .fbx-in,html:not(.dark) .ch-srch,html:not(.dark) .db-ddb{background:#f8fafc!important;border:1px solid #e2e8f0!important}
+html:not(.dark) .lp-srch input,html:not(.dark) .ch-srch input{background:transparent!important;border:none!important}
+html:not(.dark) :is(.lb2.g,.lp-btn:not(.p):not(.on),.wh-btn,.kb-btn:not(.p),.btn-g,.ct-btn,.lp-tool,.st-tab:not(.on),.fl-chip:not(.on),.ch-chip:not(.on),.fbx-btn.g,.icon-btn){background:#f8fafc!important;border:1px solid #e2e8f0!important;box-shadow:0 1px 2px rgba(0,0,0,.08)!important}
+html:not(.dark) .ct-tbl th,html:not(.dark) .fl-th{background:#f8fafc!important}
+html:not(.dark) .fl-side{background:#f8fafc!important;border-right-color:#e2e8f0!important}
+html:not(.dark) .fl-tr:hover{background:#f1f5f9!important}
+/* Modales en blanco */
+html:not(.dark) :is(.lm,.modal){background:#fff!important;border:1px solid #e5e7eb!important}
+/* Editor de flujos en blanco: lienzo blanco */
+html:not(.dark) .fe-cv,html:not(.dark) .fe-wrap,html:not(.dark) .fe{background-color:#ffffff!important}
