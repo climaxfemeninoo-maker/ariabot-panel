@@ -3122,3 +3122,28 @@ html.dark .fe-gm input[type=number]:not(#z){text-align:left}
 .cr-card-add{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border:1px dashed #4b5563;border-radius:8px;color:#e5e7eb;font-weight:600;font-size:13.5px}
 .cr-card-add span{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--nc,#0ea5e9);background:color-mix(in srgb,var(--nc,#0ea5e9) 15%,transparent)}
 .cr-card-add:hover:not(:disabled){border-color:var(--nc,#0ea5e9)}
+/* Buscador de variables */
+.vp-s{border:1px solid #4b5563!important;border-radius:7px!important;background:#111827!important;height:36px!important}
+.vp-s:focus-within{border-color:#3b82f6!important}
+.vp-s input:not(#z):not(#y){border:none!important;background:transparent!important;height:100%!important;min-height:0!important;padding:0!important;box-shadow:none!important;font-size:13px!important}
+/* Combo de flujos: una sola barra */
+html.dark .fe-gm .fc input:not(#z):not(#y){border:none!important;background:transparent!important;box-shadow:none!important;height:100%!important;min-height:0!important;padding:0!important;border-radius:0!important}
+/* Foco azulado sin anillo morado */
+html.dark .fe-gm :is(input,textarea,.l-in,.l-selb,.fc,.fe-ed,.ini-chips.sm):not(#z):not(#y):focus,html.dark .fe-gm .l-selb.open:not(#z):not(#y),html.dark .fe-gm :is(.fc.open,.fe-ed:focus-within,.ini-chips.sm:focus-within):not(#z):not(#y){border-color:#3b82f6!important;box-shadow:none!important;outline:none!important}
+html.dark .fe-gm .l-selb:not(#z){box-shadow:none!important;outline:none!important}
+/* Acciones de los nodos redondos */
+.fe-rn .acts{top:-40px!important;background:#1e2538!important;border:1px solid #36405a!important;border-radius:8px!important;padding:3px!important;gap:2px!important;flex-direction:row!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important}
+.fe-rn .acts button{width:28px!important;height:28px!important;color:#e5e7eb!important}
+.fe-rn .acts svg:not(#z){width:15px!important;height:15px!important}
+/* Deslizadores sin línea morada */
+html.dark .fe-gm .fe-rng:not(#z){border:none!important;height:6px!important;border-radius:6px!important;box-shadow:none!important}
+.fe-rng::-webkit-slider-thumb{background:#fff!important;border:3px solid var(--nc,#22d3ee)!important}
+/* Líneas separadoras más suaves */
+html.dark .fe-gm :is(.fe-mh,.lm-f){border-color:#2f3847!important}
+html.dark .fe-gm .lm-b>div[style*="borderTop"],html.dark .fe-gm .lm-b>div[style*="border-top"],html.dark .fe-gm .lm-b [style*="border-top: 1px"]{border-top-color:#2f3847!important}
+html.dark .fe-gm .fe-ed .tb{border-top-color:#2f3847!important}
+html.dark .fe-gm .fe-blk,html.dark .fe-gm .cr-btn,html.dark .fe-gm .cr-bh{border-color:#323b4c!important}
+/* Recuadro de subir archivo con el color del nodo */
+html.dark .fe-gm .fe-drop .ic{background:color-mix(in srgb,var(--nc,#3b82f6) 20%,transparent)!important;color:var(--nc,#3b82f6)!important}
+html.dark .fe-gm .fe-drop{background:#111827!important;border:1px dashed var(--nc,#3b82f6)!important}
+html.dark .fe-gm .fe-drop :is(b,small){color:#9ca3af!important}
