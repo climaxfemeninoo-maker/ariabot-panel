@@ -84,7 +84,7 @@ function Editor({ value, onChange, ph, magic, rows }) {
       {magic && <><span style={{ width: 1, height: 18, background: 'var(--border2)', margin: '0 3px' }} /><button onClick={magic}><WandSparkles size={16} color="#4d94ff" /></button></>}</div></div>
 }
 const Range = ({ label, v, max, set, unit = 's' }) => <><div style={{ display: 'flex', fontSize: 13.3, color: 'var(--soft)', marginTop: 15 }}><span>{label}</span><b style={{ margin: '0 auto', color: 'var(--text)' }}>{v} {unit}</b><span>{max} {unit}</span></div>
-  <input type="range" className="fe-rng" min="0" max={max} value={v} onChange={e => set(+e.target.value)} style={{ marginTop: 9, background: `linear-gradient(90deg,var(--nc,#22d3ee) ${v / max * 100}%,#2b3445 0)` }} /></>
+  <input type="range" className="fe-rng" min="0" max={max} value={v} onChange={e => set(+e.target.value)} style={{ marginTop: 9, background: `linear-gradient(90deg,var(--nc,#22d3ee) ${v / max * 100}%,var(--rt,#2b3445) 0)` }} /></>
 function DualRange({ min, max, limit, onChange }) {
   const ref = useRef(); const pct = v => v / limit * 100
   const drag = which => e => { e.preventDefault(); const el = ref.current; const mv = ev => { const r = el.getBoundingClientRect(); const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left; let v = Math.round(Math.max(0, Math.min(1, x / r.width)) * limit)

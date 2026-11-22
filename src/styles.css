@@ -3147,3 +3147,56 @@ html.dark .fe-gm .fe-blk,html.dark .fe-gm .cr-btn,html.dark .fe-gm .cr-bh{border
 html.dark .fe-gm .fe-drop .ic{background:color-mix(in srgb,var(--nc,#3b82f6) 20%,transparent)!important;color:var(--nc,#3b82f6)!important}
 html.dark .fe-gm .fe-drop{background:#111827!important;border:1px dashed var(--nc,#3b82f6)!important}
 html.dark .fe-gm .fe-drop :is(b,small){color:#9ca3af!important}
+/* ===== MODO BLANCO: nodos y ventanas como Leona ===== */
+html:not(.dark) .fe-cv{background-color:#f8fafc!important;background-image:radial-gradient(circle,rgba(148,163,184,.45) 1.2px,transparent 1.3px)!important}
+html:not(.dark) .fe-wrap,html:not(.dark) .fe{background:#f8fafc!important}
+html:not(.dark) .fe-edge{stroke:#9ca3af!important}
+html:not(.dark) .fe-node{background:#fff!important;box-shadow:0 6px 18px rgba(15,23,42,.08)!important}
+html:not(.dark) .fe-node .fe-ns span,html:not(.dark) .fe-rn .fe-ns span{color:#94a3b8!important}
+html:not(.dark) .fe-node .fe-ns b,html:not(.dark) .fe-rn .fe-ns b{color:#0f172a!important}
+html:not(.dark) .fe-rn .fe-ns{background:#fff!important;border:1px solid #e5e7eb;box-shadow:0 4px 12px rgba(15,23,42,.06)}
+html:not(.dark) .fe-nd,html:not(.dark) .fe-nd.lc{color:#475569!important}
+html:not(.dark) .lc-chip{background:#eff6ff!important;border-color:#bfdbfe!important;color:#1e3a8a!important}
+html:not(.dark) .lc-chip.or{background:#fff7ed!important;border-color:#fed7aa!important;color:#9a3412!important}
+html:not(.dark) .lc-chip.gn{background:#ecfdf5!important;border-color:#a7f3d0!important;color:#065f46!important}
+html:not(.dark) .lc-tags,html:not(.dark) .lc-tx,html:not(.dark) .lc-k{color:#334155!important}
+html:not(.dark) .lc-box{background:#ecfdf5!important;color:#064e3b!important}
+html:not(.dark) .lc-box.or{background:#fff7ed!important;border-color:#fdba74!important}html:not(.dark) .lc-box.or b{color:#0f172a!important}
+html:not(.dark) .lc-btn{background:#f3f4f6!important;color:#1f2937!important}
+html:not(.dark) .fe-row.or,html:not(.dark) .fe-row.or2{background:#fffbeb!important;border-color:#fde68a!important;color:#78350f!important}
+html:not(.dark) .fe-row.gr{background:#f3f4f6!important;border-color:#d1d5db!important;color:#1f2937!important}
+html:not(.dark) .fe-row.rd{background:#fef2f2!important;border-color:#fecaca!important;color:#991b1b!important}
+html:not(.dark) .fe-row.gn{background:#ecfdf5!important;border-color:#a7f3d0!important;color:#064e3b!important}
+html:not(.dark) .fe-row.pu,html:not(.dark) .fe-row.bl{background:#eff6ff!important;border-color:#bfdbfe!important;color:#1e3a8a!important}
+html:not(.dark) .fe-row small{color:inherit!important}
+html:not(.dark) .fe-box{background:#ecfdf5!important;border-color:#a7f3d0!important;color:#064e3b!important}html:not(.dark) .fe-box span{color:#047857!important}
+html:not(.dark) .fe-or{color:#64748b!important}
+html:not(.dark) .fe-card{background:#f8fafc!important;border-color:#e5e7eb!important;color:#334155!important}
+html:not(.dark) .fe-rn .circ:not(.agente){background:#fff!important}
+html:not(.dark) .fe-rn .circ small{color:#0f172a!important}
+html:not(.dark) .fe-rn .acts{background:#fff!important;border-color:#e5e7eb!important}html:not(.dark) .fe-rn .acts button{color:#475569!important}
+html:not(.dark) .fe-skel .bx{fill:#fff;stroke:#e5e7eb}html:not(.dark) .fe-skel .ln{fill:#e5e7eb}
+/* ventanas en blanco */
+html:not(.dark) .fe-gm,html:not(.dark) .ne{background:#fff!important;border:1px solid #e5e7eb!important;box-shadow:0 24px 60px rgba(15,23,42,.18)!important}
+html:not(.dark) .fe-gm :is(.fe-mh,.lm-f){border-color:#eef0f4!important}
+html:not(.dark) .fe-gm .fe-mh h2{color:#0f172a!important}
+html:not(.dark) .fe-gm :is(.l-lbl,.fe-lb),html:not(.dark) .fe-gm .lm-b label{color:#334155!important}
+html:not(.dark) .fe-gm :is(input[class]:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,.l-in,.l-selb,.fe-ed,.fc,.ini-chips.sm):not(#z){background:#f9fafb!important;border:1px solid #e5e7eb!important;color:#0f172a!important;border-radius:8px!important}
+html:not(.dark) .fe-gm :is(.fe-ed textarea,.fc input,.ini-chips.sm input,.fe-vin input,.fe-vin textarea):not(#z):not(#y){background:transparent!important;border:none!important;color:#0f172a!important}
+html:not(.dark) .fe-gm :is(input,textarea,.l-in,.l-selb,.fc,.fe-ed):not(#z):focus,html:not(.dark) .fe-gm :is(.fe-ed:focus-within,.fc.open,.l-selb.open):not(#z){border-color:#3b82f6!important;box-shadow:none!important}
+html:not(.dark) .fe-gm ::placeholder{color:#94a3b8!important}
+html:not(.dark) .fe-gm .fe-ed .tb{border-top-color:#eef0f4!important;background:#f9fafb}
+html:not(.dark) .fe-gm :is(.fe-blk,.sc-list,.sc-row,.dx-o,.mo-card,.cr-btn,.sw-box){background:#fff!important;border-color:#e5e7eb!important}
+html:not(.dark) .fe-gm .fe-seg{background:#f3f4f6!important;border-color:#e5e7eb!important}html:not(.dark) .fe-gm .fe-seg button:not(.on){color:#475569!important}
+html:not(.dark) .fe-gm .fe-drop{background:#f9fafb!important}
+html:not(.dark) .fe-gm .lb2.g:not(#z){background:#f3f4f6!important;border:1px solid #e5e7eb!important;color:#334155!important}
+html:not(.dark) .fe-gm .lb2.p:not(#z){background:var(--nc,#3b82f6)!important;color:#fff!important}
+html:not(.dark) .fe-gm .fe-mh .ic{background:linear-gradient(145deg,var(--nc,#8b5cf6),color-mix(in srgb,var(--nc,#8b5cf6) 82%,#000))!important;color:#fff!important}
+html:not(.dark) .fe-gm .fe-rng:not(#z){border:none!important}
+html:not(.dark) .fc-l,html:not(.dark) .l-selm.fx{background:#fff!important;border-color:#e5e7eb!important}html:not(.dark) .fc-l li{color:#1f2937!important}html:not(.dark) .fc-l li.on{background:#f1f5f9!important}
+html:not(.dark) .cl-card{background:linear-gradient(160deg,#f0fdfa,#fff 70%)!important}html:not(.dark) .cl-h b,html:not(.dark) .cl-st{color:#0f172a}
+html:not(.dark) .cr-add{background:#f3f4f6;border-color:#e5e7eb;color:#334155}html:not(.dark) .cr-card-add{color:#334155;border-color:#d1d5db}
+html:not(.dark) .vp-s{background:#fff!important;border-color:#e5e7eb!important}
+html:not(.dark) .fe-gm{--rt:#e5e7eb}
+html:not(.dark) .fe-gm .lm-b [style*="border-top"],html:not(.dark) .fe-gm .lm-b>div[style*="borderTop"]{border-top-color:#eef0f4!important}
+html:not(.dark) .fe-gm hr,html:not(.dark) .fe-gm .lm-b>div:last-child{border-color:#eef0f4!important}
