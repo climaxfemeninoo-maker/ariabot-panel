@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Zap, Pencil, Workflow, MessageCircle, Power, Repeat, Hash, MousePointerClick, UserPlus, MessagesSquare, Check, FlaskConical, Clock3 } from 'lucide-react'
-import { PhoneCall, X, Plus, Trash2, Info, Upload, Link2, Code, Mic, Image, Music, Video, ChevronDown, Search, Loader2, Eye, EyeOff } from 'lucide-react'
+import { LayoutGrid, PhoneCall, X, Plus, Trash2, Info, Upload, Link2, Code, Mic, Image, Music, Video, ChevronDown, Search, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useStore, useToast, uid } from '../ui'
 import { LSelect, Toggle } from './leona'
 import { PickBtn, curName } from './flowPickers'
@@ -354,16 +354,16 @@ export function CarouselModal({ node, onClose, onSave }) {
         <Lb>Texto de la tarjeta (obligatorio)</Lb><textarea className="l-in" style={{ ...IN, height: 64, padding: '10px 12px' }} value={k.text} onChange={e => card(k.id, { text: e.target.value })} placeholder="Escriba la leyenda..." />
         <div style={{ marginTop: 14 }}><Lb>Imagen de la tarjeta</Lb><Help>El carrusel de WhatsApp aquí es solo imagen. Archivo o URL (variables permitidas). Máx. 20MB.</Help>
           <div className="fe-seg" style={{ marginTop: 9 }}>{[['file', 'Archivo', Upload], ['url', 'URL', Link2]].map(([s, l, I]) => <button key={s} className={k.src === s ? 'on' : ''} onClick={() => card(k.id, { src: s })}><I size={14} />{l}</button>)}</div>
-          {k.src === 'file' ? <div className="fe-drop">{k.img ? <img src={k.img} style={{ maxHeight: 90, borderRadius: 6 }} /> : <small>{k.fname || '2MB JPG, PNG o WEBP'}</small>}<button className="bt" onClick={() => pick(k.id)}>Enviar imagen</button></div>
+          {k.src === 'file' ? <div className="cr-drop">{k.img ? <img src={k.img} alt="" /> : <span className="ic"><Image size={24} /></span>}<b>{k.fname || 'Tamaño máximo permitido: 2MB'}</b><small>JPG preferible; también PNG, WebP, HEIC, HEIF</small><button onClick={() => pick(k.id)}>{k.img ? 'Cambiar imagen' : 'Enviar imagen'}</button></div>
             : <input className="l-in" style={IN} value={k.url} onChange={e => card(k.id, { url: e.target.value })} placeholder="https://… o {imagen_url}" />}</div>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '14px 0 9px' }}><b style={{ fontSize: 13.3 }}>Botones (máx. 3 por tarjeta)</b><button className="lb2 p sm" style={{ marginLeft: 'auto', height: 32 }} disabled={k.buttons.length >= 3} onClick={() => card(k.id, { buttons: [...k.buttons, { id: uid(), type: 'reply', title: 'Opción ' + 'ABC'[k.buttons.length], val: '' }] })}><Plus size={14} />Añadir botón</button></div>
-        {k.buttons.map(b => { const ub = p => card(k.id, { buttons: k.buttons.map(x => x.id === b.id ? { ...x, ...p } : x) }); return <div key={b.id} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 11, marginBottom: 8 }}>
-          <div style={{ display: 'flex', gap: 8 }}><div style={{ width: 140 }}><Lb>Tipo</Lb><LSelect className="l-in" bold value={b.type} onChange={v => ub({ type: v })} options={[['reply', 'Respuesta'], ['url', 'URL'], ['copy', 'Copiar'], ['call', 'Llamada']].map(([value, label]) => ({ value, label }))} /></div>
-            <div style={{ flex: 1 }}><Lb>Título del botón</Lb><input className="l-in" style={IN} maxLength={20} value={b.title} onChange={e => ub({ title: e.target.value })} /></div>
-            {k.buttons.length > 1 && <button className="ch-ib" style={{ alignSelf: 'flex-end', marginBottom: 4 }} onClick={() => card(k.id, { buttons: k.buttons.filter(x => x.id !== b.id) })}><Trash2 size={15} /></button>}</div>
+        <div className="cr-bh"><b>Botones (máx. 3 por tarjeta)</b><button className="cr-add"  disabled={k.buttons.length >= 3} onClick={() => card(k.id, { buttons: [...k.buttons, { id: uid(), type: 'reply', title: 'Opción ' + 'ABC'[k.buttons.length], val: '' }] })}><Plus size={14} />Añadir botón</button></div>
+        {k.buttons.map(b => { const ub = p => card(k.id, { buttons: k.buttons.map(x => x.id === b.id ? { ...x, ...p } : x) }); return <div key={b.id} className="cr-btn">
+          <div className="cr-row"><div style={{ width: 150 }}><small className="cr-l">Tipo</small><LSelect className="l-in" bold value={b.type} onChange={v => ub({ type: v })} options={[['reply', 'Respuesta'], ['url', 'URL'], ['copy', 'Copiar'], ['call', 'Llamada']].map(([value, label]) => ({ value, label }))} /></div>
+            <div style={{ flex: 1, minWidth: 0 }}><small className="cr-l">Título del botón</small><input className="l-in" maxLength={20} value={b.title} onChange={e => ub({ title: e.target.value })} /></div>
+            <button className="cr-del" disabled={k.buttons.length < 2} onClick={() => card(k.id, { buttons: k.buttons.filter(x => x.id !== b.id) })}><Trash2 size={15} /></button></div>
           {b.type !== 'reply' && <input className="l-in" style={{ ...IN, marginTop: 8 }} value={b.val} onChange={e => ub({ val: e.target.value })} placeholder={{ url: 'https://ejemplo.com', copy: 'Código a copiar', call: '+55 11 99999-9999' }[b.type]} />}</div> })}
       </div>)}
-      <button className="lb2 g" style={{ width: '100%' }} disabled={c.cards.length >= 10} onClick={() => set({ cards: [...c.cards, carBlank()] })}><Plus size={15} />Añadir tarjeta</button>
+      <button className="cr-card-add" disabled={c.cards.length >= 10} onClick={() => set({ cards: [...c.cards, carBlank()] })}><span><LayoutGrid size={17} /></span>Añadir tarjeta</button>
       <div style={{ borderTop: '1px solid var(--border)', marginTop: 18, padding: '14px 0 20px', display: 'flex', justifyContent: 'flex-end', gap: 11 }}>
         <button className="lb2 g" onClick={onClose}>Cancelar</button><button className="lb2 p" disabled={!ok} onClick={() => onSave({ ...node, cfg: c, desc: '📝 ' + (c.intro || 'Elige una opción abajo') })}>Guardar</button></div>
     </div></div></div>
